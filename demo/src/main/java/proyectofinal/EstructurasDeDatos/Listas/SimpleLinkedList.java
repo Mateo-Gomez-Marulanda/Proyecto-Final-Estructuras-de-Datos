@@ -12,10 +12,7 @@ public class SimpleLinkedList<T> implements Iterable<T> {
     }
 
     public boolean isEmpty() {
-        if (size == 0) {
-            return true;
-        }
-        return false;
+        return size == 0;
     }
 
     public int size() {
@@ -57,8 +54,9 @@ public class SimpleLinkedList<T> implements Iterable<T> {
                 aux = aux.getNextNode();
             }
             aux.setNextNode(newNode);
-            size++;
+
         }
+        size++;
     }
 
     public void add(T data, int index) {
@@ -66,17 +64,13 @@ public class SimpleLinkedList<T> implements Iterable<T> {
             throw new RuntimeException("error index");
         }
 
-        if (isEmpty()) {
-            throw new RuntimeException("list is empty");
-        } else {
-            if (index == 0) {
-                addFirst(data);
-                return;
-            }
-            if (index == size) {
-                addLast(data);
-                return;
-            }
+        if (index == 0) {
+            addFirst(data);
+            return;
+        }
+        if (index == size) {
+            addLast(data);
+            return;
         }
 
         Node<T> aux = first;
@@ -105,14 +99,18 @@ public class SimpleLinkedList<T> implements Iterable<T> {
     public void removeLast() {
         if (isEmpty()) {
             throw new RuntimeException("list is empty");
+        }
+
+        if (size == 1) {
+            first = null;
         } else {
             Node<T> aux = first;
             while (aux.getNextNode().getNextNode() != null) {
                 aux = aux.getNextNode();
             }
             aux.setNextNode(null);
-            size--;
         }
+        size--;
     }
 
     // elimina en base al indice
@@ -135,7 +133,7 @@ public class SimpleLinkedList<T> implements Iterable<T> {
         }
 
         Node<T> aux = first;
-        for (int i = 1; i == index - 1; i++) {
+        for (int i = 1; i < index - 1; i++) {
             aux = aux.getNextNode();
         }
 
@@ -185,9 +183,6 @@ public class SimpleLinkedList<T> implements Iterable<T> {
 
     // OBTIENE EL INDICE SEGUN EL DATO
     public int indexOf(T data) {
-        if (isEmpty()) {
-            throw new RuntimeException("list is empty");
-        }
 
         Node<T> aux = first;
         int cont = 0;
@@ -218,26 +213,9 @@ public class SimpleLinkedList<T> implements Iterable<T> {
         aux.setdata(newData);
     }
 
-    // IMPRIME LA LISTA DE TAL FORMA QUE QUEDE SIMILARA UNA LISTA PROPIA DE JAVA
-    public void printList() {
-        Node<T> aux = first;
-        String message = "[";
-        do {
-            message += aux.getdata() + " ";
-            aux = aux.getNextNode();
-        } while (aux != null);
-
-        message += "]";
-        System.out.println(message);
-    }
-
     // ITERADOR PROPIO PARA PODER USAR FOR-EACH O DEMAS METODOS ITERABLE
     @Override
     public Iterator<T> iterator() {
-        if (isEmpty()) {
-            throw new RuntimeException("list is empty");
-        }
-
         return new SimpleLinkedListIterator<T>(first);
     }
 }
