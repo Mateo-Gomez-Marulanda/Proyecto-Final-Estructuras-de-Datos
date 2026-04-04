@@ -1,21 +1,24 @@
 package proyectofinal.Personal;
 
+import proyectofinal.EstructurasDeDatos.Listas.SimpleLinkedList;
+import proyectofinal.Inmueble.Inmueble;
+
 public class Asesor {
     private String identificacion;
     private String nombre;
     private String contacto;
     private String especialidadZona;
-    private Object inmuebleAsignados; // estructura de datos a definir
+    private SimpleLinkedList<Inmueble> inmuebleAsignados;
     private Object visitasAgendadas; // estructura de datos a definir
     private int cierresRealizados;
 
     public Asesor(String identificacion, String nombre, String contacto, String especialidadZona,
-            Object inmuebleAsignados, Object visitasAgendadas, int cierresRealizados) {
+            Object visitasAgendadas, int cierresRealizados) {
         this.identificacion = identificacion;
         this.nombre = nombre;
         this.contacto = contacto;
         this.especialidadZona = especialidadZona;
-        this.inmuebleAsignados = inmuebleAsignados;
+        this.inmuebleAsignados = new SimpleLinkedList<>();
         this.visitasAgendadas = visitasAgendadas;
         this.cierresRealizados = cierresRealizados;
     }
@@ -52,14 +55,6 @@ public class Asesor {
         this.especialidadZona = especialidadZona;
     }
 
-    public Object getInmuebleAsignados() {
-        return inmuebleAsignados;
-    }
-
-    public void setInmuebleAsignados(Object inmuebleAsignados) {
-        this.inmuebleAsignados = inmuebleAsignados;
-    }
-
     public Object getVisitasAgendadas() {
         return visitasAgendadas;
     }
@@ -81,5 +76,22 @@ public class Asesor {
         return "Identificación: " + identificacion + " | Nombre: " + nombre + " | Contacto: " + contacto
                 + " | Especialidad/Zona: " + especialidadZona + " | Inmuebles Asignados: " + inmuebleAsignados
                 + " | Visitas Agendadas: " + visitasAgendadas + " | Cierres Realizados: " + cierresRealizados;
+    }
+
+    public void asignarInmueble(Inmueble inmueble) {
+        inmuebleAsignados.addLast(inmueble);
+    }
+
+    public void eliminarInmueble(Inmueble inmueble) {
+        inmuebleAsignados.removeElement(inmueble);
+    }
+
+    public Inmueble consultarInmuebleAsignado(String codigo) {
+        for (Inmueble inmueble : inmuebleAsignados) {
+            if (inmueble.getCodigo().equals(codigo)) {
+                return inmueble;
+            }
+        }
+        return null; // No encontrado
     }
 }

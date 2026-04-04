@@ -8,6 +8,7 @@ import proyectofinal.Personal.Asesor;
 import proyectofinal.Personal.Cliente;
 
 public class Visita {
+    private String codigo; // código único para identificar la visita
     private Cliente cliente; // Cliente
     private Inmueble inmueble; // Inmueble
     private LocalDate fecha;
@@ -16,8 +17,10 @@ public class Visita {
     private EstadoVisita estadoVisita; // pendiente, confirmada, realizada, cancelada, reprogramada
     private String observacionesPosteriores;
 
-    public Visita(Cliente cliente, Inmueble inmueble, LocalDate fecha, LocalTime hora, Asesor asesorAsignado,
+    public Visita(String codigo, Cliente cliente, Inmueble inmueble, LocalDate fecha, LocalTime hora,
+            Asesor asesorAsignado,
             EstadoVisita estadoVisita, String observacionesPosteriores) {
+        this.codigo = codigo;
         this.cliente = cliente;
         this.inmueble = inmueble;
         this.fecha = fecha;
@@ -25,6 +28,14 @@ public class Visita {
         this.asesorAsignado = asesorAsignado;
         this.estadoVisita = estadoVisita;
         this.observacionesPosteriores = observacionesPosteriores;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
     public Cliente getCliente() {
@@ -85,7 +96,8 @@ public class Visita {
 
     @Override
     public String toString() {
-        return "Cliente: " + cliente + " | Inmueble: " + inmueble + " | Fecha: " + fecha + " | Hora: " + hora
+        return "Código: " + codigo + " | Cliente: " + cliente + " | Inmueble: " + inmueble + " | Fecha: " + fecha
+                + " | Hora: " + hora
                 + " | Asesor Asignado: " + asesorAsignado + " | Estado: " + estadoVisita + " | Observaciones: "
                 + observacionesPosteriores;
     }

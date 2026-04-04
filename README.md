@@ -1,4 +1,4 @@
-# Plataforma PropTech para Gestión Inteligente de Inmuebles, Clientes y Operaciones
+# Plataforma Inspirada en PropTech para Gestión Inteligente de Inmuebles, Clientes y Operaciones
 
 ## 📋 Descripción General
 

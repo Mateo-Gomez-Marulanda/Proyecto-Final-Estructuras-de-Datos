@@ -1,5 +1,7 @@
 package proyectofinal.Personal;
 
+import proyectofinal.EstructurasDeDatos.Listas.SimpleLinkedList;
+import proyectofinal.Inmueble.Inmueble;
 import proyectofinal.Inmueble.TipoInmueble;
 
 public class Cliente {
@@ -13,6 +15,8 @@ public class Cliente {
     private TipoInmueble tipoInmuebleDeseado;
     private int cantidadMinimaHabitaciones;
     private String estadoBusqueda;
+
+    private SimpleLinkedList<Inmueble> inmueblesFavoritos = new SimpleLinkedList<>();
 
     public Cliente(String identificacion, String nombre, String correo, String telefono, String tipoCliente,
             double presupuesto, Object zonasInteres, TipoInmueble tipoInmuebleDeseado, int cantidadMinimaHabitaciones,
@@ -89,7 +93,7 @@ public class Cliente {
         return tipoInmuebleDeseado;
     }
 
-    public void setTipoInmuebleDeseado(TipoInmueble  tipoInmuebleDeseado) {
+    public void setTipoInmuebleDeseado(TipoInmueble tipoInmuebleDeseado) {
         this.tipoInmuebleDeseado = tipoInmuebleDeseado;
     }
 
@@ -118,16 +122,17 @@ public class Cliente {
                 + estadoBusqueda;
     }
 
-    public void consultarInmuebles() {
+    public void consultarInmuebles(Inmueble inmueble) {
         // Lógica para consultar inmuebles disponibles según los criterios del cliente
+
     }
 
     public void agendarVisita() {
         // Lógica para agendar una visita a un inmueble específico
     }
 
-    public void marcarFavorito() {
-        // Lógica para marcar un inmueble como favorito
+    public void marcarFavorito(Inmueble inmueble) {
+        inmueblesFavoritos.addLast(inmueble);
     }
 
     public void registrarIntencionCompraArriendo() {
