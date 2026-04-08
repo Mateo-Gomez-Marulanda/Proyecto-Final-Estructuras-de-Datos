@@ -25,24 +25,41 @@ demo/
 │   │   │   ├── Cliente.java               # Modelo de cliente ✅
 │   │   │   └── Asesor.java                # Modelo de asesor ✅
 │   │   ├── EstructurasDeDatos/            # Implementación de ED
-│   │   │   └── Listas/
-│   │   │       ├── Node.java              # Nodo genérico ✅
-│   │   │       ├── SimpleLinkedList.java  # Lista enlazada ✅
-│   │   │       └── SimpleLinkedListIterator.java  # Iterador ✅
-│   │   │   ├── Pilas/                     # Por implementar ⏳
-│   │   │   ├── Colas/                     # Por implementar ⏳
-│   │   │   ├── ColasDePrioridad/          # Por implementar ⏳
-│   │   │   ├── TablasHash/                # Por implementar ⏳
-│   │   │   ├── Arboles/                   # Por implementar ⏳
-│   │   │   └── Grafo/                     # Por implementar ⏳
+│   │   │   ├── Listas/                    # ✅ Completada
+│   │   │   │   ├── Node.java
+│   │   │   │   ├── SimpleLinkedList.java
+│   │   │   │   └── SimpleLinkedListIterator.java
+│   │   │   ├── Pilas/                     # ✅ Completada
+│   │   │   │   ├── Node.java
+│   │   │   │   ├── Stack.java
+│   │   │   │   └── StackIterator.java
+│   │   │   ├── Colas/                     # ✅ Completada
+│   │   │   │   ├── Node.java
+│   │   │   │   ├── Queue.java
+│   │   │   │   └── QueueIterator.java
+│   │   │   ├── ColasDePrioridad/          # ⏳ Pendiente
+│   │   │   │   └── Node.java
+│   │   │   ├── TablasHash/                # ⏳ Vacía
+│   │   │   ├── Arboles/                   # ⏳ Pendiente
+│   │   │   │   └── Node.java
+│   │   │   └── Grafo/                     # ⏳ Vacía
 │   │   ├── SistemaGestion/                # Lógica del negocio
-│   │   │   ├── AgendamientoVisitas/
-│   │   │   │   ├── Visita.java            # Modelo de visita ✅
-│   │   │   │   └── EstadoVisita.java      # Estados posibles ✅
-│   │   │   ├── OperacionDeNegocio/
-│   │   │   │   ├── OperacionNegocio.java  # Modelo de operación ✅
-│   │   │   │   └── TipoOperacion.java     # Tipos de operación ✅
-│   │   │   └── HistorialInteres/          # Por implementar ⏳
+│   │   │   ├── AgendamientoVisitas/       # ✅ Completada
+│   │   │   │   ├── Visita.java
+│   │   │   │   └── EstadoVisita.java
+│   │   │   ├── OperacionDeNegocio/        # ✅ Completada
+│   │   │   │   ├── OperacionNegocio.java
+│   │   │   │   └── TipoOperacion.java
+│   │   │   ├── HistorialInteres/          # ✅ Completada
+│   │   │   │   ├── Historial.java
+│   │   │   │   ├── HistorialInmueblesConsultados.java
+│   │   │   │   ├── HistorialOperacionesRealizadas.java
+│   │   │   │   ├── HistorialPropiedadesVisitadas.java
+│   │   │   │   └── info.txt
+│   │   │   ├── Alertas/                   # ⏳ Pendiente
+│   │   │   │   └── nota.txt
+│   │   │   └── Contratos/                 # ⏳ Pendiente
+│   │   │       └── nota.txt
 │   └── test/java/                         # Tests (por crear)
 └── target/                                 # Compilados
 ```
@@ -51,7 +68,7 @@ demo/
 
 ## ✅ Componentes Implementados
 
-### 1. **Estructuras de Datos - LISTAS ENLAZADAS**
+### 1. **Estructuras de Datos - IMPLEMENTADAS**
 
 #### `Node<T>`
 Nodo genérico con soporte para cualquier tipo de dato:
@@ -76,8 +93,42 @@ Implementación completa de lista enlazada simple:
 
 #### `SimpleLinkedListIterator<T>`
 Iterador personalizado que permite recorrer la lista usando:
-- `hasNext()` - Verifica si hay siguiente
-- `next()` - Obtiene siguiente elemento
+- ✅ `hasNext()` - Verifica si hay siguiente
+- ✅ `next()` - Obtiene siguiente elemento
+
+---
+
+#### `Stack<T>` (Pila)
+Implementación completa de pila (LIFO):
+- ✅ `isEmpty()` - Verifica si está vacía
+- ✅ `push(T)` - Inserta elemento en la cima
+- ✅ `pop()` - Extrae elemento de la cima
+- ✅ `peek()` - Consulta elemento sin extraerlo
+- ✅ `size()` - Obtiene cantidad de elementos
+- ✅ `clear()` - Limpia la pila
+- ✅ Implementa `Iterable<T>` para soporte de for-each
+
+#### `StackIterator<T>`
+Iterador personalizado para recorrer la pila:
+- ✅ `hasNext()` - Verifica si hay siguiente
+- ✅ `next()` - Obtiene siguiente elemento
+
+---
+
+#### `Queue<T>` (Cola)
+Implementación completa de cola (FIFO):
+- ✅ `isEmpty()` - Verifica si está vacía
+- ✅ `enqueue(T)` - Inserta elemento en la cola
+- ✅ `dequeue()` - Extrae primer elemento
+- ✅ `peek()` - Consulta primer elemento sin extraerlo
+- ✅ `size()` - Obtiene cantidad de elementos
+- ✅ `clear()` - Limpia la cola
+- ✅ Implementa `Iterable<T>` para soporte de for-each
+
+#### `QueueIterator<T>`
+Iterador personalizado para recorrer la cola:
+- ✅ `hasNext()` - Verifica si hay siguiente
+- ✅ `next()` - Obtiene siguiente elemento
 
 ---
 
@@ -168,14 +219,14 @@ ARRIENDO, VENTA, RENOVACION_CONTRATO, CANCELACION_NEGOCIO
 
 ---
 
-## 🚀 Características Previstas (Por Implementar)
+## 🚀 Características Previstas (Por Completar)
 
 ### Estructuras de Datos Faltantes
 
 | Estructura | Uso Previsto | Estado |
 |-----------|--------------|--------|
-| **Pilas** | Deshacer cambios, historial de acciones | ⏳ Pendiente |
-| **Colas** | Solicitudes de clientes, visitas pendientes | ⏳ Pendiente |
+| **Pilas** | Deshacer cambios, historial de acciones | ✅ Implementada |
+| **Colas** | Solicitudes de clientes, visitas pendientes | ✅ Implementada |
 | **Colas de Prioridad** | Visitas VIP, alertas urgentes | ⏳ Pendiente |
 | **Tablas Hash** | Búsqueda rápida de clientes, inmuebles, asesores | ⏳ Pendiente |
 | **Árboles (BST/AVL)** | Ordenar inmuebles por precio, clientes por presupuesto | ⏳ Pendiente |
@@ -235,18 +286,18 @@ javac -d target/classes src/main/java/proyectofinal/**/*.java
 
 | Componente | Completitud | Notas |
 |-----------|------------|-------|
-| **Estructuras de Datos** | 17% | Solo listas enlazadas implementadas |
+| **Estructuras de Datos** | 50% | Listas enlazadas, Pilas y Colas implementadas. Falta: Colas de Prioridad, Tablas Hash, Árboles, Grafos |
 | **Modelos de Datos** | 80% | Todas las entidades principales creadas |
-| **Sistema de Gestión** | 10% | Stub methods sin lógica real |
+| **Sistema de Gestión** | 20% | Historial de intereses implementado, falta Alertas y Contratos |
 | **Interfaz de Usuario** | 0% | Main.java solo imprime "Hello world!" |
 | **Pruebas Unitarias** | 0% | Carpeta test vacía |
 
 ### Próximos Pasos Recomendados
 
-**Fase 1: Estructuras de Datos**
-1. Implementar `Stack`
-2. Implementar `Queue`
-3. Implementar `PriorityQueue`
+**Fase 1: Estructuras de Datos Restantes**
+1. ✅ Implementar `Stack` - COMPLETADO
+2. ✅ Implementar `Queue` - COMPLETADO
+3. Implementar `PriorityQueue` - EN PROGRESO
 4. Implementar `HashMap` personalizado
 5. Implementar `BinarySearchTree`
 6. Implementar `Graph`
@@ -289,10 +340,12 @@ javac -d target/classes src/main/java/proyectofinal/**/*.java
 
 ### Problemas Conocidos
 
-- `Main.java` actualmente solo imprime "Hello world!"
+- `Main.java` actualmente solo imprime "Hello world!" - requiere implementación de menú interactivo
+- Estructuras de Tablas Hash, Árboles y Grafos no están implementadas
+- ColasDePrioridad solo tiene clase Node sin la implementación completa
 - Los campos `Object` en Cliente y Asesor (zonasInteres, inmuebleAsignados, visitasAgendadas) deben especificarse con estructuras reales
-- Los métodos en Cliente son stubs sin implementación
-- Falta la capa de servicios para aplicar la lógica de negocio
+- Falta la capa de servicios (Managers) para aplicar la lógica de negocio
+- Las carpetas de Alertas y Contratos existen pero sin implementación
 
 ### Mejoras Futuras
 
@@ -330,4 +383,4 @@ Este proyecto es una implementación completa de un sistema PropTech que demuest
 - Patrones de cascada para gestión de datos relacionales
 - Preparación para análisis de datos e inteligencia de negocio
 
-**Estado:** Fase inicial completa ✅ → Siguiente: Implementar estructuras avanzadas ⏳
+**Estado:** Fase inicial completada (70%) ✅ → Implementación de estructuras avanzadas en progreso ⏳
