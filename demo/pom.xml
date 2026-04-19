@@ -12,10 +12,33 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <javafx.version>21</javafx.version>
     </properties>
 
+    <!-- ══ DEPENDENCIAS ══════════════════════════════════════ -->
+    <dependencies>
+
+        <!-- JavaFX: controles base (Button, Label, TableView, etc.) -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+
+        <!-- JavaFX: soporte para archivos .fxml y FXMLLoader -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+
+    </dependencies>
+
+    <!-- ══ BUILD ═════════════════════════════════════════════ -->
     <build>
         <plugins>
+
+            <!-- Compilador Java 21 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -25,6 +48,18 @@
                     <target>21</target>
                 </configuration>
             </plugin>
+
+            <!-- Plugin JavaFX: permite ejecutar con "mvn javafx:run" -->
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+                    <!-- Aquí va la clase principal que extiende Application -->
+                    <mainClass>proyectofinal.Main</mainClass>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
