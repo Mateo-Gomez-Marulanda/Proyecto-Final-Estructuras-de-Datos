@@ -4,15 +4,15 @@ package proyectofinal.EstructurasDeDatos.Arboles;
 
 public class Node<T> {
     private T data;
-    private Node<T> father;
-    private Node<T> rightSon;
-    private Node<T> leftSon;
+    private Node<T> father; // se usa una referencia al padre para facilitar la eliminación de nodos
+    private Node<T> right;
+    private Node<T> left;
 
     public Node(T data) {
         this.data = data;
         this.father = null;
-        this.rightSon = null;
-        this.leftSon = null;
+        this.right = null;
+        this.left = null;
     }
 
     public T getData() {
@@ -31,25 +31,25 @@ public class Node<T> {
         this.father = father;
     }
 
-    public Node<T> getRightSon() {
-        return rightSon;
+    public Node<T> getRight() {
+        return right;
     }
 
-    public void setRightSon(Node<T> rightSon) {
-        this.rightSon = rightSon;
+    public void setRight(Node<T> right) {
+        this.right = right;
     }
 
-    public Node<T> getLeftSon() {
-        return leftSon;
+    public Node<T> getLeft() {
+        return left;
     }
 
-    public void setLeftSon(Node<T> leftSon) {
-        this.leftSon = leftSon;
+    public void setLeft(Node<T> left) {
+        this.left = left;
     }
 
     @Override
     public String toString() {
-        return "Node [data=" + data + ", father=" + father + ", rightSon=" + rightSon + ", leftSon=" + leftSon
+        return "Node [data=" + data + ", father=" + father + ", right=" + right + ", left=" + left
                 + "]";
     }
 }
