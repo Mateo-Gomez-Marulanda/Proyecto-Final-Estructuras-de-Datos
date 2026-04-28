@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="proyectofinal.controllers.DashboardController"
+      spacing="24" styleClass="content-area">
+
+    <!-- Encabezado -->
+    <VBox spacing="4">
+        <Label text="Dashboard" styleClass="modulo-titulo"/>
+        <Label text="Resumen general del sistema" styleClass="modulo-subtitulo"/>
+    </VBox>
+
+    <!-- ══ TARJETAS DE ESTADÍSTICAS ══ -->
+    <GridPane hgap="16" vgap="16">
+        <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+        </columnConstraints>
+
+        <!-- Inmuebles -->
+        <VBox styleClass="stat-card" spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="0">
+            <Label text="🏢" styleClass="stat-icono-azul"/>
+            <Label fx:id="numInmuebles" text="0" styleClass="stat-numero"/>
+            <Label text="Inmuebles registrados" styleClass="stat-label"/>
+        </VBox>
+
+        <!-- Clientes -->
+        <VBox styleClass="stat-card" spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="0">
+            <Label text="👤" styleClass="stat-icono-verde"/>
+            <Label fx:id="numClientes" text="0" styleClass="stat-numero"/>
+            <Label text="Clientes activos" styleClass="stat-label"/>
+        </VBox>
+
+        <!-- Visitas pendientes -->
+        <VBox styleClass="stat-card" spacing="8" GridPane.columnIndex="2" GridPane.rowIndex="0">
+            <Label text="📅" styleClass="stat-icono-ambar"/>
+            <Label fx:id="numVisitas" text="0" styleClass="stat-numero"/>
+            <Label text="Visitas pendientes" styleClass="stat-label"/>
+        </VBox>
+
+        <!-- Alertas activas -->
+        <VBox styleClass="stat-card" spacing="8" GridPane.columnIndex="3" GridPane.rowIndex="0">
+            <Label text="🔔" styleClass="stat-icono-rojo"/>
+            <Label fx:id="numAlertas" text="0" styleClass="stat-numero"/>
+            <Label text="Alertas pendientes" styleClass="stat-label"/>
+        </VBox>
+    </GridPane>
+
+    <!-- ══ FILA INFERIOR: Accesos rápidos + Actividad reciente ══ -->
+    <HBox spacing="16" VBox.vgrow="ALWAYS">
+
+        <!-- Accesos rápidos -->
+        <VBox spacing="12" prefWidth="280" minWidth="240">
+            <Label text="Accesos rápidos"
+                   style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+            <Button text="➕  Registrar inmueble"
+                    styleClass="boton-primario"
+                    onAction="#irARegistrarInmueble"
+                    maxWidth="Infinity"/>
+            <Button text="👤  Registrar cliente"
+                    styleClass="boton-secundario"
+                    onAction="#irARegistrarCliente"
+                    maxWidth="Infinity"/>
+            <Button text="📅  Agendar visita"
+                    styleClass="boton-secundario"
+                    onAction="#irAAgendarVisita"
+                    maxWidth="Infinity"/>
+            <Button text="📋  Registrar operación"
+                    styleClass="boton-secundario"
+                    onAction="#irARegistrarOperacion"
+                    maxWidth="Infinity"/>
+            <Button text="🔔  Ver alertas pendientes"
+                    styleClass="boton-advertencia"
+                    onAction="#irAAlertas"
+                    maxWidth="Infinity"/>
+        </VBox>
+
+        <!-- Últimas acciones (historial de pila) -->
+        <VBox spacing="12" HBox.hgrow="ALWAYS">
+            <Label text="Últimas acciones administrativas"
+                   style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+
+            <TableView fx:id="tablaUltimosMovimientos" VBox.vgrow="ALWAYS"
+                       styleClass="tabla-principal"
+                      >
+                <placeholder><Label text="No hay acciones registradas aún."/></placeholder>
+                <columns>
+                    <TableColumn fx:id="colAccionFecha"    text="Fecha/Hora"  prefWidth="150"/>
+                    <TableColumn fx:id="colAccionTipo"     text="Tipo"        prefWidth="160"/>
+                    <TableColumn fx:id="colAccionDetalle"  text="Detalle"     prefWidth="260"/>
+                    <TableColumn fx:id="colAccionResponsable" text="Responsable" prefWidth="120"/>
+                </columns>
+            </TableView>
+        </VBox>
+
+    </HBox>
+
+</VBox>

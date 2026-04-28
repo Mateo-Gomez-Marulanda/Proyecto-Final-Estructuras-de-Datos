@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="proyectofinal.controllers.AlertasController"
+      spacing="16" styleClass="content-area">
+
+    <!-- Encabezado -->
+    <HBox alignment="CENTER_LEFT" spacing="16">
+        <VBox spacing="4" HBox.hgrow="ALWAYS">
+            <Label text="Alertas del sistema" styleClass="modulo-titulo"/>
+            <Label text="Revisión y gestión de alertas automáticas" styleClass="modulo-subtitulo"/>
+        </VBox>
+        <Button text="🔄  Generar alertas"
+                styleClass="boton-secundario"
+                onAction="#generarAlertasAutomaticas"/>
+    </HBox>
+
+    <!-- Resumen de alertas -->
+    <HBox spacing="12">
+        <VBox styleClass="stat-card" spacing="4" prefWidth="200">
+            <Label text="⏳" styleClass="stat-icono-ambar"/>
+            <Label fx:id="numPendientes" text="0" styleClass="stat-numero"/>
+            <Label text="Pendientes en cola" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-card" spacing="4" prefWidth="200">
+            <Label text="✅" styleClass="stat-icono-verde"/>
+            <Label fx:id="numRevisadas" text="0" styleClass="stat-numero"/>
+            <Label text="Revisadas" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-card" spacing="4" prefWidth="200">
+            <Label text="🗑️" style="-fx-text-fill: #94a3b8; -fx-font-size: 20px;"/>
+            <Label fx:id="numDescartadas" text="0" styleClass="stat-numero"/>
+            <Label text="Descartadas" styleClass="stat-label"/>
+        </VBox>
+    </HBox>
+
+    <!-- Tabs: Pendientes / Historial -->
+    <TabPane fx:id="tabsAlertas" VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
+
+        <!-- Tab 1: Alertas pendientes (Cola FIFO) -->
+        <Tab text="🔔  Pendientes" fx:id="tabPendientes">
+            <VBox spacing="12" style="-fx-padding: 16 0 0 0;">
+
+                <TableView fx:id="tablaPendientes"
+                           styleClass="tabla-principal"
+                           VBox.vgrow="ALWAYS"
+                          >
+                    <placeholder><Label text="No hay alertas pendientes."/></placeholder>
+                    <columns>
+                        <TableColumn fx:id="colPendId"         text="ID"             prefWidth="80"/>
+                        <TableColumn fx:id="colPendTipo"       text="Tipo de alerta" prefWidth="200"/>
+                        <TableColumn fx:id="colPendDescripcion" text="Descripción"   prefWidth="260"/>
+                        <TableColumn fx:id="colPendEntidad"    text="Entidad"        prefWidth="100"/>
+                        <TableColumn fx:id="colPendCodigo"     text="Código"         prefWidth="100"/>
+                        <TableColumn fx:id="colPendFecha"      text="Generada"       prefWidth="140"/>
+                    </columns>
+                </TableView>
+
+                <!-- Acciones sobre alertas pendientes -->
+                <HBox styleClass="barra-acciones" spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Sobre la alerta seleccionada:"
+                           style="-fx-text-fill: #64748b; -fx-font-size: 12px;"/>
+                    <Button text="✅  Marcar revisada"
+                            fx:id="btnRevisar"
+                            styleClass="boton-exito"
+                            onAction="#marcarAlertaRevisada"
+                            disable="true"/>
+                    <Button text="🗑️  Descartar"
+                            fx:id="btnDescartar"
+                            styleClass="boton-peligro"
+                            onAction="#descartarAlerta"
+                            disable="true"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label text="Procesar desde la cola:"
+                           style="-fx-text-fill: #64748b; -fx-font-size: 12px;"/>
+                    <Button text="▶  Procesar siguiente"
+                            fx:id="btnProcesarSiguiente"
+                            styleClass="boton-advertencia"
+                            onAction="#procesarSiguienteAlerta"/>
+                </HBox>
+
+            </VBox>
+        </Tab>
+
+        <!-- Tab 2: Historial (Revisadas + Descartadas) -->
+        <Tab text="📂  Historial" fx:id="tabHistorial">
+            <VBox spacing="12" style="-fx-padding: 16 0 0 0;">
+
+                <HBox styleClass="barra-filtros" spacing="12" alignment="CENTER_LEFT">
+                    <ComboBox fx:id="filtroEstadoHistorial"
+                              styleClass="combo-filtro"
+                              promptText="Estado"
+                              onAction="#filtrarHistorial"/>
+                    <ComboBox fx:id="filtroTipoHistorial"
+                              styleClass="combo-filtro"
+                              promptText="Tipo de alerta"
+                              onAction="#filtrarHistorial"/>
+                    <Button text="Limpiar" styleClass="boton-secundario" onAction="#limpiarFiltros"/>
+                </HBox>
+
+                <TableView fx:id="tablaHistorial"
+                           styleClass="tabla-principal"
+                           VBox.vgrow="ALWAYS"
+                          >
+                    <placeholder><Label text="No hay alertas en el historial."/></placeholder>
+                    <columns>
+                        <TableColumn fx:id="colHistId"           text="ID"             prefWidth="80"/>
+                        <TableColumn fx:id="colHistTipo"         text="Tipo"           prefWidth="190"/>
+                        <TableColumn fx:id="colHistDescripcion"  text="Descripción"    prefWidth="220"/>
+                        <TableColumn fx:id="colHistEstado"       text="Estado"         prefWidth="100"/>
+                        <TableColumn fx:id="colHistGenerada"     text="Generada"       prefWidth="130"/>
+                        <TableColumn fx:id="colHistGestionada"   text="Gestionada"     prefWidth="130"/>
+                        <TableColumn fx:id="colHistObservaciones" text="Observaciones" prefWidth="180"/>
+                    </columns>
+                </TableView>
+
+            </VBox>
+        </Tab>
+
+    </TabPane>
+
+</VBox>
