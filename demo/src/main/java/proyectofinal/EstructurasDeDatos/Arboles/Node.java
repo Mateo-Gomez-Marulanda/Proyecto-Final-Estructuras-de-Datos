@@ -15,11 +15,11 @@ public class Node<T> {
         this.left = null;
     }
 
-    public T getData() {
+    public T getValue() {
         return data;
     }
 
-    public void setData(T data) {
+    public void setValue(T data) {
         this.data = data;
     }
 
