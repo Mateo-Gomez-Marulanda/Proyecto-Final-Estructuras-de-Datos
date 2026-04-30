@@ -1,5 +1,7 @@
 package proyectofinal.EstructurasDeDatos.TablasHash;
 
+import proyectofinal.EstructurasDeDatos.Listas.SimpleLinkedList;
+
 public class HashTable<K, V> {
     private Node<K, V>[] table;
     private int size;
@@ -221,11 +223,48 @@ public class HashTable<K, V> {
         return false;
     }
 
-    // metodos para poder recorrer la hashtable
-    // quedan pendientes puesto que toca usar otras estrucutras de datos para
-    // almacenar key, value y pares.
-    // pendiente veridicacion de uso de:
-    // - arreglo + Object / indexacion
-    // - lista + iteracion de la lista
+    // retorna una lista de todas las claves de la tabla
+    public SimpleLinkedList<K> keySet() {
+        SimpleLinkedList<K> keys = new SimpleLinkedList<>();
 
+        for (int i = 0; i < table.length; i++) {
+            Node<K, V> current = table[i]; // referencia al primer elemento del bucket
+
+            while (current != null) { // recorrer todo el bucket
+                keys.addLast(current.getKey()); // se agrega a la lista de claves
+                current = current.getNext(); // se pasa a la siguiente posicion
+            }
+        }
+        return keys; // retornar la lista de claves
+    }
+
+    // retorna una lista de todos los valores de la tabla
+    public SimpleLinkedList<V> values() {
+        SimpleLinkedList<V> values = new SimpleLinkedList<>();
+
+        for (int i = 0; i < table.length; i++) {
+            Node<K, V> current = table[i]; // referencia al primer elemento del bucket
+
+            while (current != null) { // recorrer todo el bucket
+                values.addLast(current.getValue()); // se agrega a la lista de valores
+                current = current.getNext(); // se pasa a la siguiente posicion
+            }
+        }
+        return values; // retornar la lista de valores
+    }
+
+    // retorna una lista de todos los pares de la tabla
+    public SimpleLinkedList<Node<K, V>> entrySet() {
+        SimpleLinkedList<Node<K, V>> pairs = new SimpleLinkedList<>();
+
+        for (int i = 0; i < table.length; i++) {
+            Node<K, V> current = table[i]; // referencia al primer elemento del bucket
+
+            while (current != null) { // recorrer todo el bucket
+                pairs.addLast(current); // se agrega a la lista de pares
+                current = current.getNext(); // se pasa a la siguiente posicion
+            }
+        }
+        return pairs; // retornar la lista de pares
+    }
 }
