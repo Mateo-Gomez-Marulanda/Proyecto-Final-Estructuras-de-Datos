@@ -1,10 +1,8 @@
 package proyectofinal.EstructurasDeDatos.ColasDePrioridad;
 
-// Implementación de una cola de prioridad usando estructura de heap mínimo
-// Los elementos con MENOR prioridad se desencolan primero
 public class PriorityQueue<T> {
 
-    // Arreglo dinámico que almacena los nodos en estru ctura de heap
+    // Arreglo dinámico que almacena los nodos en estructura de heap
     private PriorityNode<T>[] heap;
     private int size;
 
