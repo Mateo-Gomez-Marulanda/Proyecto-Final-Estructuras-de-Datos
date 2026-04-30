@@ -4,14 +4,15 @@ package proyectofinal.EstructurasDeDatos.ColasDePrioridad;
 // Los elementos con MENOR prioridad se desencolan primero
 public class PriorityQueue<T> {
 
-    // Arreglo dinámico que almacena los nodos en estructura de heap
+    // Arreglo dinámico que almacena los nodos en estru ctura de heap
     private PriorityNode<T>[] heap;
     private int size;
+
     private static final int DEFAULT_CAPACITY = 10;
 
     // Constructor: inicializa la cola de prioridad con capacidad predeterminada
     public PriorityQueue() {
-        heap = (PriorityNode<T>[]) new Object[DEFAULT_CAPACITY];
+        heap = new PriorityNode[DEFAULT_CAPACITY];
         size = 0;
     }
 
@@ -26,7 +27,7 @@ public class PriorityQueue<T> {
         // Inserta el nuevo elemento al final
         heap[size] = new PriorityNode<T>(element, priority);
         // Sube el elemento para mantener la propiedad de heap mínimo
-        percolateUp(size);
+        siftUp(size);
         size++;
     }
 
@@ -44,7 +45,7 @@ public class PriorityQueue<T> {
         if (size > 0) {
             heap[0] = heap[size];
             // Restaura la propiedad de heap bajando el elemento
-            percolateDown(0);
+            siftDown(0);
         }
 
         // Limpia la referencia del último elemento para evitar memory leak
@@ -56,7 +57,7 @@ public class PriorityQueue<T> {
     // Retorna el elemento con mayor prioridad sin removerlo
     public T peek() {
         if (isEmpty()) {
-            throw new IllegalStateException("La cola de prioridad está vacía");
+            throw new IllegalStateException("the priority queue is empty");
         }
         return heap[0].getElement();
     }
@@ -64,7 +65,7 @@ public class PriorityQueue<T> {
     // Retorna el nivel de prioridad del elemento al frente de la cola
     public int peekPriority() {
         if (isEmpty()) {
-            throw new IllegalStateException("La cola de prioridad está vacía");
+            throw new IllegalStateException("the priority queue is empty");
         }
         return heap[0].getPriority();
     }
@@ -81,7 +82,7 @@ public class PriorityQueue<T> {
 
     // Sube un elemento en el heap para mantener la propiedad de heap mínimo
     // Se ejecuta después de insertar un elemento al final
-    private void percolateUp(int index) {
+    private void siftUp(int index) {
         // Compara con el padre y intercambia si el padre tiene mayor prioridad (número
         // mayor)
         while (index > 0) {
@@ -98,7 +99,7 @@ public class PriorityQueue<T> {
 
     // Baja un elemento en el heap para mantener la propiedad de heap mínimo
     // Se ejecuta después de remover la raíz
-    private void percolateDown(int index) {
+    private void siftDown(int index) {
         while (true) {
             // Índice del hijo izquierdo y derecho
             int smallest = index;
@@ -134,7 +135,7 @@ public class PriorityQueue<T> {
 
     // Duplica la capacidad del arreglo cuando está lleno
     private void resize() {
-        PriorityNode<T>[] newHeap = (PriorityNode<T>[]) new Object[heap.length * 2];
+        PriorityNode<T>[] newHeap = new PriorityNode[heap.length * 2];
         System.arraycopy(heap, 0, newHeap, 0, heap.length);
         heap = newHeap;
     }
