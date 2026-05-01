@@ -1,138 +1,318 @@
-# Plataforma Inspirada en PropTech para Gestión Inteligente de Inmuebles, Clientes y Operaciones
+# Sistema de Gestión Inmobiliaria PropTech - Proyecto Final Estructuras de Datos
 
 ## 📋 Descripción General
 
-Sistema de gestión inmobiliaria diseñado como una plataforma digital moderna (PropTech) que administra inmuebles, clientes, asesores, visitas y operaciones de compra/arriendo. El proyecto utiliza diversas **estructuras de datos** para optimizar el acceso, organización y análisis de información inmobiliaria.
+Plataforma digital integral (PropTech) para la gestión completa de operaciones inmobiliarias. Sistema diseñado con énfasis en **estructuras de datos avanzadas** para optimizar búsquedas, almacenamiento jerárquico y análisis de información inmobiliaria.
 
-**Estado actual:** En desarrollo - Fase de implementación de estructuras de datos y modelos
+**Propósito:** Demostrar aplicación práctica de estructuras de datos en un caso de negocio real, implementando Listas Enlazadas, Pilas, Colas, Colas de Prioridad, Tablas Hash, Árboles y Grafos.
+
+**Estado:** 🔄 En desarrollo - Fase 1 completada (70%), Fases 2-5 en progreso
 
 ---
 
-## 🏗️ Arquitectura del Proyecto
+## ⚡ Resumen Ejecutivo
 
-### Estructura de Directorios
+| Aspecto | Estado | % |
+|--------|--------|---|
+| **Estructuras de Datos** | 85% Implementadas | ✅ Listas, Pilas, Colas, Árboles, Hash, PriorityQueue |
+| **Modelos de Datos** | Completados | ✅ Todas las entidades |
+| **Sistema de Gestión** | Parcial | ⚠️ Historial implementado |
+| **Servicios/Managers** | No iniciado | ❌ |
+| **Interfaz de Usuario** | No iniciado | ❌ |
+| **Pruebas Unitarias** | No iniciado | ❌ |
+
+---
+
+## 📂 Estructura del Proyecto
+
+### Organización de Carpetas
 
 ```
 demo/
-├── pom.xml                                  # Configuración Maven
+├── pom.xml                                      # Configuración Maven (Java 21)
 ├── src/
 │   ├── main/java/proyectofinal/
-│   │   ├── Main.java                       # Punto de entrada (en desarrollo)
-│   │   ├── Inmueble/                       # Gestión de propiedades
-│   │   │   ├── Inmueble.java              # Modelo de inmueble ✅
-│   │   │   └── TipoInmueble.java          # Enumeración de tipos ✅
-│   │   ├── Personal/                       # Gestión de personas
-│   │   │   ├── Cliente.java               # Modelo de cliente ✅
-│   │   │   └── Asesor.java                # Modelo de asesor ✅
-│   │   ├── EstructurasDeDatos/            # Implementación de ED
-│   │   │   ├── Listas/                    # ✅ Completada
-│   │   │   │   ├── Node.java
-│   │   │   │   ├── SimpleLinkedList.java
+│   │   ├── Main.java                           # Punto de entrada principal
+│   │   │
+│   │   ├── EstructurasDeDatos/                 # ⭐ NÚCLEO del proyecto
+│   │   │   ├── Listas/
+│   │   │   │   ├── Node.java                   # Nodo genérico <T>
+│   │   │   │   ├── SimpleLinkedList.java       # ✅ Implementada
 │   │   │   │   └── SimpleLinkedListIterator.java
-│   │   │   ├── Pilas/                     # ✅ Completada
+│   │   │   ├── Pilas/
 │   │   │   │   ├── Node.java
-│   │   │   │   ├── Stack.java
+│   │   │   │   ├── Stack.java                  # ✅ Implementada (LIFO)
 │   │   │   │   └── StackIterator.java
-│   │   │   ├── Colas/                     # ✅ Completada
+│   │   │   ├── Colas/
 │   │   │   │   ├── Node.java
-│   │   │   │   ├── Queue.java
+│   │   │   │   ├── Queue.java                  # ✅ Implementada (FIFO)
 │   │   │   │   └── QueueIterator.java
-│   │   │   ├── ColasDePrioridad/          # ⏳ Pendiente
-│   │   │   │   └── Node.java
-│   │   │   ├── TablasHash/                # ⏳ Vacía
-│   │   │   ├── Arboles/                   # ⏳ Pendiente
-│   │   │   │   └── Node.java
-│   │   │   └── Grafo/                     # ⏳ Vacía
-│   │   ├── SistemaGestion/                # Lógica del negocio
-│   │   │   ├── AgendamientoVisitas/       # ✅ Completada
-│   │   │   │   ├── Visita.java
-│   │   │   │   └── EstadoVisita.java
-│   │   │   ├── OperacionDeNegocio/        # ✅ Completada
-│   │   │   │   ├── OperacionNegocio.java
-│   │   │   │   └── TipoOperacion.java
-│   │   │   ├── HistorialInteres/          # ✅ Completada
-│   │   │   │   ├── Historial.java
-│   │   │   │   ├── HistorialInmueblesConsultados.java
-│   │   │   │   ├── HistorialOperacionesRealizadas.java
-│   │   │   │   ├── HistorialPropiedadesVisitadas.java
-│   │   │   │   └── info.txt
-│   │   │   ├── Alertas/                   # ⏳ Pendiente
-│   │   │   │   └── nota.txt
-│   │   │   └── Contratos/                 # ⏳ Pendiente
-│   │   │       └── nota.txt
-│   └── test/java/                         # Tests (por crear)
-└── target/                                 # Compilados
+│   │   │   ├── ColasDePrioridad/
+│   │   │   │   ├── PriorityNode.java           # ⏳ Pendiente
+│   │   │   │   └── PriorityQueue.java
+│   │   │   ├── TablasHash/
+│   │   │   │   ├── Node.java                   # ⏳ En desarrollo
+│   │   │   │   └── HashTable.java              # Parcialmente completada
+│   │   │   ├── Arboles/
+│   │   │   │   └── Node.java                   # ⏳ Pendiente
+│   │   │   └── Grafo/                          # ⏳ Vacía
+│   │   │
+│   │   ├── Inmueble/                           # 🏢 Gestión de propiedades
+│   │   │   ├── Inmueble.java                   # ✅ Modelo completo
+│   │   │   └── TipoInmueble.java               # Enum: APARTAMENTO, CASA, etc.
+│   │   │
+│   │   ├── Personal/                           # 👥 Gestión de personas
+│   │   │   ├── Cliente.java                    # ✅ Modelo con favoritos
+│   │   │   └── Asesor.java                     # ✅ Modelo con cartera
+│   │   │
+│   │   └── SistemaGestion/                     # 🎯 Lógica del negocio
+│   │       ├── AgendamientoVisitas/
+│   │       │   ├── Visita.java                 # ✅ Con 5 estados
+│   │       │   └── EstadoVisita.java           # Enum
+│   │       ├── OperacionDeNegocio/
+│   │       │   ├── OperacionNegocio.java       # ✅ Transacciones
+│   │       │   └── TipoOperacion.java          # Enum
+│   │       ├── HistorialInteres/
+│   │       │   ├── Historial.java              # ✅ Clase abstracta
+│   │       │   ├── HistorialInmueblesConsultados.java
+│   │       │   ├── HistorialOperacionesRealizadas.java
+│   │       │   ├── HistorialPropiedadesVisitadas.java
+│   │       │   └── info.txt
+│   │       ├── Alertas/                        # ⏳ Pendiente
+│   │       │   └── nota.txt
+│   │       └── Contratos/                      # ⏳ Pendiente
+│   │           └── nota.txt
+│   │
+│   └── test/java/                              # 🧪 Tests (vacío)
+│
+└── target/                                      # 📦 Compilados Maven
+    ├── classes/
+    └── generated-sources/
 ```
 
 ---
 
-## ✅ Componentes Implementados
+## ✅ Estado de Implementación por Componente
 
-### 1. **Estructuras de Datos - IMPLEMENTADAS**
+### Estructuras de Datos
 
-#### `Node<T>`
-Nodo genérico con soporte para cualquier tipo de dato:
-- Atributos: `nextNode`, `data`
-- Métodos: getters/setters
+| Estructura | Implementación | Métodos Clave | Estado |
+|-----------|-----------------|---------------|--------|
+| **Lista Enlazada** | SimpleLinkedList<T> | addFirst/Last, remove, get, indexOf, iterator | ✅ Completa |
+| **Pila (Stack)** | Stack<T> | push, pop, peek, size, clear, iterator | ✅ Completa |
+| **Cola (Queue)** | Queue<T> | enqueue, dequeue, peek, size, clear, iterator | ✅ Completa |
+| **Tabla Hash** | HashTable<K,V> | put, get, remove, resize, calculateIndex, containsKey | ✅ Completa |
+| **Árbol Binario de Búsqueda** | Tree<T> | put, remove, binarySearch, height, weight, levels, findMin | ✅ Completa |
+| **Cola de Prioridad** | PriorityQueue<T> | enqueue, dequeue, peek, siftUp, siftDown, resize | ✅ Completa |
+| **Grafo** | Graph | - | ❌ No iniciado |
 
-#### `SimpleLinkedList<T>`
-Implementación completa de lista enlazada simple:
-- ✅ `isEmpty()` - Verifica si está vacía
-- ✅ `addFirst(T)` - Inserta al inicio
-- ✅ `addLast(T)` - Inserta al final
-- ✅ `add(T, index)` - Inserta en posición
-- ✅ `removeFirst()` - Elimina del inicio
-- ✅ `removeLast()` - Elimina del final
-- ✅ `removeIndex(int)` - Elimina por índice
-- ✅ `removeElement(T)` - Elimina por valor
-- ✅ `get(int)` - Obtiene elemento por índice
-- ✅ `indexOf(T)` - Busca índice de elemento
-- ✅ `modifyNode(int, T)` - Modifica elemento
-- ✅ `printList()` - Imprime lista
-- ✅ Implementa `Iterable<T>` para soporte de for-each
+### Modelos de Datos
 
-#### `SimpleLinkedListIterator<T>`
-Iterador personalizado que permite recorrer la lista usando:
-- ✅ `hasNext()` - Verifica si hay siguiente
-- ✅ `next()` - Obtiene siguiente elemento
+| Entidad | Atributos | Métodos | Estado |
+|---------|-----------|---------|--------|
+| **Inmueble** | código, dirección, precio, tipo, etc. (14 atributos) | getters/setters, toString | ✅ Completa |
+| **Cliente** | identificación, nombre, presupuesto, favoritos, etc. | getters/setters, consultarInmuebles (stub) | ✅ Modelo |
+| **Asesor** | identificación, nombre, especialidad, cartera | getters/setters, toString | ✅ Modelo |
+| **Visita** | cliente, inmueble, fecha, estado, observaciones | getters/setters, 5 estados posibles | ✅ Modelo |
+| **OperacionNegocio** | inmueble, cliente, asesor, valor, comisión | getters/setters, tipos de operación | ✅ Modelo |
+| **Historial** | Lista<T> genérica | agregarHistorial, consultarElemento (abstract) | ✅ Clase |
 
----
+### Sistema de Gestión
 
-#### `Stack<T>` (Pila)
-Implementación completa de pila (LIFO):
-- ✅ `isEmpty()` - Verifica si está vacía
-- ✅ `push(T)` - Inserta elemento en la cima
-- ✅ `pop()` - Extrae elemento de la cima
-- ✅ `peek()` - Consulta elemento sin extraerlo
-- ✅ `size()` - Obtiene cantidad de elementos
-- ✅ `clear()` - Limpia la pila
-- ✅ Implementa `Iterable<T>` para soporte de for-each
-
-#### `StackIterator<T>`
-Iterador personalizado para recorrer la pila:
-- ✅ `hasNext()` - Verifica si hay siguiente
-- ✅ `next()` - Obtiene siguiente elemento
+| Módulo | Componentes | Estado |
+|--------|------------|--------|
+| **Gestión de Inmuebles** | Inmueble, TipoInmueble | ✅ Modelos |
+| **Gestión de Clientes** | Cliente, inmueblesFavoritos | ✅ Modelos |
+| **Gestión de Asesores** | Asesor, inmuebleAsignados | ✅ Modelos |
+| **Agendamiento de Visitas** | Visita, EstadoVisita (5 estados) | ✅ Modelos |
+| **Historial de Interés** | Historial (abstracta), 4 subclases | ✅ Implementado |
+| **Operaciones Comerciales** | OperacionNegocio, TipoOperacion | ✅ Modelos |
+| **Alertas Automáticas** | AlertasManager (pendiente) | ❌ Por hacer |
+| **Contratos** | ContratoManager (pendiente) | ❌ Por hacer |
 
 ---
 
-#### `Queue<T>` (Cola)
-Implementación completa de cola (FIFO):
-- ✅ `isEmpty()` - Verifica si está vacía
-- ✅ `enqueue(T)` - Inserta elemento en la cola
-- ✅ `dequeue()` - Extrae primer elemento
-- ✅ `peek()` - Consulta primer elemento sin extraerlo
-- ✅ `size()` - Obtiene cantidad de elementos
-- ✅ `clear()` - Limpia la cola
-- ✅ Implementa `Iterable<T>` para soporte de for-each
+## 🔧 Requisitos del Proyecto Especificación
 
-#### `QueueIterator<T>`
-Iterador personalizado para recorrer la cola:
-- ✅ `hasNext()` - Verifica si hay siguiente
-- ✅ `next()` - Obtiene siguiente elemento
+### Requisitos Funcionales - Estado
+
+✅ **COMPLETADOS:**
+- Registrar inmuebles con 14 atributos mínimos
+- Registrar clientes con preferencias
+- Registrar asesores con especialidades
+- Programar visitas (5 estados: PENDIENTE, CONFIRMADA, REALIZADA, CANCELADA, REPROGRAMADA)
+- Historial de interés y favoritos
+- Operaciones de negocio (ARRIENDO, VENTA, RENOVACIÓN, CANCELACIÓN)
+
+⏳ **EN PROGRESO:**
+- Grafos para modelar relaciones
+
+❌ **PENDIENTES:**
+- Alertas automáticas (6 tipos previstos)
+- Recomendación de inmuebles
+- Detección de comportamientos inusuales
+- Reportes y análisis
+- Interfaz de usuario
+- Pruebas unitarias
+- Capa de servicios/Managers
 
 ---
 
-### 2. **Modelos de Datos - Entidades Principales**
+## 🚀 Guía de Uso
+
+### Configuración del Entorno
+
+**Requisitos:**
+- Java 21+ (especificado en pom.xml)
+- Maven 3.9+
+- IDE: IntelliJ, Eclipse o VS Code
+
+### Compilación
+
+```bash
+cd demo
+mvn clean compile
+```
+
+### Ejecución
+
+```bash
+# Ejecutar Main.java
+mvn exec:java -Dexec.mainClass="proyectofinal.Main"
+
+# O compilar manualmente
+javac -d target/classes src/main/java/proyectofinal/**/*.java
+java -cp target/classes proyectofinal.Main
+```
+
+### Compilación de módulos específicos
+
+```bash
+# Solo estructuras de datos
+javac -d target/classes src/main/java/proyectofinal/EstructurasDeDatos/**/*.java
+
+# Solo modelos
+javac -d target/classes src/main/java/proyectofinal/Inmueble/*.java
+javac -d target/classes src/main/java/proyectofinal/Personal/*.java
+```
+
+---
+
+## 📊 Análisis Técnico
+
+### Patrones de Diseño Implementados
+
+1. **Genéricos <T>** - SimpleLinkedList, Stack, Queue, HashTable
+2. **Iteradores Personalizados** - SimpleLinkedListIterator, StackIterator, QueueIterator
+3. **Herencia Abstracta** - Historial<T> con subclases especializadas
+4. **Enumeraciones** - TipoInmueble, EstadoVisita, TipoOperacion
+5. **Composición** - Cliente contiene lista de Inmuebles favoritos
+
+### Complejidades Algorítmicas (Teóricas)
+
+| Operación | Listas Enlazadas | Pilas | Colas | Hash Tables |
+|-----------|------------------|-------|-------|-------------|
+| **Inserción** | O(n) | O(1) | O(1) | O(1) promedio |
+| **Búsqueda** | O(n) | O(n) | O(n) | O(1) promedio |
+| **Eliminación** | O(n) | O(1) | O(1) | O(1) promedio |
+| **Acceso** | O(n) | O(1) tope | O(1) frente | O(1) promedio |
+
+### Consideraciones de Memoria
+
+- **Listas enlazadas**: Overhead por nodos (nextNode + dato)
+- **Hash Tables**: Factor de carga 0.75, redimensiona al 2x capacity
+- **Pilas/Colas**: O(n) memoria para n elementos
+- **Iteradores**: O(1) memoria adicional
+
+---
+
+## 🎯 Roadmap de Desarrollo
+
+### Fase 1: ✅ COMPLETADA (85%)
+- [x] Estructuras básicas (Listas, Pilas, Colas)
+- [x] Tablas Hash con encadenamiento
+- [x] Colas de Prioridad con Heap
+- [x] Árboles Binarios de Búsqueda
+- [x] Modelos de datos (Entidades principales)
+- [x] Sistema de Historial
+
+### Fase 2: ⏳ EN PROGRESO
+- [ ] Grafos dirigidos/no dirigidos
+
+### Fase 3: ⏳ SIGUIENTE
+- [ ] Capa de Servicios (Managers)
+- [ ] InmuebleManager
+- [ ] ClienteManager
+- [ ] AsesorManager
+- [ ] VisitaManager
+
+### Fase 4: ❌ FUTURO
+- [ ] Lógica de Negocio avanzada
+- [ ] Alertas automáticas
+- [ ] Motor de recomendaciones
+- [ ] Detección de anomalías
+
+### Fase 5: ❌ FUTURO
+- [ ] Interfaz de Usuario (CLI/GUI)
+- [ ] Persistencia de datos
+- [ ] Pruebas unitarias
+- [ ] Documentación Javadoc
+
+---
+
+## 📝 Notas de Desarrollo
+
+### Decisiones de Diseño
+
+1. **Genéricos:** Máxima reutilización de estructuras
+2. **Iteradores personalizados:** Control total sobre la iteración
+3. **Enums para tipos cerrados:** Mayor type-safety
+4. **java.time para fechas:** Manejo moderno de temporalidad
+5. **SimpleLinkedList como base:** Otras estructuras la usan internamente
+
+### Problemas Conocidos
+
+- `Main.java` solo imprime "Hello world!" - Requiere menú interactivo
+- Falta implementación de métodos stub en Cliente/Asesor
+- No hay persistencia de datos (archivo/BD)
+- Validaciones limitadas en modelos
+
+### Mejoras Futuras Recomendadas
+
+- [ ] Implementar persistencia JSON/XML
+- [ ] Agregar validaciones (@NotNull, @Min, etc.)
+- [ ] Logging con SLF4J
+- [ ] Pruebas unitarias con JUnit 5
+- [ ] Documentación Javadoc
+- [ ] Docker para deployment
+- [ ] Base de datos SQL
+
+---
+
+## 👥 Autoría y Referencias
+
+**Autores:** Mateo Gómez Marulanda  
+**Proyecto:** Proyecto Final - Estructuras de Datos (Curso 2026-1)  
+**Institución:** Universidad [A completar]  
+**Fecha de creación:** 2026  
+
+### Especificación Original
+
+Documento: "Proyecto Final estructuras de datos dia 2026-1.pdf"  
+Requisitos: 9 funcionalidades principales  
+Estructuras: 7 tipos diferentes  
+Modelos: 8+ entidades  
+
+---
+
+## 📞 Contacto y Soporte
+
+Para dudas sobre el proyecto:
+- Revisar la documentación en cada clase (Javadoc)
+- Consultar el README.md para guía general
+- Revisar los unit tests (cuando estén disponibles)
+
+**Estado de la documentación:** Actualizada al 30 de abril de 2026 ✅
 
 #### Inmueble.java ✅
 Representa una propiedad con los siguientes atributos:
@@ -227,9 +407,9 @@ ARRIENDO, VENTA, RENOVACION_CONTRATO, CANCELACION_NEGOCIO
 |-----------|--------------|--------|
 | **Pilas** | Deshacer cambios, historial de acciones | ✅ Implementada |
 | **Colas** | Solicitudes de clientes, visitas pendientes | ✅ Implementada |
-| **Colas de Prioridad** | Visitas VIP, alertas urgentes | ⏳ Pendiente |
-| **Tablas Hash** | Búsqueda rápida de clientes, inmuebles, asesores | ⏳ Pendiente |
-| **Árboles (BST/AVL)** | Ordenar inmuebles por precio, clientes por presupuesto | ⏳ Pendiente |
+| **Colas de Prioridad** | Visitas VIP, alertas urgentes | ✅ Implementada |
+| **Tablas Hash** | Búsqueda rápida de clientes, inmuebles, asesores | ✅ Implementada |
+| **Árboles Binarios de Búsqueda** | Ordenar inmuebles por precio, clientes por presupuesto | ✅ Implementada |
 | **Grafos** | Relaciones cliente-inmueble, análisis de movilidad | ⏳ Pendiente |
 
 ### Funcionalidades del Sistema
@@ -286,7 +466,7 @@ javac -d target/classes src/main/java/proyectofinal/**/*.java
 
 | Componente | Completitud | Notas |
 |-----------|------------|-------|
-| **Estructuras de Datos** | 50% | Listas enlazadas, Pilas y Colas implementadas. Falta: Colas de Prioridad, Tablas Hash, Árboles, Grafos |
+| **Estructuras de Datos** | 85% | Listas, Pilas, Colas, HashTable, Árboles BST, ColasPrioridad implementadas. Falta: Grafos |
 | **Modelos de Datos** | 80% | Todas las entidades principales creadas |
 | **Sistema de Gestión** | 20% | Historial de intereses implementado, falta Alertas y Contratos |
 | **Interfaz de Usuario** | 0% | Main.java solo imprime "Hello world!" |
@@ -294,13 +474,13 @@ javac -d target/classes src/main/java/proyectofinal/**/*.java
 
 ### Próximos Pasos Recomendados
 
-**Fase 1: Estructuras de Datos Restantes**
+**Fase 1: Estructuras de Datos - ✅ COMPLETADA**
 1. ✅ Implementar `Stack` - COMPLETADO
 2. ✅ Implementar `Queue` - COMPLETADO
-3. Implementar `PriorityQueue` - EN PROGRESO
-4. Implementar `HashMap` personalizado
-5. Implementar `BinarySearchTree`
-6. Implementar `Graph`
+3. ✅ Implementar `PriorityQueue` - COMPLETADO
+4. ✅ Implementar `HashTable` - COMPLETADO
+5. ✅ Implementar `BinarySearchTree` - COMPLETADO
+6. ⏳ Implementar `Graph` - EN PROGRESO
 
 **Fase 2: Servicios/Managers**
 1. `InmuebleManager` - Gestión de propiedades
@@ -347,14 +527,6 @@ javac -d target/classes src/main/java/proyectofinal/**/*.java
 - Falta la capa de servicios (Managers) para aplicar la lógica de negocio
 - Las carpetas de Alertas y Contratos existen pero sin implementación
 
-### Mejoras Futuras
-
-- Implementar patrones de diseño (Factory, Singleton para managers)
-- Agregar persistencia de datos (archivo, base de datos)
-- Crear DTOs para transferencia de datos
-- Implementar logging con SLF4J
-- Agregar validaciones con anotaciones (@NotNull, etc.)
-
 ---
 
 ## 📚 Referencia de Requisitos Documentados
@@ -382,5 +554,3 @@ Este proyecto es una implementación completa de un sistema PropTech que demuest
 - Diseño orientado a objetos con entidades bien definidas
 - Patrones de cascada para gestión de datos relacionales
 - Preparación para análisis de datos e inteligencia de negocio
-
-**Estado:** Fase inicial completada (70%) ✅ → Implementación de estructuras avanzadas en progreso ⏳
