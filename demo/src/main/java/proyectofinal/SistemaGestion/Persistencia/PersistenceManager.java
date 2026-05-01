@@ -173,7 +173,7 @@ public class PersistenceManager {
 
     // Auxiliar para encontrar al asesor
     private static Advisor findAdvisorById(SimpleLinkedList<Advisor> advisors, String id) {
-        if (id.equals(null))
+        if (id == null || id.equals("NONE"))
             return null;
         for (Advisor a : advisors) {
             if (a.getId().equals(id))
@@ -264,7 +264,7 @@ public class PersistenceManager {
                         v.markAsCancelled();
                     else if (d[3].equals("CONFIRM"))
                         v.markAsConfirm();
-                    else if (d[3].equals("RECHEDULED"))
+                    else if (d[3].equals("RESCHEDULED"))
                         v.markAsRecheduled();
 
                     v.setNotes(d[4]);
