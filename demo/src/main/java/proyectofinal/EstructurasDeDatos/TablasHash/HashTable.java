@@ -61,33 +61,36 @@ public class HashTable<K, V> {
      */
 
     private void resize() {
-        capacity *= 2; // se aumenta la capacidad al doble (norma general para tablas hash)
-        Node<K, V>[] newTable = new Node[capacity]; // nueva tabla con la nueva capacidad
+        int oldCapacity = capacity;
+        capacity *= 2; // Duplicamos la capacidad
+        Node<K, V>[] newTable = new Node[capacity]; // Nueva tabla más grande
 
-        for (Node<K, V> node : table) {
+        // Recorremos cada índice de la tabla antigua
+        for (int i = 0; i < oldCapacity; i++) {
+            Node<K, V> node = table[i];
+
+            // Recorremos la lista enlazada en ese índice
             while (node != null) {
-                // se calcula el indice apartir del primer nodo de la antiguia tabla
-                int index = calculateIndex(node.getKey());
+                // 1. Guardamos una referencia al siguiente nodo de la antigua tabla
+                // porque al mover 'node', perderíamos el acceso al resto de la lista.
+                Node<K, V> nextNodeInOldTable = node.getNext();
 
-                // se crea un nuevo nodo con la misma clave y valor del nodo actual
-                Node<K, V> newNode = new Node<>(node.getKey(), node.getValue());
+                // 2. Recalculamos el índice basado en la NUEVA capacidad
+                int newIndex = calculateIndex(node.getKey());
 
-                if (newTable[index] == null) {
-                    newTable[index] = newNode; // se agrega el nuevo nodo si la posicion esta vacia
-                } else {
-                    Node<K, V> current = newTable[index]; // referencia al nodo actual de la nueva tabla
+                // 3. REUTILIZAMOS el nodo: lo insertamos al INICIO de la lista en la nueva
+                // tabla.
+                // Esto es mucho más rápido que recorrer hasta el final.
+                node.setNext(newTable[newIndex]);
+                newTable[newIndex] = node;
 
-                    // se recorre la lista enlazada de la nueva tabla hasta encontrar el ultimo
-                    // nodo, y se agrega el nuevo nodo al final de la lista
-                    while (current.getNext() != null) {
-                        current = current.getNext();
-                    }
-                    current.setNext(newNode);
-                }
-                node = node.getNext();
+                // 4. Pasamos al siguiente nodo que habíamos guardado
+                node = nextNodeInOldTable;
             }
         }
-        table = newTable; // se asigna la nueva tabla a la tabla original
+
+        // 5. Finalmente, reemplazamos la tabla vieja por la nueva
+        table = newTable;
     }
 
     public void put(K key, V value) {

@@ -2,60 +2,72 @@ package proyectofinal.SistemaGestion.GestionInmuebles;
 
 import proyectofinal.EstructurasDeDatos.Pilas.Stack;
 import proyectofinal.EstructurasDeDatos.Listas.SimpleLinkedList;
+import proyectofinal.EstructurasDeDatos.TablasHash.HashTable;
+import proyectofinal.EstructurasDeDatos.Arboles.Tree;
 import proyectofinal.Inmueble.Property;
 import proyectofinal.SistemaGestion.GestionInmuebles.PropertyChange.ChangeType;
 
 public class PropertyManager {
 
-    // Catálogo principal de inmuebles
+    // 1. Catálogo principal (Requisito 5.1)
     private SimpleLinkedList<Property> properties;
 
-    // Pila 1: deshacer cambios en publicaciones (precio, área, habitaciones, etc.)
+    // 2. Búsqueda rápida por código O(1) (Requisito 5.5)
+    private HashTable<String, Property> propertyTable;
+
+    // 3. Ordenamiento y rangos por precio O(log n) (Requisito 5.6)
+    private Tree<Property> priceTree;
+
+    // 4. Pilas para Deshacer/Historial (Requisito 5.2)
     private Stack<PropertyChange> modificationHistory;
-
-    // Pila 2: revertir cambios de estado (estadoInmueble, disponibilidad)
     private Stack<PropertyChange> statusHistory;
-
-    // Pila 3: historial de acciones administrativas
     private Stack<PropertyChange> adminActionsHistory;
 
     public PropertyManager() {
         this.properties = new SimpleLinkedList<>();
+        this.propertyTable = new HashTable<>(50);
+        this.priceTree = new Tree<>();
         this.modificationHistory = new Stack<>();
         this.statusHistory = new Stack<>();
         this.adminActionsHistory = new Stack<>();
     }
 
-    // CRUD básico
+
     public void registerProperty(Property property, String responsiblePerson) {
+        if (propertyTable.containsKey(property.getCode())) {
+            throw new RuntimeException("El código del inmueble ya existe: " + property.getCode());
+        }
+
+        // Insertar en todas las estructuras para mantener consistencia
         properties.addLast(property);
-        registerAdminAction(property.getCode(),
-                "Property registered in the system", responsiblePerson);
+        propertyTable.put(property.getCode(), property);
+        priceTree.put(property); 
+
+        registerAdminAction(property.getCode(), "Registro inicial de propiedad", responsiblePerson);
     }
 
     public Property findByCode(String code) {
-        for (Property p : properties) {
-            if (p.getCode().equals(code)) return p;
-        }
-        return null;
+        return propertyTable.get(code);
     }
 
-    // Pila 1: modificaciones de publicación (precio, área, habitaciones, etc.)
     public void modifyPrice(String code, double newPrice, String responsiblePerson) {
         Property property = findByCode(code);
-        if (property == null) throw new RuntimeException("Property not found: " + code);
+        if (property == null) throw new RuntimeException("Inmueble no encontrado.");
 
         PropertyChange change = new PropertyChange(
                 code, ChangeType.FIELD_MODIFICATION,
                 "price", property.getPrice(), newPrice, responsiblePerson);
 
+        priceTree.remove(property); 
         property.setPrice(newPrice);
+        priceTree.put(property); 
+
         modificationHistory.push(change);
     }
 
     public void modifyArea(String code, double newArea, String responsiblePerson) {
         Property property = findByCode(code);
-        if (property == null) throw new RuntimeException("Property not found: " + code);
+        if (property == null) throw new RuntimeException("Inmueble no encontrado.");
 
         PropertyChange change = new PropertyChange(
                 code, ChangeType.FIELD_MODIFICATION,
@@ -65,49 +77,35 @@ public class PropertyManager {
         modificationHistory.push(change);
     }
 
-    public void modifyRooms(String code, int newRoomCount, String responsiblePerson) {
-        Property property = findByCode(code);
-        if (property == null) throw new RuntimeException("Property not found: " + code);
 
-        PropertyChange change = new PropertyChange(
-                code, ChangeType.FIELD_MODIFICATION,
-                "rooms", property.getRooms(), newRoomCount, responsiblePerson);
-
-        property.setRooms(newRoomCount);
-        modificationHistory.push(change);
-    }
-
-    /**
-     * Deshace el último cambio realizado en publicaciones.
-     * Restaura el valor anterior del campo modificado.
-     */
     public PropertyChange undoLastModification() {
-        if (modificationHistory.isEmpty()) {
-            throw new RuntimeException("No modifications to undo");
-        }
+        if (modificationHistory.isEmpty()) throw new RuntimeException("No hay modificaciones para deshacer");
 
         PropertyChange last = modificationHistory.pop();
         Property property = findByCode(last.getPropertyCode());
-        if (property == null) return last; // ya no existe, solo se retorna el registro
-
-        switch (last.getModifiedField()) {
-            case "price":
-                property.setPrice((double) last.getPreviousValue());
-                break;
-            case "area":
-                property.setArea((double) last.getPreviousValue());
-                break;
-            case "rooms":
-                property.setRooms((int) last.getPreviousValue());
-                break;
+        
+        if (property != null) {
+            switch (last.getModifiedField()) {
+                case "price":
+                    priceTree.remove(property);
+                    property.setPrice((double) last.getPreviousValue());
+                    priceTree.put(property);
+                    break;
+                case "area":
+                    property.setArea((double) last.getPreviousValue());
+                    break;
+                case "rooms":
+                    property.setRooms((int) last.getPreviousValue());
+                    break;
+            }
         }
         return last;
     }
 
-    // Pila 2: cambios de estado de la propiedad
+
     public void changePropertyStatus(String code, String newStatus, String responsiblePerson) {
         Property property = findByCode(code);
-        if (property == null) throw new RuntimeException("Property not found: " + code);
+        if (property == null) throw new RuntimeException("Inmueble no encontrado.");
 
         PropertyChange change = new PropertyChange(
                 code, ChangeType.STATUS_CHANGE,
@@ -117,72 +115,32 @@ public class PropertyManager {
         statusHistory.push(change);
     }
 
-    public void changeAvailability(String code, boolean newAvailability, String responsiblePerson) {
-        Property property = findByCode(code);
-        if (property == null) throw new RuntimeException("Property not found: " + code);
-
-        PropertyChange change = new PropertyChange(
-                code, ChangeType.STATUS_CHANGE,
-                "isAvailable", property.isAvailable(), newAvailability, responsiblePerson);
-
-        property.setAvailable(newAvailability);
-        statusHistory.push(change);
-    }
-
-    /**
-     * Revierte el último cambio de estado de cualquier propiedad.
-     */
     public PropertyChange revertLastStatusChange() {
-        if (statusHistory.isEmpty()) {
-            throw new RuntimeException("No status changes to revert");
-        }
+        if (statusHistory.isEmpty()) throw new RuntimeException("No hay cambios de estado para revertir");
 
         PropertyChange last = statusHistory.pop();
         Property property = findByCode(last.getPropertyCode());
-        if (property == null) return last;
-
-        switch (last.getModifiedField()) {
-            case "propertyStatus":
+        
+        if (property != null) {
+            if (last.getModifiedField().equals("propertyStatus")) {
                 property.setPropertyStatus((String) last.getPreviousValue());
-                break;
-            case "isAvailable":
+            } else if (last.getModifiedField().equals("isAvailable")) {
                 property.setAvailable((boolean) last.getPreviousValue());
-                break;
+            }
         }
         return last;
     }
 
-    // Pila 3: historial de acciones administrativas
     public void registerAdminAction(String propertyCode, String description, String responsiblePerson) {
         PropertyChange action = new PropertyChange(propertyCode, description, responsiblePerson);
         adminActionsHistory.push(action);
     }
 
-    public void printActionHistory() {
-        if (adminActionsHistory.isEmpty()) {
-            System.out.println("No administrative actions registered.");
-            return;
-        }
-        System.out.println("=== ADMINISTRATIVE ACTIONS HISTORY (most recent first) ===");
-        for (PropertyChange action : adminActionsHistory) {
-            System.out.println(action);
-        }
-    }
-
-    // Utilidades de consulta
-    public PropertyChange peekLastModification() {
-        return modificationHistory.isEmpty() ? null : modificationHistory.peek();
-    }
-
-    public PropertyChange peekLastStatusChange() {
-        return statusHistory.isEmpty() ? null : statusHistory.peek();
-    }
-
-    public int getTotalPendingModifications() {
-        return modificationHistory.size();
-    }
-
     public SimpleLinkedList<Property> getProperties() {
         return properties;
+    }
+
+    public Tree<Property> getPriceTree() {
+        return priceTree;
     }
 }

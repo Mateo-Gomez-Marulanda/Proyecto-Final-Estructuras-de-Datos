@@ -15,12 +15,22 @@ public class Client {
     private TypeProperty desiredPropertyType;
     private int minRooms;
     private String searchStatus;
+    private String password;
 
     private SimpleLinkedList<Property> favoriteProperties = new SimpleLinkedList<>();
+    private SimpleLinkedList<Property> visitedPropertyHistory = new SimpleLinkedList<>();
+
+    public SimpleLinkedList<Property> getFavoriteProperties() {
+        return favoriteProperties;
+    }
+
+    public void setFavoriteProperties(SimpleLinkedList<Property> favoriteProperties) {
+        this.favoriteProperties = favoriteProperties;
+    }
 
     public Client(String id, String name, String email, String phoneNumber, String clientType,
             double budget, Object interestZones, TypeProperty desiredPropertyType, int minRooms,
-            String searchStatus) {
+            String searchStatus, String password) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -31,6 +41,7 @@ public class Client {
         this.desiredPropertyType = desiredPropertyType;
         this.minRooms = minRooms;
         this.searchStatus = searchStatus;
+        this.password = password;
     }
 
     public String getId() {
@@ -113,6 +124,14 @@ public class Client {
         this.searchStatus = searchStatus;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public String toString() {
         return "ID: " + id + " | Name: " + name + " | Email: " + email + " | Phone: "
@@ -122,23 +141,26 @@ public class Client {
                 + searchStatus;
     }
 
-    public void searchProperties(Property property) {
-        // Logic to search available properties based on client criteria
+    public SimpleLinkedList<Property> getVisitedPropertiesHistory() {
+        return visitedPropertyHistory;
     }
 
-    public void scheduleVisit() {
-        // Logic to schedule a visit to a specific property
-    }
+    //Por ahora opcional para persisitir datos, esta sustento a modificacion
 
-    public void markAsFavorite(Property property) {
-        favoriteProperties.addLast(property);
-    }
+    public String toFileLine() {
+    return String.join(";", 
+        id, 
+        name, 
+        email, 
+        phoneNumber, 
+        clientType, 
+        String.valueOf(budget), 
+        interestZones.toString(), // Convertimos el objeto a String
+        desiredPropertyType.name(), // Guardamos el nombre del Enum
+        String.valueOf(minRooms), 
+        searchStatus, 
+        password
+    );
+}
 
-    public void registerPurchaseRentIntent() {
-        // Logic to register intent to purchase or rent a property
-    }
-
-    public void checkInteractionHistory() {
-        // Logic to check the client's interaction history with the real estate agency
-    }
 }

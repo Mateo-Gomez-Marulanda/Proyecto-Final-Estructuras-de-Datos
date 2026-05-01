@@ -2,7 +2,7 @@ package proyectofinal.Inmueble;
 
 import proyectofinal.Personal.Advisor;
 
-public class Property {
+public class Property implements Comparable<Property> {
     private String code;
     private String address;
     private String city;
@@ -67,11 +67,11 @@ public class Property {
         this.neighborhood = neighborhood;
     }
 
-    public TypeProperty getPropertyType() {
+    public TypeProperty getType() {
         return propertyType;
     }
 
-    public void setPropertyType(TypeProperty propertyType) {
+    public void setType(TypeProperty propertyType) {
         this.propertyType = propertyType;
     }
 
@@ -146,5 +146,15 @@ public class Property {
                 + price + " | Area: " + area + " m² | Rooms: " + rooms + " | Bathrooms: "
                 + bathrooms + " | Status: " + propertyStatus + " | Available: " + (isAvailable ? "Yes" : "No")
                 + " | Responsible Advisor: " + responsibleAdvisor;
+    }
+
+    @Override
+    public int compareTo(Property other) {
+       // Ordenamos de menor a mayor precio
+        if (this.price < other.price) return -1;
+        if (this.price > other.price) return 1;
+        
+
+        return this.code.compareTo(other.code);
     }
 }
