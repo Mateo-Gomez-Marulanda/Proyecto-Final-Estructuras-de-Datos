@@ -1,6 +1,6 @@
 package proyectofinal.Inmueble;
 
-public enum TipoInmueble {
+public enum TypeProperty {
     APARTAMENTO,
     CASA,
     LOCAL_COMERCIAL,

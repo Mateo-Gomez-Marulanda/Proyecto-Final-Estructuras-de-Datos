@@ -1,6 +1,6 @@
 package proyectofinal.SistemaGestion.AgendamientoVisitas;
 
-public enum EstadoVisita {
+public enum VisitStatus {
     PENDIENTE,
     CONFIRMADA,
     REALIZADA,
