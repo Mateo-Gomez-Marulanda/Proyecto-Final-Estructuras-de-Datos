@@ -218,7 +218,7 @@ public class PersistenceManager {
                         d[10] // password
                 );
 
-                clients.addLast(c);
+                clients.add(c);
             }
         } catch (Exception e) {
             System.err.println("Error al cargar cliente: " + e.getMessage());
@@ -233,7 +233,7 @@ public class PersistenceManager {
             while (scanner.hasNextLine()) {
                 String[] d = scanner.nextLine().split(";");
                 // Constructor: id, name, contact, zone, visits, closings
-                advisors.addLast(new Advisor(d[0], d[1], d[2], d[3], d[4], Integer.parseInt(d[5])));
+                advisors.add(new Advisor(d[0], d[1], d[2], d[3], d[4], Integer.parseInt(d[5])));
             }
         } catch (Exception e) {
             System.err.println("Error carga Asesores: " + e.getMessage());
@@ -268,7 +268,7 @@ public class PersistenceManager {
                         v.markAsRecheduled();
 
                     v.setNotes(d[4]);
-                    vm.getVisitHistory().addLast(v);
+                    vm.getVisitHistory().add(v);
                 }
             }
         } catch (Exception e) {

@@ -43,7 +43,7 @@ public class SimpleLinkedList<T> implements Iterable<T> {
         size++;
     }
 
-    public void addLast(T data) {
+    public void add(T data) {
         Node<T> newNode = new Node<>(data);
 
         if (isEmpty()) {
@@ -69,7 +69,7 @@ public class SimpleLinkedList<T> implements Iterable<T> {
             return;
         }
         if (index == size) {
-            addLast(data);
+            add(data);
             return;
         }
 
@@ -114,7 +114,7 @@ public class SimpleLinkedList<T> implements Iterable<T> {
     }
 
     // elimina en base al indice
-    public void removeIndex(int index) {
+    public void remove(int index) {
         if (!validIndex(index)) {
             throw new RuntimeException("error index");
         }
@@ -142,7 +142,7 @@ public class SimpleLinkedList<T> implements Iterable<T> {
     }
 
     // eliminar en base al dato
-    public void removeElement(T data) {
+    public void remove(T data) {
         if (isEmpty()) {
             throw new RuntimeException("list is empty");
         }

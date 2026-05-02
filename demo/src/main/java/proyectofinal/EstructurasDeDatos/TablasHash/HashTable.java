@@ -234,7 +234,7 @@ public class HashTable<K, V> {
             Node<K, V> current = table[i]; // referencia al primer elemento del bucket
 
             while (current != null) { // recorrer todo el bucket
-                keys.addLast(current.getKey()); // se agrega a la lista de claves
+                keys.add(current.getKey()); // se agrega a la lista de claves
                 current = current.getNext(); // se pasa a la siguiente posicion
             }
         }
@@ -249,7 +249,7 @@ public class HashTable<K, V> {
             Node<K, V> current = table[i]; // referencia al primer elemento del bucket
 
             while (current != null) { // recorrer todo el bucket
-                values.addLast(current.getValue()); // se agrega a la lista de valores
+                values.add(current.getValue()); // se agrega a la lista de valores
                 current = current.getNext(); // se pasa a la siguiente posicion
             }
         }
@@ -264,7 +264,7 @@ public class HashTable<K, V> {
             Node<K, V> current = table[i]; // referencia al primer elemento del bucket
 
             while (current != null) { // recorrer todo el bucket
-                pairs.addLast(current); // se agrega a la lista de pares
+                pairs.add(current); // se agrega a la lista de pares
                 current = current.getNext(); // se pasa a la siguiente posicion
             }
         }
