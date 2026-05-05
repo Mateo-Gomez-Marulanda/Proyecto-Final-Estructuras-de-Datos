@@ -213,6 +213,18 @@ public class SimpleLinkedList<T> implements Iterable<T> {
         aux.setdata(newData);
     }
 
+    public boolean contains(T data) {
+        Node<T> aux = first;
+
+        while (aux != null) {
+            if (aux.getdata().equals(data)) {
+                return true;
+            }
+            aux = aux.getNextNode();
+        }
+        return false;
+    }
+
     // ITERADOR PROPIO PARA PODER USAR FOR-EACH O DEMAS METODOS ITERABLE
     @Override
     public Iterator<T> iterator() {

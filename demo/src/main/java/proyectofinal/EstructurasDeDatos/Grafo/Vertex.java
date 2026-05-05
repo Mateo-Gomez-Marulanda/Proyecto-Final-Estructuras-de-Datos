@@ -9,8 +9,8 @@ public class Vertex<T> {
 
     // lista de adyacencia para identificar las conexciones del vertice
 
-    private SimpleLinkedList<Edge<T>> incidentEdges; // aristas salientes
-    private SimpleLinkedList<Edge<T>> outgoingEdges; // aristas entrantes
+    private SimpleLinkedList<Edge<T>> incidentEdges; // aristas incidentes
+    private SimpleLinkedList<Edge<T>> outgoingEdges; // aristas salientes
 
     public Vertex(String id, T data) {
         this.id = id;
@@ -47,10 +47,10 @@ public class Vertex<T> {
     // agrega una arista a la lista de incidencia del vertice
     public void addEdge(Edge<T> edge) {
         if (edge != null) {
-            if (edge.getFrom().getId().equals(id)) { // verifica si la arista es saliente
+            if (id.equals(edge.getFrom().getId())) { // verifica si la arista es saliente
                 incidentEdges.add(edge); // agrega a la lista de aristas salientes
             } else {
-                if (edge.getTo().getId().equals(id)) { // verifica si la arista es entrante
+                if (id.equals(edge.getTo().getId())) { // verifica si la arista es entrante
                     outgoingEdges.add(edge); // agrega a la lista de aristas entrantes
                 } else {
                     // si la arista no conecta con este vertice, se lanza una excepcion
@@ -68,7 +68,7 @@ public class Vertex<T> {
             // Buscar y remover de incidentEdges
             for (int i = 0; i < incidentEdges.size(); i++) {
                 Edge<T> edge = incidentEdges.get(i);
-                if (edge != null && edge.getId().equals(edgeId)) {
+                if (edge != null && edgeId.equals(edge.getId())) {
                     incidentEdges.remove(i);
                     return true;
                 }
@@ -77,7 +77,7 @@ public class Vertex<T> {
             // Buscar y remover de outgoingEdges
             for (int i = 0; i < outgoingEdges.size(); i++) {
                 Edge<T> edge = outgoingEdges.get(i);
-                if (edge != null && edge.getId().equals(edgeId)) {
+                if (edge != null && edgeId.equals(edge.getId())) {
                     outgoingEdges.remove(i);
                     return true;
                 }
