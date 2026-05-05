@@ -55,7 +55,7 @@ public class VisitManager {
         
         request.markAsCancelled();
         request.setNotes("Motivo cancelación: " + reason);
-        visitHistory.addLast(request);
+        visitHistory.add(request);
     }
 
 
@@ -87,7 +87,7 @@ public class VisitManager {
         Property property = request.getProperty();
         
         // Registrar en el historial del cliente (Requisito 4.5)
-        client.getVisitedPropertiesHistory().addLast(property);
+        client.getVisitedPropertiesHistory().add(property);
 
         // Lógica de Negocio (Requisito 4.6)
         if (interested) {
@@ -100,7 +100,7 @@ public class VisitManager {
         }
 
         // Mover al historial definitivo
-        visitHistory.addLast(request);
+        visitHistory.add(request);
     }
 
 

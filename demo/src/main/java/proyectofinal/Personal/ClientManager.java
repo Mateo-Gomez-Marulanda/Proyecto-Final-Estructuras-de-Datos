@@ -52,7 +52,7 @@ public class ClientManager {
             Client newClient = new Client(id, name, email, phoneNumber, clientType, budget, 
                                           interestZones, desiredPropertyType, minRooms, searchStatus,password);
             
-            clients.addLast(newClient);      // Para listado general
+            clients.add(newClient);      // Para listado general
             clientTable.put(id, newClient); // Para búsquedas y login
             return true;
         } catch (Exception e) {
@@ -64,7 +64,7 @@ public class ClientManager {
         if(current == null){
             throw new RuntimeException("No hay sesion activa");
         }
-        clients.removeElement(current);
+        clients.remove(current);
         logout();
     }
 
@@ -100,7 +100,7 @@ public class ClientManager {
         if (current == null) throw new RuntimeException("Inicie sesión para guardar favoritos.");
         
         if (current.getFavoriteProperties().indexOf(p) == -1) {
-            current.getFavoriteProperties().addLast(p);
+            current.getFavoriteProperties().add(p);
         }
     }
 
@@ -119,7 +119,7 @@ public class ClientManager {
             boolean matchPrice = p.getPrice() <= (current.getBudget() * 1.10);
 
             if (matchType && matchRooms && matchPrice) {
-                matches.addLast(p);
+                matches.add(p);
             }
         }
         return matches;

@@ -39,7 +39,7 @@ public class PropertyManager {
         }
 
         // Insertar en todas las estructuras para mantener consistencia
-        properties.addLast(property);
+        properties.add(property);
         propertyTable.put(property.getCode(), property);
         priceTree.put(property); 
 
