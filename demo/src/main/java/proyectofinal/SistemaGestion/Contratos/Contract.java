@@ -54,7 +54,7 @@ public class Contract {
 
         // Auto-register in the system list
         // FUTURE OBSERVER: notify listeners here
-        contractRegistry.addLast(this);
+        contractRegistry.add(this);
     }
 
     // ─────────────────────────────────────────────
