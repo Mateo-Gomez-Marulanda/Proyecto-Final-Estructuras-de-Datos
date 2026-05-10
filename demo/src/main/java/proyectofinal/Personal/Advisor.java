@@ -94,4 +94,6 @@ public class Advisor {
         }
         return null; // No encontrado
     }
+
+    public SimpleLinkedList<Property> getAssignedPropertiesList() { return assignedProperties; }
 }

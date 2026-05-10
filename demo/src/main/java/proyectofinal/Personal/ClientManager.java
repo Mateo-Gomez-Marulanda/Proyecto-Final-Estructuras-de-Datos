@@ -129,4 +129,5 @@ public class ClientManager {
         return clients;
     }
 
+    public HashTable<String, Client> getClientTable() { return clientTable; }
 }
