@@ -16,7 +16,7 @@ public abstract class History<T> {
 
     // elimina un elemento del historial de interés del cliente
     public void removeFromHistory(T element) {
-        this.historyList.removeElement(element);
+        this.historyList.remove(element);
     }
 
     // consulta general del historial de interés del cliente

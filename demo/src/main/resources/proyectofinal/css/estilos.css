@@ -403,3 +403,18 @@
 .separator .line {
     -fx-border-color: #e2e8f0;
 }
+
+/* ─── BOTÓN LINK (texto plano, sin fondo) ───────────── */
+.boton-link {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2563eb;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+}
+ 
+.boton-link:hover {
+    -fx-text-fill: #1d4ed8;
+    -fx-underline: true;
+}

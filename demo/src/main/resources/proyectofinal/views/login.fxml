@@ -32,8 +32,6 @@
                        onAction="#manejarLogin"/>
         </VBox>
 
-        <VBox.margin><Insets top="0"/></VBox.margin>
-
         <!-- Campo: contraseña -->
         <VBox spacing="6">
             <VBox.margin><Insets top="16"/></VBox.margin>
@@ -62,10 +60,20 @@
             <VBox.margin><Insets top="24"/></VBox.margin>
         </Button>
 
+        <!-- Separador + enlace a registro -->
+        <HBox alignment="CENTER" spacing="6">
+            <VBox.margin><Insets top="14"/></VBox.margin>
+            <Label text="¿No tienes cuenta?"
+                   style="-fx-font-size: 12px; -fx-text-fill: #6b7280;"/>
+            <Button text="Regístrate"
+                    styleClass="boton-link"
+                    onAction="#irARegistro"/>
+        </HBox>
+
         <!-- Versión -->
         <Label text="v1.0 · Proyecto Final ED"
                style="-fx-font-size: 11px; -fx-text-fill: #9ca3af;">
-            <VBox.margin><Insets top="20"/></VBox.margin>
+            <VBox.margin><Insets top="12"/></VBox.margin>
         </Label>
 
     </VBox>

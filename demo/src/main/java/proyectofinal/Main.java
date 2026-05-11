@@ -61,4 +61,10 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
+    public static void cargarRegistro() throws Exception {
+    Parent vista = FXMLLoader.load(Main.class.getResource("/proyectofinal/views/register.fxml"));
+    stagePrincipal.setScene(new Scene(vista, ANCHO_LOGIN, 620));
+    stagePrincipal.centerOnScreen();
+}
 }

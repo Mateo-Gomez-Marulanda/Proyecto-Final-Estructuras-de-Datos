@@ -79,11 +79,11 @@ public class Advisor {
     }
 
     public void assignProperty(Property property) {
-        assignedProperties.addLast(property);
+        assignedProperties.add(property);
     }
 
     public void removeProperty(Property property) {
-        assignedProperties.removeElement(property);
+        assignedProperties.remove(property);
     }
 
     public Property getAssignedProperty(String code) {
@@ -94,4 +94,6 @@ public class Advisor {
         }
         return null; // No encontrado
     }
+
+    public SimpleLinkedList<Property> getAssignedPropertiesList() { return assignedProperties; }
 }
