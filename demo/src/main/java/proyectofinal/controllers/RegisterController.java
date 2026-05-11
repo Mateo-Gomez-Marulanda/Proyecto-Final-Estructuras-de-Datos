@@ -4,73 +4,81 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.application.Platform;
 
-import proyectofinal.Inmueble.TypeProperty;
 import proyectofinal.Main;
 
 public class RegisterController {
 
-    @FXML private TextField     campoNombre;
-    @FXML private TextField     campoId;
-    @FXML private TextField     campoCorreo;
-    @FXML private TextField     campoTelefono;
+    @FXML private TextField campoNombre;
+    @FXML private TextField campoId;
+    @FXML private TextField campoCorreo;
+    @FXML private TextField campoTelefono;
     @FXML private PasswordField campoContrasena;
     @FXML private PasswordField campoConfirmarContrasena;
-    @FXML private Label         mensajeFeedback;
+    @FXML private Label mensajeFeedback;
 
     @FXML
     public void manejarRegistro() {
-        String nombre    = campoNombre.getText().trim();
-        String id        = campoId.getText().trim();
-        String correo    = campoCorreo.getText().trim();
-        String telefono  = campoTelefono.getText().trim();
-        String password  = campoContrasena.getText();
-        String confirm   = campoConfirmarContrasena.getText();
+        String nombre   = campoNombre.getText().trim();
+        String id       = campoId.getText().trim();
+        String correo   = campoCorreo.getText().trim();
+        String telefono = campoTelefono.getText().trim();
+        String password = campoContrasena.getText();
+        String confirm  = campoConfirmarContrasena.getText();
 
-        // Validaciones básicas
-        if (nombre.isEmpty() || id.isEmpty() || correo.isEmpty()
-                || telefono.isEmpty() || password.isEmpty()) {
+        if (estaVacio(nombre, id, correo, password, telefono)) {
             mostrarError("Por favor completa todos los campos.");
             return;
         }
 
         if (!password.equals(confirm)) {
             mostrarError("Las contraseñas no coinciden.");
-            return;
-        }
-
-        if (password.length() < 6) {
-            mostrarError("La contraseña debe tener al menos 6 caracteres.");
+            campoConfirmarContrasena.requestFocus();
             return;
         }
 
         try {
-            AppContext.getInstance().getClientManager().registerClient(
-                    id, nombre, correo, telefono,
-                    "Regular",          // tipo de cliente por defecto
-                    0.0,                // presupuesto inicial
-                    "Sin definir",      // zonas de interés
-                    TypeProperty.APARTAMENTO, // tipo inmueble deseado por defecto
-                    1,                  // mínimo de habitaciones
-                    "Buscando",         // estado de búsqueda
-                    password
+            AppContext.getInstance().getClientManager().registerBasic(
+                id, nombre, correo, password, telefono
             );
 
             mostrarExito("¡Cuenta creada exitosamente! Redirigiendo...");
-
-            // Breve pausa visual y navegar al login
-            new Thread(() -> {
-                try {
-                    Thread.sleep(1200);
-                    javafx.application.Platform.runLater(() -> {
-                        try { Main.cargarLogin(); } catch (Exception ignored) {}
-                    });
-                } catch (InterruptedException ignored) {}
-            }).start();
+            bloquearFormulario(true);
+            navegarAlLoginConRetraso();
 
         } catch (RuntimeException e) {
             mostrarError(e.getMessage());
         }
+    }
+
+    private boolean estaVacio(String... campos) {
+        for (String campo : campos) {
+            if (campo == null || campo.isEmpty()) return true;
+        }
+        return false;
+    }
+
+    private void navegarAlLoginConRetraso() {
+        new Thread(() -> {
+            try {
+                Thread.sleep(1500); // Pausa para que el usuario lea el mensaje de éxito
+                Platform.runLater(() -> {
+                    try {
+                        Main.cargarLogin();
+                    } catch (Exception ignored) {}
+                });
+            } catch (InterruptedException ignored) {}
+        }).start();
+    }
+
+    private void bloquearFormulario(boolean bloquear) {
+        campoNombre.setDisable(bloquear);
+        campoId.setDisable(bloquear);
+        campoCorreo.setDisable(bloquear);
+        campoTelefono.setDisable(bloquear);
+        campoContrasena.setDisable(bloquear);
+        campoConfirmarContrasena.setDisable(bloquear);
     }
 
     @FXML
@@ -78,17 +86,17 @@ public class RegisterController {
         try {
             Main.cargarLogin();
         } catch (Exception e) {
-            mostrarError("No se pudo volver al login.");
+            mostrarError("Error al intentar volver al login.");
         }
     }
 
     private void mostrarError(String msg) {
         mensajeFeedback.setText(msg);
-        mensajeFeedback.setStyle("-fx-text-fill: #dc2626; -fx-font-size: 12px;");
+        mensajeFeedback.setStyle("-fx-text-fill: #dc2626; -fx-font-weight: bold;");
     }
 
     private void mostrarExito(String msg) {
         mensajeFeedback.setText(msg);
-        mensajeFeedback.setStyle("-fx-text-fill: #16a34a; -fx-font-size: 12px;");
+        mensajeFeedback.setStyle("-fx-text-fill: #16a34a; -fx-font-weight: bold;");
     }
 }

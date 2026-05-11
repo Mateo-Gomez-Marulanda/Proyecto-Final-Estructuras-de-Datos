@@ -6,7 +6,7 @@ import proyectofinal.Inmueble.Property;
 import proyectofinal.Inmueble.TypeProperty;
 
 public class ClientManager {
-    private Client current; // Instancia de el cliente que este loggeado en la aplicacion
+    private Client current;
     private SimpleLinkedList<Client> clients;
     private HashTable<String, Client> clientTable;
 
@@ -17,117 +17,98 @@ public class ClientManager {
 
     public void login(String id, String password) {
         Client found = clientTable.get(id);
-
-        if (found == null) {
-            throw new RuntimeException("El usuario con ID " + id + " no existe.");
-        }
-
-        if (found.getPassword().equals(password)) {
-            this.current = found;
-        } else {
-            throw new RuntimeException("Contraseña incorrecta.");
-        }
-    }
-
-    public void setCurrent(Client client) {
-        this.current = client;
-    }
-
-    public Client getCurrent() {
-        return current;
-    }
-
-    public void logout() {
-        this.current = null;
-    }
-
-    public boolean registerClient(String id, String name, String email, String phoneNumber, String clientType,
-            double budget, Object interestZones, TypeProperty desiredPropertyType, int minRooms,
-            String searchStatus, String password) {
-        if (clientTable.containsKey(id)) {
-            throw new RuntimeException("Error: El ID ya se encuentra registrado.");
-        }
+        if (found == null) throw new RuntimeException("Usuario no encontrado.");
+        if (!found.getPassword().equals(password)) throw new RuntimeException("Contraseña incorrecta.");
         
-        try {
-            Client newClient = new Client(id, name, email, phoneNumber, clientType, budget, 
-                                          interestZones, desiredPropertyType, minRooms, searchStatus,password);
-            
-            clients.add(newClient);      // Para listado general
-            clientTable.put(id, newClient); // Para búsquedas y login
-            return true;
-        } catch (Exception e) {
-            throw new RuntimeException("Error en el registro: " + e.getMessage());
+        this.current = found;
+    }
+
+    // Registro rápido para GUI: incluye validación de seguridad de contraseña
+    public void registerBasic(String id, String name, String email, String password, String phoneNumber) {
+        if (clientTable.containsKey(id)) throw new RuntimeException("El ID ya existe.");
+        
+        validatePassword(password);
+        
+        Client newClient = new Client(id, name, email, password,phoneNumber);
+        clients.add(newClient);
+        clientTable.put(id, newClient);
+    }
+
+    // Registro completo: útil para la carga masiva desde archivos persistentes
+    public void registerFull(String id, String name, String email, String phoneNumber, String clientType,
+                            double budget, String interestZones, TypeProperty desiredPropertyType, 
+                            int minRooms, String searchStatus, String password) {
+        
+        Client newClient = new Client(id, name, email, phoneNumber, clientType, budget, 
+                                     interestZones, desiredPropertyType, minRooms, searchStatus, password);
+        clients.add(newClient);
+        clientTable.put(id, newClient);
+    }
+
+    // Valida requisitos mínimos de seguridad antes de crear el objeto
+    private void validatePassword(String password) {
+        if (password == null || password.length() < 8) 
+            throw new RuntimeException("Contraseña debe tener al menos 8 caracteres.");
+
+        boolean hasDigit = false, hasUpper = false, hasLower = false;
+        for (char c : password.toCharArray()) {
+            if (Character.isDigit(c)) hasDigit = true;
+            else if (Character.isUpperCase(c)) hasUpper = true;
+            else if (Character.isLowerCase(c)) hasLower = true;
+        }
+
+        if (!hasDigit || !hasUpper || !hasLower) {
+            throw new RuntimeException("La contraseña requiere mayúscula, minúscula y un número.");
         }
     }
 
-    public void deleteClient() {
-        if(current == null){
-            throw new RuntimeException("No hay sesion activa");
-        }
-        clients.remove(current);
+    // Elimina de forma síncrona en Lista y HashTable para mantener integridad
+    public void deleteAccount() {
+        if (current == null) throw new RuntimeException("No hay sesión activa.");
+        
+        String idToDelete = current.getId();
+        clients.remove(current);       
+        clientTable.remove(idToDelete); 
         logout();
     }
 
-    public Client findClientById(String id) {
-        return clientTable.get(id);
+    public void updateClient(String email, String phoneNumber, double budget, 
+                             String interestZones, TypeProperty desiredPropertyType, int minRooms) {
+        if (current == null) throw new RuntimeException("No hay sesión activa para actualizar.");
+
+        current.setEmail(email);
+        current.setPhoneNumber(phoneNumber);
+        current.setBudget(budget);
+        current.setInterestZones(interestZones);
+        current.setDesiredPropertyType(desiredPropertyType);
+        current.setMinRooms(minRooms);
     }
 
-    public void updatePassword(String password){
-        if(current != null){
-            current.setPassword(password);
-        }
-    }
-
-    public void updateClient(String email, String phoneNumber,
-            double budget, Object interestZones, TypeProperty desiredPropertyType, int minRooms) {
-
-        if (current != null) {
-            current.setEmail(email);
-            current.setPhoneNumber(phoneNumber);
-            current.setBudget(budget);
-            current.setDesiredPropertyType(desiredPropertyType);
-            current.setInterestZones(interestZones);
-            current.setMinRooms(minRooms);
-        } else {
-            throw new RuntimeException("No se pudo actualizar: Cliente no encontrado.");
-        }
-    }
-
-    /**
-     * REQUISITO 4.5: Favoritos.
-     */
-    public void markAsFavorite(Property p) {
-        if (current == null) throw new RuntimeException("Inicie sesión para guardar favoritos.");
-        
-        if (current.getFavoriteProperties().indexOf(p) == -1) {
-            current.getFavoriteProperties().add(p);
-        }
-    }
-
-    /**
-     * REQUISITO 4.8: Recomendación de inmuebles.
-     * Cruza datos del perfil del cliente con el inventario disponible.
-     */
+    // Filtra el inventario basado en el perfil del cliente loggeado
     public SimpleLinkedList<Property> getRecommendations(SimpleLinkedList<Property> inventory) {
         if (current == null) return new SimpleLinkedList<>();
 
         SimpleLinkedList<Property> matches = new SimpleLinkedList<>();
         for (Property p : inventory) {
-            // Lógica: coincide tipo, habitaciones y el precio no supera el 10% de su presupuesto
+            boolean matchZone = p.getZone().equalsIgnoreCase(current.getInterestZones());
             boolean matchType = p.getType().equals(current.getDesiredPropertyType());
             boolean matchRooms = p.getRooms() >= current.getMinRooms();
             boolean matchPrice = p.getPrice() <= (current.getBudget() * 1.10);
 
-            if (matchType && matchRooms && matchPrice) {
+            if (matchType && matchRooms && matchPrice && matchZone) {
                 matches.add(p);
             }
         }
         return matches;
     }
 
-    public SimpleLinkedList<Client> getAllClients() {
-        return clients;
+    public void logout() { this.current = null; }
+    public Client getCurrent() { return current; }
+    public SimpleLinkedList<Client> getAllClients() { return clients; }
+    public HashTable<String, Client> getClientTable() {
+        return clientTable;
     }
-
-    public HashTable<String, Client> getClientTable() { return clientTable; }
+    public void setClientTable(HashTable<String, Client> clientTable) {
+        this.clientTable = clientTable;
+    }
 }

@@ -11,25 +11,32 @@ public class Client {
     private String phoneNumber;
     private String clientType;
     private double budget;
-    private Object interestZones; // data structure to be defined
     private TypeProperty desiredPropertyType;
     private int minRooms;
     private String searchStatus;
     private String password;
-
+    private String interestZones;
     private SimpleLinkedList<Property> favoriteProperties = new SimpleLinkedList<>();
     private SimpleLinkedList<Property> visitedPropertyHistory = new SimpleLinkedList<>();
 
-    public SimpleLinkedList<Property> getFavoriteProperties() {
-        return favoriteProperties;
-    }
+    // Constructor para Registro Inicial (GUI de Registro)
+    public Client(String id, String name, String email, String password, String phoneNumber) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
 
-    public void setFavoriteProperties(SimpleLinkedList<Property> favoriteProperties) {
-        this.favoriteProperties = favoriteProperties;
+        // Valores por defecto para evitar errores en lógica o persistencia
+        this.clientType = "POTENTIAL";
+        this.searchStatus = "INACTIVE";
+        this.budget = 0.0;
+        this.minRooms = 0;
+        this.interestZones= "Sin definir";
     }
 
     public Client(String id, String name, String email, String phoneNumber, String clientType,
-            double budget, Object interestZones, TypeProperty desiredPropertyType, int minRooms,
+            double budget, String interestZones, TypeProperty desiredPropertyType, int minRooms,
             String searchStatus, String password) {
         this.id = id;
         this.name = name;
@@ -37,11 +44,11 @@ public class Client {
         this.phoneNumber = phoneNumber;
         this.clientType = clientType;
         this.budget = budget;
-        this.interestZones = interestZones;
         this.desiredPropertyType = desiredPropertyType;
         this.minRooms = minRooms;
         this.searchStatus = searchStatus;
         this.password = password;
+        this.interestZones = interestZones;
     }
 
     public String getId() {
@@ -92,11 +99,11 @@ public class Client {
         this.budget = budget;
     }
 
-    public Object getInterestZones() {
+    public String getInterestZones() {
         return interestZones;
     }
 
-    public void setInterestZones(Object interestZones) {
+    public void setInterestZones(String interestZones) {
         this.interestZones = interestZones;
     }
 
@@ -132,35 +139,40 @@ public class Client {
         this.password = password;
     }
 
-    @Override
-    public String toString() {
-        return "ID: " + id + " | Name: " + name + " | Email: " + email + " | Phone: "
-                + phoneNumber + " | Client Type: " + clientType + " | Budget: $" + budget
-                + " | Interest Zones: " + interestZones + " | Desired Property Type: " + desiredPropertyType
-                + " | Min Rooms: " + minRooms + " | Search Status: "
-                + searchStatus;
+    public SimpleLinkedList<Property> getFavoriteProperties() {
+        return favoriteProperties;
+    }
+
+    public void setFavoriteProperties(SimpleLinkedList<Property> favoriteProperties) {
+        this.favoriteProperties = favoriteProperties;
     }
 
     public SimpleLinkedList<Property> getVisitedPropertiesHistory() {
         return visitedPropertyHistory;
     }
 
-    //Por ahora opcional para persisitir datos, esta sustento a modificacion
+    public void setVisitedPropertiesHistory(SimpleLinkedList<Property> history) {
+        this.visitedPropertyHistory = history;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ID: %s | Name: %s | Status: %s | Type: %s",
+                id, name, searchStatus, clientType);
+    }
 
     public String toFileLine() {
-    return String.join(";", 
-        id, 
-        name, 
-        email, 
-        phoneNumber, 
-        clientType, 
-        String.valueOf(budget), 
-        interestZones.toString(), // Convertimos el objeto a String
-        desiredPropertyType.name(), // Guardamos el nombre del Enum
-        String.valueOf(minRooms), 
-        searchStatus, 
-        password
-    );
-}
-
+        return String.join(";",
+                id,
+                name,
+                email,
+                (phoneNumber != null ? phoneNumber : "N/A"),
+                clientType,
+                String.valueOf(budget),
+                (interestZones != null ? interestZones.toString() : "NONE"),
+                (desiredPropertyType != null ? desiredPropertyType.name() : "NONE"),
+                String.valueOf(minRooms),
+                searchStatus,
+                password);
+    }
 }

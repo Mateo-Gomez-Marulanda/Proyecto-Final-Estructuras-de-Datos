@@ -63,7 +63,7 @@ public class PersistenceManager {
                         p.getCode(), // d[0]
                         p.getAddress(), // d[1]
                         p.getCity(), // d[2]
-                        p.getNeighborhood(), // d[3]
+                        p.getZone(), // d[3]
                         p.getType(), // d[4] (Enum)
                         p.getPurpose(), // d[5]
                         p.getPrice(), // d[6]

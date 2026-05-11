@@ -6,7 +6,7 @@ public class Property implements Comparable<Property> {
     private String code;
     private String address;
     private String city;
-    private String neighborhood;
+    private String zone;
     private TypeProperty propertyType;
     private String purpose; // venta o arriendo
     private double price;
@@ -17,13 +17,13 @@ public class Property implements Comparable<Property> {
     private boolean isAvailable;
     private Advisor responsibleAdvisor;
 
-    public Property(String code, String address, String city, String neighborhood, TypeProperty propertyType,
+    public Property(String code, String address, String city, String zone, TypeProperty propertyType,
             String purpose, double price, double area, int rooms, int bathrooms,
             String propertyStatus, boolean isAvailable, Advisor responsibleAdvisor) {
         this.code = code;
         this.address = address;
         this.city = city;
-        this.neighborhood = neighborhood;
+        this.zone = zone;
         this.propertyType = propertyType;
         this.purpose = purpose;
         this.price = price;
@@ -59,12 +59,12 @@ public class Property implements Comparable<Property> {
         this.city = city;
     }
 
-    public String getNeighborhood() {
-        return neighborhood;
+    public String getZone() {
+        return zone;
     }
 
-    public void setNeighborhood(String neighborhood) {
-        this.neighborhood = neighborhood;
+    public void setZone(String zone) {
+        this.zone = zone;
     }
 
     public TypeProperty getType() {
@@ -141,8 +141,8 @@ public class Property implements Comparable<Property> {
 
     @Override
     public String toString() {
-        return "Code: " + code + " | Address: " + address + " | City: " + city + " | Neighborhood: "
-                + neighborhood + " | Property Type: " + propertyType + " | Purpose: " + purpose + " | Price: $"
+        return "Code: " + code + " | Address: " + address + " | City: " + city + " | zone: "
+                + zone + " | Property Type: " + propertyType + " | Purpose: " + purpose + " | Price: $"
                 + price + " | Area: " + area + " m² | Rooms: " + rooms + " | Bathrooms: "
                 + bathrooms + " | Status: " + propertyStatus + " | Available: " + (isAvailable ? "Yes" : "No")
                 + " | Responsible Advisor: " + responsibleAdvisor;
