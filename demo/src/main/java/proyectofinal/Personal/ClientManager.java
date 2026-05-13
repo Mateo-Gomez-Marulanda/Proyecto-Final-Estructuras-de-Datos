@@ -111,4 +111,11 @@ public class ClientManager {
     public void setClientTable(HashTable<String, Client> clientTable) {
         this.clientTable = clientTable;
     }
+
+    public void markAsFavorite(Property p) {
+    if (current == null) throw new RuntimeException("No hay sesión activa.");
+    if (current.getFavoriteProperties().indexOf(p) == -1) {
+        current.getFavoriteProperties().add(p);
+    }
+}
 }

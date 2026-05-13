@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="proyectofinal.controllers.ClientProfileController"
+      spacing="24" styleClass="content-area">
+
+    <!-- Encabezado -->
+    <VBox spacing="4">
+        <Label text="Mi perfil" styleClass="modulo-titulo"/>
+        <Label text="Actualiza tus preferencias para recibir mejores recomendaciones"
+               styleClass="modulo-subtitulo"/>
+    </VBox>
+
+    <!-- Formulario en dos columnas -->
+    <HBox spacing="24" VBox.vgrow="ALWAYS" alignment="TOP_CENTER">
+
+        <!-- Columna izquierda: datos personales -->
+        <VBox spacing="16" HBox.hgrow="ALWAYS"
+              style="-fx-background-color: white; -fx-background-radius: 10px; -fx-padding: 24px;
+                     -fx-border-color: #e2e8f0; -fx-border-width: 1px; -fx-border-radius: 10px;">
+
+            <Label text="Datos personales"
+                   style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+            <Separator/>
+
+            <VBox spacing="6">
+                <Label text="Nombre completo" styleClass="login-label"/>
+                <TextField fx:id="campoNombre" styleClass="campo-busqueda" promptText="Tu nombre"/>
+            </VBox>
+            <VBox spacing="6">
+                <Label text="Correo electrónico" styleClass="login-label"/>
+                <TextField fx:id="campoCorreo" styleClass="campo-busqueda" promptText="Tu correo"/>
+            </VBox>
+            <VBox spacing="6">
+                <Label text="Teléfono" styleClass="login-label"/>
+                <TextField fx:id="campoTelefono" styleClass="campo-busqueda" promptText="Tu teléfono"/>
+            </VBox>
+            <VBox spacing="6">
+                <Label text="Nueva contraseña (opcional)" styleClass="login-label"/>
+                <PasswordField fx:id="campoContrasena" styleClass="campo-busqueda"
+                               promptText="Dejar vacío para no cambiar"/>
+            </VBox>
+        </VBox>
+
+        <!-- Columna derecha: preferencias de búsqueda -->
+        <VBox spacing="16" HBox.hgrow="ALWAYS"
+              style="-fx-background-color: white; -fx-background-radius: 10px; -fx-padding: 24px;
+                     -fx-border-color: #e2e8f0; -fx-border-width: 1px; -fx-border-radius: 10px;">
+
+            <Label text="Preferencias de búsqueda"
+                   style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+            <Separator/>
+
+            <VBox spacing="6">
+                <Label text="Presupuesto máximo ($)" styleClass="login-label"/>
+                <TextField fx:id="campoPresupuesto" styleClass="campo-busqueda" promptText="0"/>
+            </VBox>
+            <VBox spacing="6">
+                <Label text="Zona de interés" styleClass="login-label"/>
+                <TextField fx:id="campoZona" styleClass="campo-busqueda" promptText="Ej: Norte, Laureles..."/>
+            </VBox>
+            <VBox spacing="6">
+                <Label text="Tipo de inmueble deseado" styleClass="login-label"/>
+                <ComboBox fx:id="comboTipoInmueble" styleClass="combo-filtro"
+                          promptText="Selecciona un tipo" maxWidth="Infinity"/>
+            </VBox>
+            <VBox spacing="6">
+                <Label text="Habitaciones mínimas" styleClass="login-label"/>
+                <Spinner fx:id="spinnerHab" min="0" max="10" initialValue="1"
+                         style="-fx-pref-width: 120px;"/>
+            </VBox>
+        </VBox>
+
+    </HBox>
+
+    <!-- Mensaje de feedback -->
+    <Label fx:id="mensajeFeedback" text="" wrapText="true"
+           style="-fx-font-size: 12px;"/>
+
+    <!-- Botones -->
+    <HBox spacing="12" alignment="CENTER_RIGHT">
+        <Button text="Cancelar"
+                styleClass="boton-secundario"
+                onAction="#cancelarEdicion"/>
+        <Button text="💾  Guardar cambios"
+                styleClass="boton-primario"
+                onAction="#guardarCambios"/>
+    </HBox>
+
+</VBox>

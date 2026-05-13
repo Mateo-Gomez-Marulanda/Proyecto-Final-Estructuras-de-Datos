@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="proyectofinal.controllers.ClientDashboardController"
+      spacing="24" styleClass="content-area">
+
+    <!-- Encabezado de bienvenida -->
+    <VBox spacing="4">
+        <Label fx:id="lblBienvenida" text="¡Bienvenido!" styleClass="modulo-titulo"/>
+        <Label text="Estas son las propiedades recomendadas para ti" styleClass="modulo-subtitulo"/>
+    </VBox>
+
+    <!-- Tarjetas de resumen -->
+    <HBox spacing="16">
+        <VBox styleClass="stat-card" spacing="8" prefWidth="200">
+            <Label text="⭐" styleClass="stat-icono-ambar"/>
+            <Label fx:id="numFavoritos" text="0" styleClass="stat-numero"/>
+            <Label text="Favoritos guardados" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-card" spacing="8" prefWidth="200">
+            <Label text="📅" styleClass="stat-icono-azul"/>
+            <Label fx:id="numVisitas" text="0" styleClass="stat-numero"/>
+            <Label text="Visitas agendadas" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-card" spacing="8" prefWidth="200">
+            <Label text="🏠" styleClass="stat-icono-verde"/>
+            <Label fx:id="numVisitadas" text="0" styleClass="stat-numero"/>
+            <Label text="Propiedades visitadas" styleClass="stat-label"/>
+        </VBox>
+    </HBox>
+
+    <!-- Recomendaciones -->
+    <VBox spacing="12" VBox.vgrow="ALWAYS">
+        <Label text="Recomendadas para ti"
+               style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+
+        <TableView fx:id="tablaRecomendaciones"
+                   styleClass="tabla-principal"
+                   VBox.vgrow="ALWAYS">
+            <placeholder><Label text="Completa tu perfil para recibir recomendaciones personalizadas."/></placeholder>
+            <columns>
+                <TableColumn fx:id="colRecCodigo"    text="Código"     prefWidth="90"/>
+                <TableColumn fx:id="colRecDireccion" text="Dirección"  prefWidth="200"/>
+                <TableColumn fx:id="colRecCiudad"    text="Ciudad"     prefWidth="110"/>
+                <TableColumn fx:id="colRecTipo"      text="Tipo"       prefWidth="120"/>
+                <TableColumn fx:id="colRecPrecio"    text="Precio"     prefWidth="120"/>
+                <TableColumn fx:id="colRecHab"       text="Hab."       prefWidth="60"/>
+                <TableColumn fx:id="colRecArea"      text="Área m²"    prefWidth="80"/>
+            </columns>
+        </TableView>
+
+        <!-- Acciones sobre selección -->
+        <HBox styleClass="barra-acciones" spacing="10" alignment="CENTER_LEFT">
+            <Button text="⭐  Guardar favorito"
+                    fx:id="btnGuardarFavorito"
+                    styleClass="boton-advertencia"
+                    onAction="#guardarFavorito"
+                    disable="true"/>
+            <Button text="📅  Agendar visita"
+                    fx:id="btnAgendarVisita"
+                    styleClass="boton-primario"
+                    onAction="#agendarVisitaDesdeRecomendacion"
+                    disable="true"/>
+        </HBox>
+    </VBox>
+
+</VBox>

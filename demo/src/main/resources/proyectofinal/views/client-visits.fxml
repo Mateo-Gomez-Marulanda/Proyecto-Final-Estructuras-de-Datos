@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="proyectofinal.controllers.ClientVisitsController"
+      spacing="16" styleClass="content-area">
+
+    <!-- Encabezado -->
+    <VBox spacing="4">
+        <Label text="Mis visitas" styleClass="modulo-titulo"/>
+        <Label text="Historial y estado de tus visitas agendadas" styleClass="modulo-subtitulo"/>
+    </VBox>
+
+    <!-- Tabs -->
+    <TabPane VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
+
+        <!-- Tab: visitas activas -->
+        <Tab text="📅  Pendientes y confirmadas">
+            <VBox spacing="12" style="-fx-padding: 16 0 0 0;">
+
+                <TableView fx:id="tablaActivas"
+                           styleClass="tabla-principal"
+                           VBox.vgrow="ALWAYS">
+                    <placeholder><Label text="No tienes visitas pendientes."/></placeholder>
+                    <columns>
+                        <TableColumn fx:id="colACodigo"   text="Código"    prefWidth="100"/>
+                        <TableColumn fx:id="colAInmueble" text="Inmueble"  prefWidth="160"/>
+                        <TableColumn fx:id="colAFecha"    text="Fecha"     prefWidth="110"/>
+                        <TableColumn fx:id="colAHora"     text="Hora"      prefWidth="80"/>
+                        <TableColumn fx:id="colAEstado"   text="Estado"    prefWidth="120"/>
+                        <TableColumn fx:id="colAAsesor"   text="Asesor"    prefWidth="150"/>
+                    </columns>
+                </TableView>
+
+                <HBox styleClass="barra-acciones" spacing="10" alignment="CENTER_LEFT">
+                    <Button text="❌  Solicitar cancelación"
+                            fx:id="btnCancelar"
+                            styleClass="boton-peligro"
+                            onAction="#cancelarVisita"
+                            disable="true"/>
+                </HBox>
+            </VBox>
+        </Tab>
+
+        <!-- Tab: historial de propiedades visitadas -->
+        <Tab text="🏠  Propiedades visitadas">
+            <VBox spacing="12" style="-fx-padding: 16 0 0 0;">
+
+                <TableView fx:id="tablaHistorial"
+                           styleClass="tabla-principal"
+                           VBox.vgrow="ALWAYS">
+                    <placeholder><Label text="Aún no has visitado ninguna propiedad."/></placeholder>
+                    <columns>
+                        <TableColumn fx:id="colHCodigo"    text="Código"     prefWidth="90"/>
+                        <TableColumn fx:id="colHDireccion" text="Dirección"  prefWidth="200"/>
+                        <TableColumn fx:id="colHCiudad"    text="Ciudad"     prefWidth="110"/>
+                        <TableColumn fx:id="colHTipo"      text="Tipo"       prefWidth="120"/>
+                        <TableColumn fx:id="colHPrecio"    text="Precio"     prefWidth="120"/>
+                    </columns>
+                </TableView>
+
+                <HBox styleClass="barra-acciones" spacing="10" alignment="CENTER_LEFT">
+                    <Button text="⭐  Guardar en favoritos"
+                            fx:id="btnFavoritoDesdeHistorial"
+                            styleClass="boton-advertencia"
+                            onAction="#guardarFavoritoDesdeHistorial"
+                            disable="true"/>
+                </HBox>
+            </VBox>
+        </Tab>
+
+    </TabPane>
+
+</VBox>

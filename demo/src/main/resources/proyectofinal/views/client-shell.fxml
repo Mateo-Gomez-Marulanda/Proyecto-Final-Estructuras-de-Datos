@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="proyectofinal.controllers.ClientShellController"
+            stylesheets="@../css/estilos.css"
+            prefWidth="1100" prefHeight="700">
+
+    <!-- ══ SIDEBAR ══════════════════════════════════════════ -->
+    <left>
+        <VBox styleClass="sidebar">
+
+            <!-- Header -->
+            <VBox styleClass="sidebar-header" spacing="2">
+                <Label text="🏠 PropTech" styleClass="sidebar-title"/>
+                <Label text="Portal del cliente" styleClass="sidebar-subtitle"/>
+            </VBox>
+
+            <!-- Nombre del cliente -->
+            <VBox style="-fx-padding: 12 16 8 16;">
+                <Label fx:id="labelBienvenida"
+                       text="Bienvenido"
+                       style="-fx-text-fill: #94a3b8; -fx-font-size: 12px;"/>
+                <Label fx:id="labelNombreCliente"
+                       text="—"
+                       style="-fx-text-fill: #f1f5f9; -fx-font-size: 13px; -fx-font-weight: bold;"/>
+            </VBox>
+
+            <Separator style="-fx-background-color: #334155;"/>
+
+            <Label text="MI PORTAL" styleClass="nav-section-label"/>
+
+            <Button fx:id="btnDashboard"
+                    text="  🏠  Inicio"
+                    styleClass="nav-button, nav-button-activo"
+                    onAction="#navegarDashboard"
+                    maxWidth="Infinity"/>
+
+            <Button fx:id="btnCatalogo"
+                    text="  🔍  Explorar inmuebles"
+                    styleClass="nav-button"
+                    onAction="#navegarCatalogo"
+                    maxWidth="Infinity"/>
+
+            <Button fx:id="btnFavoritos"
+                    text="  ⭐  Mis favoritos"
+                    styleClass="nav-button"
+                    onAction="#navegarFavoritos"
+                    maxWidth="Infinity"/>
+
+            <Button fx:id="btnVisitas"
+                    text="  📅  Mis visitas"
+                    styleClass="nav-button"
+                    onAction="#navegarVisitas"
+                    maxWidth="Infinity"/>
+
+            <Separator>
+                <VBox.margin><Insets top="8" bottom="8"/></VBox.margin>
+            </Separator>
+
+            <Button fx:id="btnPerfil"
+                    text="  👤  Mi perfil"
+                    styleClass="nav-button"
+                    onAction="#navegarPerfil"
+                    maxWidth="Infinity"/>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <!-- Footer -->
+            <VBox styleClass="sidebar-footer" spacing="4">
+                <Label fx:id="labelTipoCliente"
+                       text="Cliente"
+                       style="-fx-text-fill: #94a3b8; -fx-font-size: 11px;"/>
+                <Button text="Cerrar sesión"
+                        styleClass="boton-salir"
+                        onAction="#cerrarSesion"
+                        maxWidth="Infinity"/>
+            </VBox>
+
+        </VBox>
+    </left>
+
+    <!-- ══ CONTENIDO CENTRAL ════════════════════════════════ -->
+    <center>
+        <StackPane fx:id="contenidoCentral" styleClass="content-area"/>
+    </center>
+
+</BorderPane>
