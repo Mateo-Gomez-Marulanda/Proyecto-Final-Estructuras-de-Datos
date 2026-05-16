@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="proyectofinal.controllers.HistorialInmueblesController"
+      spacing="0"
+      prefWidth="950"
+      prefHeight="520">
+
+    <!-- ── Header ── -->
+    <VBox spacing="4"
+          style="-fx-background-color: #1e293b; -fx-padding: 20 24 20 24;">
+        <Label text="Historial de cambios — Inmuebles"
+               style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+        <Label text="Modificaciones, cambios de estado y acciones administrativas registradas"
+               style="-fx-text-fill: #94a3b8; -fx-font-size: 12px;"/>
+    </VBox>
+
+    <!-- ── Tabla ── -->
+    <TableView fx:id="tablaHistorial"
+               VBox.vgrow="ALWAYS"
+               styleClass="tabla-principal">
+        <placeholder>
+            <Label text="No hay cambios registrados todavía."
+                   style="-fx-text-fill: #94a3b8;"/>
+        </placeholder>
+        <columns>
+            <TableColumn fx:id="colFecha"
+                         text="Fecha / Hora"
+                         prefWidth="145"/>
+            <TableColumn fx:id="colTipo"
+                         text="Tipo"
+                         prefWidth="130"/>
+            <TableColumn fx:id="colPropiedad"
+                         text="Propiedad"
+                         prefWidth="95"/>
+            <TableColumn fx:id="colCampo"
+                         text="Campo / Acción"
+                         prefWidth="200"/>
+            <TableColumn fx:id="colAnterior"
+                         text="Valor anterior"
+                         prefWidth="120"/>
+            <TableColumn fx:id="colNuevo"
+                         text="Valor nuevo"
+                         prefWidth="120"/>
+            <TableColumn fx:id="colResponsable"
+                         text="Responsable"
+                         prefWidth="110"/>
+        </columns>
+    </TableView>
+
+    <!-- ── Footer ── -->
+    <HBox alignment="CENTER_RIGHT" spacing="12"
+          style="-fx-background-color: #f1f5f9; -fx-padding: 14 24 14 24;
+                 -fx-border-color: #e2e8f0; -fx-border-width: 1 0 0 0;">
+        <Label fx:id="labelTotal"
+               text=""
+               style="-fx-text-fill: #64748b; -fx-font-size: 12px;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Cerrar"
+                styleClass="boton-secundario"
+                onAction="#cerrar"/>
+    </HBox>
+
+</VBox>

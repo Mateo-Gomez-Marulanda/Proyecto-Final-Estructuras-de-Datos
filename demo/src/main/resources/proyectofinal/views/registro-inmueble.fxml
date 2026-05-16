@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="proyectofinal.controllers.RegistroInmuebleController"
+      spacing="0"
+      prefWidth="620"
+      styleClass="content-area"
+      style="-fx-background-color: #f8fafc;">
+
+    <!-- ── Header ── -->
+    <VBox spacing="4"
+          style="-fx-background-color: #1e293b; -fx-padding: 20 24 20 24;">
+        <Label text="Registrar Inmueble"
+               style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+        <Label text="Complete todos los campos obligatorios (*)"
+               style="-fx-text-fill: #94a3b8; -fx-font-size: 12px;"/>
+    </VBox>
+
+    <!-- ── Form body ── -->
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+                style="-fx-background-color: transparent; -fx-background: transparent;"
+                VBox.vgrow="ALWAYS">
+        <VBox spacing="20" style="-fx-padding: 24;">
+
+            <!-- ── Sección: Identificación ── -->
+            <VBox spacing="10">
+                <Label text="Identificación" styleClass="seccion-titulo"
+                       style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #475569;"/>
+                <Separator/>
+                <GridPane hgap="16" vgap="12">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50"/>
+                        <ColumnConstraints percentWidth="50"/>
+                    </columnConstraints>
+
+                    <!-- Código -->
+                    <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Código *"
+                               style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
+                        <TextField fx:id="campoCodigo"
+                                   promptText="Ej: INM-001"
+                                   styleClass="campo-texto"/>
+                    </VBox>
+
+                    <!-- Tipo de inmueble -->
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Tipo de inmueble *"
+                               style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
+                        <ComboBox fx:id="campoTipo"
+                                  promptText="Seleccione tipo"
+                                  maxWidth="Infinity"
+                                  styleClass="combo-filtro"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+            <!-- ── Sección: Ubicación ── -->
+            <VBox spacing="10">
+                <Label text="Ubicación"
+                       style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #475569;"/>
+                <Separator/>
+                <GridPane hgap="16" vgap="12">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50"/>
+                        <ColumnConstraints percentWidth="50"/>
+                    </columnConstraints>
+
+                    <!-- Dirección -->
+                    <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0"
+                          GridPane.columnSpan="2">
+                        <Label text="Dirección *"
+                               style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
+                        <TextField fx:id="campoDireccion"
+                                   promptText="Calle / Carrera / Avenida..."
+                                   styleClass="campo-texto"/>
+                    </VBox>
+
+                    <!-- Ciudad -->
+                    <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <Label text="Ciudad *"
+                               style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
+                        <TextField fx:id="campoCiudad"
+                                   promptText="Ej: Bogotá"
+                                   styleClass="campo-texto"/>
+                    </VBox>
+
+                    <!-- Zona -->
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label text="Zona *"
+                               style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
+                        <TextField fx:id="campoZona"
+                                   promptText="Ej: Norte, Sur, Centro"
+                                   styleClass="campo-texto"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+            <!-- ── Sección: Características ── -->
+            <VBox spacing="10">
+                <Label text="Características"
+                       style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #475569;"/>
+                <Separator/>
+                <GridPane hgap="16" vgap="12">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                    </columnConstraints>
+
+                    <!-- Área -->
+                    <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Área (m²) *"
+                               style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
+                        <TextField fx:id="campoArea"
+                                   promptText="Ej: 85.5"
+                                   styleClass="campo-texto"/>
+                    </VBox>
+
+                    <!-- Precio -->
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Precio (COP) *"
+                               style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
+                        <TextField fx:id="campoPrecio"
+                                   promptText="Ej: 250000000"
+                                   styleClass="campo-texto"/>
+                    </VBox>
+
+                    <!-- Habitaciones -->
+                    <VBox spacing="4" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                        <Label text="Habitaciones *"
+                               style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
+                        <Spinner fx:id="campoHabitaciones"
+                                 min="0" max="20" initialValue="0"
+                                 editable="true"
+                                 styleClass="campo-texto"/>
+                    </VBox>
+
+                    <!-- Baños -->
+                    <VBox spacing="4" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                        <Label text="Baños *"
+                               style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
+                        <Spinner fx:id="campoBanos"
+                                 min="0" max="10" initialValue="0"
+                                 editable="true"
+                                 styleClass="campo-texto"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+            <!-- ── Sección: Negocio ── -->
+            <VBox spacing="10">
+                <Label text="Condiciones de negocio"
+                       style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #475569;"/>
+                <Separator/>
+                <GridPane hgap="16" vgap="12">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="33"/>
+                        <ColumnConstraints percentWidth="33"/>
+                        <ColumnConstraints percentWidth="34"/>
+                    </columnConstraints>
+
+                    <!-- Finalidad -->
+                    <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Finalidad *"
+                               style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
+                        <ComboBox fx:id="campoFinalidad"
+                                  promptText="Seleccione"
+                                  maxWidth="Infinity"
+                                  styleClass="combo-filtro"/>
+                    </VBox>
+
+                    <!-- Estado -->
+                    <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Estado *"
+                               style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
+                        <ComboBox fx:id="campoEstado"
+                                  promptText="Seleccione estado"
+                                  maxWidth="Infinity"
+                                  styleClass="combo-filtro"/>
+                    </VBox>
+
+                    <!-- Disponible -->
+                    <VBox spacing="4" GridPane.columnIndex="2" GridPane.rowIndex="0"
+                          alignment="BOTTOM_LEFT">
+                        <CheckBox fx:id="campoDisponible"
+                                  text="Disponible"
+                                  selected="true"
+                                  style="-fx-font-size: 13px; -fx-text-fill: #374151;"/>
+                    </VBox>
+
+                    <!-- Asesor -->
+                    <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="1"
+                          GridPane.columnSpan="3">
+                        <Label text="Asesor responsable"
+                               style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
+                        <ComboBox fx:id="campoAsesor"
+                                  promptText="Sin asignar (opcional)"
+                                  maxWidth="Infinity"
+                                  styleClass="combo-filtro"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+            <!-- ── Label de error ── -->
+            <Label fx:id="labelError"
+                   text=""
+                   style="-fx-text-fill: #dc2626; -fx-font-size: 12px;"
+                   wrapText="true"
+                   visible="false"
+                   managed="false"/>
+
+        </VBox>
+    </ScrollPane>
+
+    <!-- ── Footer con botones ── -->
+    <HBox spacing="12" alignment="CENTER_RIGHT"
+          style="-fx-background-color: #f1f5f9; -fx-padding: 16 24 16 24;
+                 -fx-border-color: #e2e8f0; -fx-border-width: 1 0 0 0;">
+        <Button text="Cancelar"
+                styleClass="boton-secundario"
+                onAction="#cancelar"/>
+        <Button text="✔  Registrar inmueble"
+                styleClass="boton-primario"
+                defaultButton="true"
+                onAction="#registrarInmueble"/>
+    </HBox>
+
+</VBox>

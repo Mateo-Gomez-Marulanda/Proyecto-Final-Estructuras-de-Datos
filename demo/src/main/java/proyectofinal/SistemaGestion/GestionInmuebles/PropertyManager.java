@@ -143,4 +143,66 @@ public class PropertyManager {
     public Tree<Property> getPriceTree() {
         return priceTree;
     }
+
+
+    public void setProperties(SimpleLinkedList<Property> properties) {
+        this.properties = properties;
+    }
+
+
+    public HashTable<String, Property> getPropertyTable() {
+        return propertyTable;
+    }
+
+
+    public void setPropertyTable(HashTable<String, Property> propertyTable) {
+        this.propertyTable = propertyTable;
+    }
+
+
+    public void setPriceTree(Tree<Property> priceTree) {
+        this.priceTree = priceTree;
+    }
+
+
+    public Stack<PropertyChange> getModificationHistory() {
+        return modificationHistory;
+    }
+
+
+    public void setModificationHistory(Stack<PropertyChange> modificationHistory) {
+        this.modificationHistory = modificationHistory;
+    }
+
+
+    public Stack<PropertyChange> getStatusHistory() {
+        return statusHistory;
+    }
+
+
+    public void setStatusHistory(Stack<PropertyChange> statusHistory) {
+        this.statusHistory = statusHistory;
+    }
+
+
+    public Stack<PropertyChange> getAdminActionsHistory() {
+        return adminActionsHistory;
+    }
+
+
+    public void setAdminActionsHistory(Stack<PropertyChange> adminActionsHistory) {
+        this.adminActionsHistory = adminActionsHistory;
+    }
+
+    public void modifyRooms(String code, int newRooms, String responsiblePerson) {
+        Property property = findByCode(code);
+        if (property == null) throw new RuntimeException("Inmueble no encontrado.");
+ 
+        PropertyChange change = new PropertyChange(
+                code, ChangeType.FIELD_MODIFICATION,
+                "rooms", property.getRooms(), newRooms, responsiblePerson);
+ 
+        property.setRooms(newRooms);
+        modificationHistory.push(change);
+    }
 }
