@@ -38,7 +38,7 @@ public class Main extends Application {
 
     public static void cargarRegistro() throws Exception {
         Parent vista = FXMLLoader.load(
-                Main.class.getResource("/proyectofinal/views/register.fxml"));
+                Main.class.getResource("/proyectofinal/views/register-content.fxml"));
         stagePrincipal.setScene(new Scene(vista, ANCHO_LOGIN, ALTO_REGISTRO));
         stagePrincipal.setMinWidth(ANCHO_LOGIN);
         stagePrincipal.setMinHeight(ALTO_REGISTRO);
