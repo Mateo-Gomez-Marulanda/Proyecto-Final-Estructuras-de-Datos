@@ -7,6 +7,12 @@ import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import java.io.IOException;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import proyectofinal.Inmueble.Property;
 import proyectofinal.Personal.Advisor;
@@ -142,9 +148,105 @@ public class AsesoresController {
     // Actions
     // ─────────────────────────────────────────────────────────
 
-    @FXML public void abrirFormularioRegistro()  { mostrarInfo("Formulario de registro próximamente."); }
-    @FXML public void editarAsesorSeleccionado() { mostrarInfo("Edición próximamente."); }
-    @FXML public void gestionarInmueblesAsesor() { mostrarInfo("Gestión de inmuebles próximamente."); }
+    @FXML
+    public void abrirFormularioRegistro() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/proyectofinal/views/registro-asesor.fxml"));
+            Parent root = loader.load();
+
+            RegistroAsesorController ctrl = loader.getController();
+            ctrl.setOnRegistroExitoso(nuevoAsesor -> {
+            masterList.add(nuevoAsesor);
+            if (!filtroZona.getItems().contains(nuevoAsesor.getZoneSpecialty())) {
+                filtroZona.getItems().add(nuevoAsesor.getZoneSpecialty());
+            }
+        });
+
+            Stage dialog = new Stage();
+            dialog.setTitle("Registrar asesor");
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.initOwner(tablaAsesores.getScene().getWindow());
+            dialog.setResizable(false);
+
+            Scene scene = new Scene(root);
+            if (!tablaAsesores.getScene().getStylesheets().isEmpty()) {
+                scene.getStylesheets().addAll(tablaAsesores.getScene().getStylesheets());
+            }
+            dialog.setScene(scene);
+            dialog.showAndWait();
+
+        } catch (IOException e) {
+            mostrarInfo("No se pudo abrir el formulario:\n" + e.getMessage());
+        }
+    }
+    
+    @FXML
+    public void editarAsesorSeleccionado() {
+        Advisor selected = tablaAsesores.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/proyectofinal/views/editar-asesor.fxml"));
+            Parent root = loader.load();
+
+            EdicionAsesorController ctrl = loader.getController();
+            ctrl.setAdvisorToEdit(selected);
+            ctrl.setOnEdicionExitosa(() -> {
+                tablaAsesores.refresh();
+                mostrarDetalle(selected);
+            });
+
+            Stage dialog = new Stage();
+            dialog.setTitle("Editar asesor — " + selected.getName());
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.initOwner(tablaAsesores.getScene().getWindow());
+            dialog.setResizable(false);
+
+            Scene scene = new Scene(root);
+            if (!tablaAsesores.getScene().getStylesheets().isEmpty()) {
+                scene.getStylesheets().addAll(tablaAsesores.getScene().getStylesheets());
+            }
+            dialog.setScene(scene);
+            dialog.showAndWait();
+
+        } catch (IOException e) {
+            mostrarInfo("No se pudo abrir el formulario:\n" + e.getMessage());
+        }
+    }
+
+    @FXML
+    public void gestionarInmueblesAsesor() {
+        Advisor selected = tablaAsesores.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/proyectofinal/views/gestionar-inmuebles-asesor.fxml"));
+            Parent root = loader.load();
+
+            GestionInmueblesAsesorController ctrl = loader.getController();
+            ctrl.setAdvisor(selected);
+            ctrl.setOnCambios(() -> {
+                tablaAsesores.refresh();
+                mostrarDetalle(selected);  // actualiza panel lateral
+            });
+
+            Stage dialog = new Stage();
+            dialog.setTitle("Gestionar inmuebles — " + selected.getName());
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.initOwner(tablaAsesores.getScene().getWindow());
+
+            Scene scene = new Scene(root);
+            if (!tablaAsesores.getScene().getStylesheets().isEmpty()) {
+                scene.getStylesheets().addAll(tablaAsesores.getScene().getStylesheets());
+            }
+            dialog.setScene(scene);
+            dialog.show();
+
+        } catch (IOException e) {
+            mostrarInfo("No se pudo abrir el gestor:\n" + e.getMessage());
+        }
+    }
 
     @FXML
     public void eliminarAsesorSeleccionado() {
@@ -152,10 +254,17 @@ public class AsesoresController {
         if (selected == null) return;
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-                "¿Eliminar al asesor " + selected.getName() + "?",
+                "¿Eliminar al asesor " + selected.getName() + "?"
+                + "\nSus inmuebles asignados quedarán sin asesor responsable.",
                 ButtonType.YES, ButtonType.NO);
         confirm.showAndWait().ifPresent(bt -> {
             if (bt == ButtonType.YES) {
+                for (Property p : AppContext.getInstance().getPropertyManager().getProperties()) {
+                    if (p.getResponsibleAdvisor() != null
+                            && p.getResponsibleAdvisor().getId().equals(selected.getId())) {
+                        p.setResponsibleAdvisor(null);
+                    }
+                }
                 AppContext.getInstance().getAdvisors().remove(selected);
                 masterList.remove(selected);
                 panelDetalle.setVisible(false);

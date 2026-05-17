@@ -34,17 +34,20 @@ public class PropertyManager {
 
 
     public void registerProperty(Property property, String responsiblePerson) {
-        if (propertyTable.containsKey(property.getCode())) {
-            throw new RuntimeException("El código del inmueble ya existe: " + property.getCode());
-        }
-
-        // Insertar en todas las estructuras para mantener consistencia
-        properties.add(property);
-        propertyTable.put(property.getCode(), property);
-        priceTree.put(property); 
-
-        registerAdminAction(property.getCode(), "Registro inicial de propiedad", responsiblePerson);
+    if (propertyTable.containsKey(property.getCode())) {
+        throw new RuntimeException("El código del inmueble ya existe: " + property.getCode());
     }
+
+    properties.add(property);
+    propertyTable.put(property.getCode(), property);
+    priceTree.put(property);
+
+    if (property.getResponsibleAdvisor() != null) {
+        property.getResponsibleAdvisor().assignProperty(property);
+    }
+
+    registerAdminAction(property.getCode(), "Registro inicial de propiedad", responsiblePerson);
+}
 
     public Property findByCode(String code) {
         return propertyTable.get(code);

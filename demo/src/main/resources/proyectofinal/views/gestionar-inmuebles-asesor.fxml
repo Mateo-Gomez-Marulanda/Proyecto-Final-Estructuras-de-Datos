@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="proyectofinal.controllers.GestionInmueblesAsesorController"
+      spacing="0"
+      prefWidth="860"
+      prefHeight="560"
+      style="-fx-background-color: #f8fafc;">
+
+    <!-- ── Header ── -->
+    <VBox spacing="4"
+          style="-fx-background-color: #1e293b; -fx-padding: 20 24 20 24;">
+        <Label fx:id="labelTitulo"
+               text="Gestionar inmuebles"
+               style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+        <Label text="Asigna o quita inmuebles del asesor"
+               style="-fx-text-fill: #94a3b8; -fx-font-size: 12px;"/>
+    </VBox>
+
+    <!-- ── Contenido: dos tablas lado a lado ── -->
+    <HBox spacing="0" VBox.vgrow="ALWAYS">
+
+        <!-- Izquierda: inmuebles asignados -->
+        <VBox spacing="10" HBox.hgrow="ALWAYS"
+              style="-fx-padding: 20; -fx-border-color: transparent #e2e8f0 transparent transparent;
+                     -fx-border-width: 0 1 0 0;">
+
+            <Label text="Inmuebles asignados"
+                   style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+
+            <TableView fx:id="tablaAsignados"
+                       styleClass="tabla-principal"
+                       VBox.vgrow="ALWAYS">
+                <placeholder><Label text="Sin inmuebles asignados."/></placeholder>
+                <columns>
+                    <TableColumn fx:id="colAsigCodigo"   text="Código"    prefWidth="90"/>
+                    <TableColumn fx:id="colAsigDireccion" text="Dirección" prefWidth="180"/>
+                    <TableColumn fx:id="colAsigTipo"     text="Tipo"      prefWidth="110"/>
+                    <TableColumn fx:id="colAsigPrecio"   text="Precio"    prefWidth="110"/>
+                </columns>
+            </TableView>
+
+            <Button text="➡  Quitar seleccionado"
+                    fx:id="btnQuitar"
+                    styleClass="boton-peligro"
+                    onAction="#quitarInmueble"
+                    disable="true"
+                    maxWidth="Infinity"/>
+        </VBox>
+
+        <!-- Derecha: inmuebles disponibles para asignar -->
+        <VBox spacing="10" HBox.hgrow="ALWAYS"
+              style="-fx-padding: 20;">
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Catálogo disponible"
+                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #0f172a;"
+                       HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="campoBusqueda"
+                           styleClass="campo-busqueda"
+                           promptText="Buscar..."
+                           prefWidth="180"
+                           onKeyReleased="#filtrar"/>
+            </HBox>
+
+            <TableView fx:id="tablaDisponibles"
+                       styleClass="tabla-principal"
+                       VBox.vgrow="ALWAYS">
+                <placeholder><Label text="No hay inmuebles disponibles."/></placeholder>
+                <columns>
+                    <TableColumn fx:id="colDispCodigo"    text="Código"    prefWidth="90"/>
+                    <TableColumn fx:id="colDispDireccion" text="Dirección" prefWidth="180"/>
+                    <TableColumn fx:id="colDispTipo"      text="Tipo"      prefWidth="110"/>
+                    <TableColumn fx:id="colDispPrecio"    text="Precio"    prefWidth="110"/>
+                </columns>
+            </TableView>
+
+            <Button text="⬅  Asignar seleccionado"
+                    fx:id="btnAsignar"
+                    styleClass="boton-exito"
+                    onAction="#asignarInmueble"
+                    disable="true"
+                    maxWidth="Infinity"/>
+        </VBox>
+
+    </HBox>
+
+    <!-- ── Footer ── -->
+    <HBox spacing="12" alignment="CENTER_RIGHT"
+          style="-fx-background-color: #f1f5f9; -fx-padding: 14 24 14 24;
+                 -fx-border-color: #e2e8f0; -fx-border-width: 1 0 0 0;">
+        <Label fx:id="labelResumen"
+               text=""
+               style="-fx-text-fill: #64748b; -fx-font-size: 12px;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Cerrar"
+                styleClass="boton-secundario"
+                onAction="#cerrar"/>
+    </HBox>
+
+</VBox>
