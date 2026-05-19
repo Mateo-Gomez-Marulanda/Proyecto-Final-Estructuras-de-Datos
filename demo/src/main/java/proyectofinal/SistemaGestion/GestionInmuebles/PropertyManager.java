@@ -34,17 +34,20 @@ public class PropertyManager {
 
 
     public void registerProperty(Property property, String responsiblePerson) {
-        if (propertyTable.containsKey(property.getCode())) {
-            throw new RuntimeException("El código del inmueble ya existe: " + property.getCode());
-        }
-
-        // Insertar en todas las estructuras para mantener consistencia
-        properties.add(property);
-        propertyTable.put(property.getCode(), property);
-        priceTree.put(property); 
-
-        registerAdminAction(property.getCode(), "Registro inicial de propiedad", responsiblePerson);
+    if (propertyTable.containsKey(property.getCode())) {
+        throw new RuntimeException("El código del inmueble ya existe: " + property.getCode());
     }
+
+    properties.add(property);
+    propertyTable.put(property.getCode(), property);
+    priceTree.put(property);
+
+    if (property.getResponsibleAdvisor() != null) {
+        property.getResponsibleAdvisor().assignProperty(property);
+    }
+
+    registerAdminAction(property.getCode(), "Registro inicial de propiedad", responsiblePerson);
+}
 
     public Property findByCode(String code) {
         return propertyTable.get(code);
@@ -142,5 +145,67 @@ public class PropertyManager {
 
     public Tree<Property> getPriceTree() {
         return priceTree;
+    }
+
+
+    public void setProperties(SimpleLinkedList<Property> properties) {
+        this.properties = properties;
+    }
+
+
+    public HashTable<String, Property> getPropertyTable() {
+        return propertyTable;
+    }
+
+
+    public void setPropertyTable(HashTable<String, Property> propertyTable) {
+        this.propertyTable = propertyTable;
+    }
+
+
+    public void setPriceTree(Tree<Property> priceTree) {
+        this.priceTree = priceTree;
+    }
+
+
+    public Stack<PropertyChange> getModificationHistory() {
+        return modificationHistory;
+    }
+
+
+    public void setModificationHistory(Stack<PropertyChange> modificationHistory) {
+        this.modificationHistory = modificationHistory;
+    }
+
+
+    public Stack<PropertyChange> getStatusHistory() {
+        return statusHistory;
+    }
+
+
+    public void setStatusHistory(Stack<PropertyChange> statusHistory) {
+        this.statusHistory = statusHistory;
+    }
+
+
+    public Stack<PropertyChange> getAdminActionsHistory() {
+        return adminActionsHistory;
+    }
+
+
+    public void setAdminActionsHistory(Stack<PropertyChange> adminActionsHistory) {
+        this.adminActionsHistory = adminActionsHistory;
+    }
+
+    public void modifyRooms(String code, int newRooms, String responsiblePerson) {
+        Property property = findByCode(code);
+        if (property == null) throw new RuntimeException("Inmueble no encontrado.");
+ 
+        PropertyChange change = new PropertyChange(
+                code, ChangeType.FIELD_MODIFICATION,
+                "rooms", property.getRooms(), newRooms, responsiblePerson);
+ 
+        property.setRooms(newRooms);
+        modificationHistory.push(change);
     }
 }

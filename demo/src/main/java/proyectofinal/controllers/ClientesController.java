@@ -1,14 +1,26 @@
 package proyectofinal.controllers;
 
+import java.io.IOException;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import proyectofinal.Inmueble.TypeProperty;
 import proyectofinal.Personal.Client;
+import java.io.IOException;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class ClientesController {
 
@@ -127,13 +139,65 @@ public class ClientesController {
     // Actions
     // ─────────────────────────────────────────────────────────
 
-    @FXML public void abrirFormularioRegistro()       { mostrarInfo("Formulario de registro próximamente."); }
+    @FXML
+    public void abrirFormularioRegistro() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/proyectofinal/views/registro-cliente.fxml"));
+            Parent root = loader.load();
+
+            RegistroClienteController ctrl = loader.getController();
+            ctrl.setOnRegistroExitoso(nuevoCliente -> {
+                masterList.add(nuevoCliente);
+            });
+
+            Stage dialog = new Stage();
+            dialog.setTitle("Registrar cliente");
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.initOwner(tablaClientes.getScene().getWindow());
+            dialog.setResizable(false);
+
+            Scene scene = new Scene(root);
+            if (!tablaClientes.getScene().getStylesheets().isEmpty()) {
+                scene.getStylesheets().addAll(tablaClientes.getScene().getStylesheets());
+            }
+            dialog.setScene(scene);
+            dialog.showAndWait();
+
+        } catch (IOException e) {
+            mostrarError("No se pudo abrir el formulario:\n" + e.getMessage());
+        }
+    }
 
     @FXML
     public void editarClienteSeleccionado() {
         Client selected = tablaClientes.getSelectionModel().getSelectedItem();
         if (selected == null) return;
-        mostrarInfo("Edición de: " + selected.getName());
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/proyectofinal/views/editar-cliente.fxml"));
+            Parent root = loader.load();
+
+            EdicionClienteController ctrl = loader.getController();
+            ctrl.setClientToEdit(selected);
+            ctrl.setOnEdicionExitosa(() -> tablaClientes.refresh());
+
+            Stage dialog = new Stage();
+            dialog.setTitle("Editar cliente — " + selected.getName());
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.initOwner(tablaClientes.getScene().getWindow());
+            dialog.setResizable(false);
+
+            Scene scene = new Scene(root);
+            if (!tablaClientes.getScene().getStylesheets().isEmpty()) {
+                scene.getStylesheets().addAll(tablaClientes.getScene().getStylesheets());
+            }
+            dialog.setScene(scene);
+            dialog.showAndWait();
+
+        } catch (IOException e) {
+            mostrarError("No se pudo abrir el formulario de edición:\n" + e.getMessage());
+        }
     }
 
     @FXML

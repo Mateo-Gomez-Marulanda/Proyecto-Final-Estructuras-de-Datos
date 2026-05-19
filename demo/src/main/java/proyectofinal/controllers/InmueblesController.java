@@ -1,12 +1,18 @@
 package proyectofinal.controllers;
 
+import java.io.IOException;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import proyectofinal.Inmueble.Property;
 import proyectofinal.Inmueble.TypeProperty;
 import proyectofinal.SistemaGestion.GestionInmuebles.PropertyManager;
@@ -141,16 +147,74 @@ public class InmueblesController {
 
     @FXML
     public void abrirFormularioRegistro() {
-        // TODO: open registration dialog when form dialogs are built
-        mostrarInfo("Formulario de registro próximamente.");
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/proyectofinal/views/registro-inmueble.fxml"));
+            Parent root = loader.load();
+
+            RegistroInmuebleController ctrl = loader.getController();
+            ctrl.setOnRegistroExitoso(nuevaProperty -> {
+                try {
+                    String responsable = AppContext.getInstance().getClientManager().getCurrent() != null
+                            ? AppContext.getInstance().getClientManager().getCurrent().getName()
+                            : "Admin";
+                    AppContext.getInstance().getPropertyManager()
+                            .registerProperty(nuevaProperty, responsable);
+                    masterList.add(nuevaProperty);
+                } catch (RuntimeException e) {
+                    mostrarError("No se pudo registrar: " + e.getMessage());
+                }
+            });
+
+            Stage dialog = new Stage();
+            dialog.setTitle("Registrar inmueble");
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.initOwner(tablaInmuebles.getScene().getWindow());
+            dialog.setResizable(false);
+
+            Scene scene = new Scene(root);
+            if (!tablaInmuebles.getScene().getStylesheets().isEmpty()) {
+                scene.getStylesheets().addAll(tablaInmuebles.getScene().getStylesheets());
+            }
+
+            dialog.setScene(scene);
+            dialog.showAndWait();
+
+        } catch (IOException e) {
+            mostrarError("No se pudo abrir el formulario de registro:\n" + e.getMessage());
+        }
     }
 
     @FXML
     public void editarInmuebleSeleccionado() {
         Property selected = tablaInmuebles.getSelectionModel().getSelectedItem();
         if (selected == null) return;
-        // TODO: open edit dialog
-        mostrarInfo("Edición de: " + selected.getCode());
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/proyectofinal/views/editar-inmueble.fxml"));
+            Parent root = loader.load();
+ 
+            EdicionInmuebleController ctrl = loader.getController();
+            ctrl.setPropertyToEdit(selected);
+            // Callback: refresca la tabla para mostrar los valores actualizados
+            ctrl.setOnEdicionExitosa(this::refrescarTabla);
+ 
+            Stage dialog = new Stage();
+            dialog.setTitle("Editar inmueble — " + selected.getCode());
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.initOwner(tablaInmuebles.getScene().getWindow());
+            dialog.setResizable(false);
+ 
+            Scene scene = new Scene(root);
+            if (!tablaInmuebles.getScene().getStylesheets().isEmpty()) {
+                scene.getStylesheets().addAll(tablaInmuebles.getScene().getStylesheets());
+            }
+            dialog.setScene(scene);
+            dialog.showAndWait();
+ 
+        } catch (IOException e) {
+            mostrarError("No se pudo abrir el formulario de edición:\n" + e.getMessage());
+        }
     }
 
     @FXML
@@ -200,7 +264,26 @@ public class InmueblesController {
 
     @FXML
     public void verHistorialAcciones() {
-        mostrarInfo("Historial de acciones próximamente.");
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/proyectofinal/views/historial-inmuebles.fxml"));
+            Parent root = loader.load();
+ 
+            Stage dialog = new Stage();
+            dialog.setTitle("Historial de cambios — Inmuebles");
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.initOwner(tablaInmuebles.getScene().getWindow());
+ 
+            Scene scene = new Scene(root);
+            if (!tablaInmuebles.getScene().getStylesheets().isEmpty()) {
+                scene.getStylesheets().addAll(tablaInmuebles.getScene().getStylesheets());
+            }
+            dialog.setScene(scene);
+            dialog.show();   // no bloqueante: se puede consultar mientras se usa la app
+ 
+        } catch (IOException e) {
+            mostrarError("No se pudo abrir el historial:\n" + e.getMessage());
+        }
     }
 
     // ─────────────────────────────────────────────────────────

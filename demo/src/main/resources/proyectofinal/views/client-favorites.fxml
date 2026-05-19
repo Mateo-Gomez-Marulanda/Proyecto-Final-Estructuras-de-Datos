@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="proyectofinal.controllers.ClientFavoritesController"
+      spacing="16" styleClass="content-area">
+
+    <!-- Encabezado -->
+    <HBox alignment="CENTER_LEFT" spacing="16">
+        <VBox spacing="4" HBox.hgrow="ALWAYS">
+            <Label text="Mis favoritos" styleClass="modulo-titulo"/>
+            <Label text="Propiedades que has guardado" styleClass="modulo-subtitulo"/>
+        </VBox>
+        <Label fx:id="lblTotal"
+               text="0 propiedades"
+               style="-fx-font-size: 13px; -fx-text-fill: #64748b;"/>
+    </HBox>
+
+    <!-- Tabla de favoritos -->
+    <TableView fx:id="tablaFavoritos"
+               styleClass="tabla-principal"
+               VBox.vgrow="ALWAYS">
+        <placeholder><Label text="Aún no tienes favoritos guardados. Explora el catálogo para agregar."/></placeholder>
+        <columns>
+            <TableColumn fx:id="colCodigo"     text="Código"     prefWidth="90"/>
+            <TableColumn fx:id="colDireccion"  text="Dirección"  prefWidth="200"/>
+            <TableColumn fx:id="colCiudad"     text="Ciudad"     prefWidth="110"/>
+            <TableColumn fx:id="colTipo"       text="Tipo"       prefWidth="120"/>
+            <TableColumn fx:id="colPrecio"     text="Precio"     prefWidth="120"/>
+            <TableColumn fx:id="colHab"        text="Hab."       prefWidth="55"/>
+            <TableColumn fx:id="colDisponible" text="Disponible" prefWidth="90"/>
+        </columns>
+    </TableView>
+
+    <!-- Acciones -->
+    <HBox styleClass="barra-acciones" spacing="10" alignment="CENTER_LEFT">
+        <Button text="📅  Agendar visita"
+                fx:id="btnAgendar"
+                styleClass="boton-primario"
+                onAction="#agendarVisita"
+                disable="true"/>
+        <Button text="🗑️  Quitar de favoritos"
+                fx:id="btnQuitar"
+                styleClass="boton-peligro"
+                onAction="#quitarFavorito"
+                disable="true"/>
+    </HBox>
+
+</VBox>

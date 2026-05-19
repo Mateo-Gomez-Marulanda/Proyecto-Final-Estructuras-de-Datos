@@ -15,32 +15,18 @@ import proyectofinal.SistemaGestion.Observer.OperationPublisher;
 import proyectofinal.SistemaGestion.OperacionDeNegocio.BusinessOperation;
 import proyectofinal.SistemaGestion.Persistencia.PersistenceManager;
 
-/**
- * Central application state — Singleton.
- * Every controller gets its data from here instead of creating its own instances.
- */
 public class AppContext {
 
     private static AppContext instance;
 
-    // ─── Managers ────────────────────────────────────────────
     private final PropertyManager propertyManager;
     private final ClientManager   clientManager;
     private final VisitManager    visitManager;
-
-    // ─── Collections without a dedicated manager ─────────────
-    private final SimpleLinkedList<Advisor> advisors;
-
-    // ObservableList for operations — JavaFX tables bind directly to this.
-    // OperacionesController registers itself as an Observer so this list
-    // updates automatically whenever a BusinessOperation is published.
+    private final SimpleLinkedList<Advisor>         advisors;
     private final ObservableList<BusinessOperation> operations;
+    private final Queue<Alert>                      pendingAlerts;
+    private final SimpleLinkedList<Alert>           alertHistory;
 
-    // Alert queues
-    private final Queue<Alert>               pendingAlerts;
-    private final SimpleLinkedList<Alert>    alertHistory;
-
-    // ─────────────────────────────────────────────────────────
     private AppContext() {
         propertyManager = new PropertyManager();
         clientManager   = new ClientManager();
@@ -50,11 +36,9 @@ public class AppContext {
         pendingAlerts   = new Queue<>();
         alertHistory    = new SimpleLinkedList<>();
 
-        // Register the contract generator — reacts to every new operation
         OperationPublisher.getInstance().subscribe(new ContractGeneratorObserver());
-
-        // Load persisted data
         loadPersistedData();
+        crearAdminSiNoExiste();
     }
 
     public static AppContext getInstance() {
@@ -62,51 +46,28 @@ public class AppContext {
         return instance;
     }
 
-    // ─────────────────────────────────────────────────────────
-    // Data loading
-    // ─────────────────────────────────────────────────────────
-
-    /**
-     * Loads all data from disk.
-     * NOTE: PersistenceManager loads clients directly into the list but skips
-     * the internal HashTable of ClientManager. We re-index here to fix that.
-     */
     private void loadPersistedData() {
-        PersistenceManager.loadAll(
-                propertyManager,
-                clientManager.getAllClients(),
-                advisors,
-                visitManager
-        );
-
-        // Re-index all loaded clients into the HashTable so lookups work
+        PersistenceManager.loadAll(propertyManager, clientManager.getAllClients(), advisors, visitManager);
         for (var client : clientManager.getAllClients()) {
-            try {
-                clientManager.getClientTable().put(client.getId(), client);
-            } catch (Exception ignored) {
-                // Already indexed — skip
-            }
+            clientManager.getClientTable().put(client.getId(), client);
         }
     }
 
-    public void saveAll() {
-        PersistenceManager.saveAll(
-                propertyManager,
-                clientManager.getAllClients(),
-                advisors,
-                visitManager
-        );
+    private void crearAdminSiNoExiste() {
+        if (clientManager.getClientTable().get("admin") != null) return;
+        clientManager.registerFull("admin", "Administrador", "admin@proptech.com",
+                "000-000-0000", "ADMIN", 0.0, "N/A", null, 0, "ACTIVE", "Admin1234");
     }
 
-    // ─────────────────────────────────────────────────────────
-    // Getters
-    // ─────────────────────────────────────────────────────────
+    public void saveAll() {
+        PersistenceManager.saveAll(propertyManager, clientManager.getAllClients(), advisors, visitManager);
+    }
 
-    public PropertyManager getPropertyManager()           { return propertyManager; }
-    public ClientManager   getClientManager()             { return clientManager; }
-    public VisitManager    getVisitManager()              { return visitManager; }
-    public SimpleLinkedList<Advisor> getAdvisors()        { return advisors; }
+    public PropertyManager getPropertyManager()              { return propertyManager; }
+    public ClientManager   getClientManager()                { return clientManager; }
+    public VisitManager    getVisitManager()                 { return visitManager; }
+    public SimpleLinkedList<Advisor> getAdvisors()           { return advisors; }
     public ObservableList<BusinessOperation> getOperations() { return operations; }
-    public Queue<Alert>              getPendingAlerts()   { return pendingAlerts; }
-    public SimpleLinkedList<Alert>   getAlertHistory()    { return alertHistory; }
+    public Queue<Alert>    getPendingAlerts()                { return pendingAlerts; }
+    public SimpleLinkedList<Alert> getAlertHistory()         { return alertHistory; }
 }

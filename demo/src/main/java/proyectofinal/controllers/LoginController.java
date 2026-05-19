@@ -4,8 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-
 import proyectofinal.Main;
+import proyectofinal.Personal.Client;
 
 public class LoginController {
 
@@ -25,7 +25,15 @@ public class LoginController {
 
         try {
             AppContext.getInstance().getClientManager().login(id, password);
-            Main.cargarShellPrincipal();
+            Client current = AppContext.getInstance().getClientManager().getCurrent();
+
+            // Redirect based on client type
+            if ("ADMIN".equalsIgnoreCase(current.getClientType())) {
+                Main.cargarShellPrincipal();   // Admin view
+            } else {
+                Main.cargarShellCliente();     // Client view
+            }
+
         } catch (RuntimeException e) {
             mostrarError(e.getMessage());
         } catch (Exception e) {
