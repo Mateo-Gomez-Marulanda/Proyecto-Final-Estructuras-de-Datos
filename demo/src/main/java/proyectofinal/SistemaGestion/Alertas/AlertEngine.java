@@ -9,7 +9,7 @@ import proyectofinal.controllers.AppContext;
 import proyectofinal.Inmueble.Property;
 import proyectofinal.Personal.Client;
 import proyectofinal.SistemaGestion.AgendamientoVisitas.VisitRequest;
-import proyectofinal.SistemaGestion.Contratos.Contract; // Importamos tu clase Contract
+import proyectofinal.SistemaGestion.Contratos.Contract;
 
 public class AlertEngine {
 
@@ -21,15 +21,22 @@ public class AlertEngine {
     private static final int CONTRACT_EXPIRING_DAYS = 30; // Contratos que venzan en menos de 30 días
 
     /**
-     * Evalúa las reglas de negocio y genera alertas automáticas en la cola del sistema.
+     * Versión estándar para controladores de la UI.
+     * Utiliza la instancia global ya construida de manera segura.
      */
     public static void checkAndGenerateAlerts() {
-        AppContext context = AppContext.getInstance();
+        checkAndGenerateAlerts(AppContext.getInstance());
+    }
+
+    /**
+     * Versión interna de arranque para evitar bucles de recursión infinita (StackOverflowError).
+     * Recibe el contexto directamente como parámetro durante la inicialización.
+     */
+    public static void checkAndGenerateAlerts(AppContext context) {
         LocalDateTime now = LocalDateTime.now();
         LocalDate today = LocalDate.now();
 
-        
-        // Recorremos el registro estático de tu clase Contract (SimpleLinkedList)
+        // 1. Evaluación de Contratos Próximos a Vencer
         for (Contract contract : Contract.getContractRegistry()) {
             
             // Forzamos la actualización de estado por si ya expiró hoy
@@ -39,9 +46,9 @@ public class AlertEngine {
             if (contract.isExpiringSoon(CONTRACT_EXPIRING_DAYS)) {
                 long daysLeft = ChronoUnit.DAYS.between(today, contract.getExpirationDate());
                 
-                enqueueUniqueAlert(new Alert(
+                enqueueUniqueAlert(context, new Alert(
                     generateId(), 
-                    AlertType.CONTRACT_EXPIRING, // Usamos el tipo correcto de tu Enum
+                    AlertType.CONTRACT_EXPIRING, 
                     "El contrato '" + contract.getName() + "' vencerá en " + daysLeft + " días (Expira: " + contract.getExpirationDateFormatted() + ").",
                     contract.getId(), 
                     "CONTRACT"
@@ -49,7 +56,7 @@ public class AlertEngine {
             }
         }
 
-      
+        // 2. Evaluación de Propiedades (Visitas, Estancamiento, Alta Demanda)
         for (Property p : context.getPropertyManager().getProperties()) {
             
             int visitCount = 0;
@@ -68,7 +75,7 @@ public class AlertEngine {
             if ("RESERVED".equalsIgnoreCase(p.getPropertyStatus()) && lastVisitDate != null) {
                 long daysReserved = ChronoUnit.DAYS.between(lastVisitDate, now);
                 if (daysReserved >= DAYS_RESERVATION_STALE) {
-                    enqueueUniqueAlert(new Alert(
+                    enqueueUniqueAlert(context, new Alert(
                         generateId(), AlertType.RESERVATION_STALE,
                         "El inmueble está RESERVADO y no registra movimientos ni cierres desde hace " + daysReserved + " días.",
                         p.getCode(), "PROPERTY"
@@ -80,7 +87,7 @@ public class AlertEngine {
             if (lastVisitDate != null) {
                 long daysSinceLastVisit = ChronoUnit.DAYS.between(lastVisitDate, now);
                 if (daysSinceLastVisit >= DAYS_NO_VISITS && "AVAILABLE".equalsIgnoreCase(p.getPropertyStatus())) {
-                    enqueueUniqueAlert(new Alert(
+                    enqueueUniqueAlert(context, new Alert(
                         generateId(), AlertType.PROPERTY_NO_VISITS,
                         "Alerta de estancamiento: Inmueble disponible sin visitas desde hace " + daysSinceLastVisit + " días.",
                         p.getCode(), "PROPERTY"
@@ -90,7 +97,7 @@ public class AlertEngine {
 
             // Propiedades con alta demanda
             if (visitCount >= HIGH_DEMAND_THRESHOLD) {
-                enqueueUniqueAlert(new Alert(
+                enqueueUniqueAlert(context, new Alert(
                     generateId(), AlertType.PROPERTY_HIGH_DEMAND,
                     "Inmueble caliente: Registra un alto flujo de interés con " + visitCount + " visitas en total.",
                     p.getCode(), "PROPERTY"
@@ -98,11 +105,12 @@ public class AlertEngine {
             }
         }
 
+        // 3. Evaluación de Visitas Pendientes por Confirmar
         for (VisitRequest v : context.getVisitManager().getVisitHistory()) {
             String status = v.getStatus().toUpperCase();
             if (status.equals("PENDING") || status.equals("PENDIENTE")) {
                 if (v.getDateTime().isBefore(now.plusDays(1))) {
-                    enqueueUniqueAlert(new Alert(
+                    enqueueUniqueAlert(context, new Alert(
                         generateId(), AlertType.VISIT_PENDING_CONFIRM,
                         "Urgente: Visita programada para el " + v.getDateTime() + " sigue pendiente por confirmar.",
                         v.getClient().getId() + "-" + v.getProperty().getCode(), "VISIT"
@@ -111,6 +119,7 @@ public class AlertEngine {
             }
         }
 
+        // 4. Evaluación de Clientes Desatendidos (Falta de Seguimiento)
         for (Client c : context.getClientManager().getAllClients()) {
             LocalDateTime lastInteraction = null;
 
@@ -125,7 +134,7 @@ public class AlertEngine {
             if (lastInteraction != null) {
                 long daysWithoutFollowUp = ChronoUnit.DAYS.between(lastInteraction, now);
                 if (daysWithoutFollowUp >= DAYS_NO_FOLLOWUP) {
-                    enqueueUniqueAlert(new Alert(
+                    enqueueUniqueAlert(context, new Alert(
                         generateId(), AlertType.CLIENT_NO_FOLLOWUP,
                         "Desatención: El cliente (" + c.getName() + ") no tiene interacciones ni agendamientos hace " + daysWithoutFollowUp + " días.",
                         c.getId(), "CLIENT"
@@ -135,12 +144,16 @@ public class AlertEngine {
         }
     }
 
-    private static void enqueueUniqueAlert(Alert newAlert) {
-        AppContext context = AppContext.getInstance();
+    /**
+     * Encola una alerta asegurándose de evitar duplicados activos.
+     * Utiliza explícitamente el contexto inyectado en lugar de llamar al Singleton.
+     */
+    private static void enqueueUniqueAlert(AppContext context, Alert newAlert) {
         boolean isDuplicate = false;
 
         proyectofinal.EstructurasDeDatos.Colas.Queue<Alert> tempQueue = new proyectofinal.EstructurasDeDatos.Colas.Queue<>();
         
+        // Vaciamos temporalmente la cola para buscar repetidos
         while (!context.getPendingAlerts().isEmpty()) {
             Alert current = context.getPendingAlerts().dequeue();
             if (current.getRelatedEntityCode().equals(newAlert.getRelatedEntityCode()) &&
@@ -150,10 +163,12 @@ public class AlertEngine {
             tempQueue.enqueue(current);
         }
 
+        // Restauramos los elementos a la cola original en el orden correcto
         while (!tempQueue.isEmpty()) {
             context.getPendingAlerts().enqueue(tempQueue.dequeue());
         }
 
+        // Si no existe un duplicado idéntico pendiente, agregamos la nueva alerta
         if (!isDuplicate) {
             context.getPendingAlerts().enqueue(newAlert);
         }

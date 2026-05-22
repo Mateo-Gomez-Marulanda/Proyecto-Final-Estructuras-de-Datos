@@ -16,6 +16,7 @@ public class Client {
     private String searchStatus;
     private String password;
     private String interestZones;
+    private String interestCity;
     private SimpleLinkedList<Property> favoriteProperties = new SimpleLinkedList<>();
     private SimpleLinkedList<Property> visitedPropertyHistory = new SimpleLinkedList<>();
 
@@ -32,11 +33,13 @@ public class Client {
         this.searchStatus = "INACTIVE";
         this.budget = 0.0;
         this.minRooms = 0;
-        this.interestZones= "Sin definir";
+        this.interestZones = "Sin definir";
+        this.interestCity = "Sin definir";
     }
 
+    // Constructor Completo (Usado por el PersistenceManager y cargas del sistema)
     public Client(String id, String name, String email, String phoneNumber, String clientType,
-            double budget, String interestZones, TypeProperty desiredPropertyType, int minRooms,
+            double budget, String interestZones, String interestCity, TypeProperty desiredPropertyType, int minRooms,
             String searchStatus, String password) {
         this.id = id;
         this.name = name;
@@ -49,6 +52,15 @@ public class Client {
         this.searchStatus = searchStatus;
         this.password = password;
         this.interestZones = interestZones;
+        this.interestCity = interestCity;
+    }
+
+    public String getInterestCity() {
+        return interestCity;
+    }
+
+    public void setInterestCity(String interestCity) {
+        this.interestCity = interestCity;
     }
 
     public String getId() {
@@ -157,8 +169,8 @@ public class Client {
 
     @Override
     public String toString() {
-        return String.format("ID: %s | Name: %s | Status: %s | Type: %s",
-                id, name, searchStatus, clientType);
+        return String.format("ID: %s | Name: %s | Status: %s | Type: %s | City: %s",
+                id, name, searchStatus, clientType, interestCity);
     }
 
     public String toFileLine() {
@@ -169,7 +181,8 @@ public class Client {
                 (phoneNumber != null ? phoneNumber : "N/A"),
                 clientType,
                 String.valueOf(budget),
-                (interestZones != null ? interestZones.toString() : "NONE"),
+                (interestZones != null ? interestZones : "NONE"),
+                (interestCity != null ? interestCity : "NONE"), // <-- Guardado en el archivo de texto
                 (desiredPropertyType != null ? desiredPropertyType.name() : "NONE"),
                 String.valueOf(minRooms),
                 searchStatus,

@@ -152,24 +152,37 @@ public class PersistenceManager {
 
             String[] d = line.split(";");
 
-            // 1. Parseos seguros
-            double budget = Double.parseDouble(d[5].replace(",", "."));
-            TypeProperty type = TypeProperty.valueOf(d[7].toUpperCase()); // <--- Aquí ya extraes el Enum
-            int rooms = Integer.parseInt(d[8]);
+            // SEGURIDAD: Si la línea pertenece a un rol administrativo, se ignora
+            String tipoCliente = d[4].toUpperCase();
+            if (tipoCliente.equals("ADMIN") || tipoCliente.equals("ADVISOR") || tipoCliente.equals("ASESOR")) {
+                continue;
+            }
 
-            // 2. Inyección al Manager
+            // 1. Parseos seguros con los nuevos índices desplazados
+            double budget     = Double.parseDouble(d[5].replace(",", "."));
+            String zones      = d[6];
+            String city       = d[7]; // <--- NUEVO: d[7] ahora es la ciudad de interés
+            
+            // Los índices de aquí en adelante aumentan en +1 debido al desplazamiento
+            TypeProperty type = TypeProperty.valueOf(d[8].toUpperCase()); 
+            int rooms         = Integer.parseInt(d[9]);
+            String status     = d[10];
+            String password   = d[11];
+
+            // 2. Inyección al Manager utilizando la firma actualizada de registerFull
             cm.registerFull(
-                    d[0], // id
-                    d[1], // name
-                    d[2], // email
-                    d[3], // phoneNumber
-                    d[4], // clientType
+                    d[0],     // id
+                    d[1],     // name
+                    d[2],     // email
+                    d[3],     // phoneNumber
+                    tipoCliente,
                     budget,
-                    d[6], // interestZones
-                    type, // <--- SOLUCIÓN: Pasa la variable 'type' (Enum), NO el String d[7]
+                    zones,
+                    city,     // <--- Pasamos la ciudad al constructor/manager
+                    type,     
                     rooms,
-                    d[9], // searchStatus
-                    d[10] // password
+                    status,   
+                    password  
             );
         }
     } catch (Exception e) {

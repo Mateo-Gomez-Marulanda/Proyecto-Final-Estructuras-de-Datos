@@ -7,6 +7,8 @@ import javafx.scene.control.TextField;
 import javafx.application.Platform;
 
 import proyectofinal.Main;
+// IMPORTANTE: Asegúrate de importar tu gestor de persistencia e hilos de contexto
+import proyectofinal.SistemaGestion.Persistencia.PersistenceManager;
 
 public class RegisterController {
 
@@ -39,8 +41,18 @@ public class RegisterController {
         }
 
         try {
-            AppContext.getInstance().getClientManager().registerBasic(
+            AppContext context = AppContext.getInstance();
+
+            // 2. Registramos el cliente en la memoria (Estructura de Datos)
+            context.getClientManager().registerBasic(
                 id, nombre, correo, password, telefono
+            );
+
+            PersistenceManager.saveAll(
+                context.getPropertyManager(),
+                context.getClientManager(),
+                context.getAdvisors(), 
+                context.getVisitManager()
             );
 
             mostrarExito("¡Cuenta creada exitosamente! Redirigiendo...");
@@ -62,7 +74,7 @@ public class RegisterController {
     private void navegarAlLoginConRetraso() {
         new Thread(() -> {
             try {
-                Thread.sleep(1500); // Pausa para que el usuario lea el mensaje de éxito
+                Thread.sleep(1500); 
                 Platform.runLater(() -> {
                     try {
                         Main.cargarLogin();

@@ -1,1 +1,2 @@
 123;El matadero;Cali;Norte;APARTAMENTO;Venta;2313213,00;23,00;4;2;Disponible;true;NONE
+234;Oro negro;Armenia;Norte;CASA;Venta;6000000,00;85,00;3;2;Disponible;true;NONE

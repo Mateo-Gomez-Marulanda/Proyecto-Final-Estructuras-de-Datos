@@ -51,13 +51,13 @@ public class AppContext {
         // ENTRADA SÍNCRONA: Pasamos 'clientManager' directamente. 
         // Desaparece el bucle 'for' porque la indexación en la HashTable ocurre abajo.
         PersistenceManager.loadAll(propertyManager, clientManager, advisors, visitManager);
-        AlertEngine.checkAndGenerateAlerts();
+        AlertEngine.checkAndGenerateAlerts(this);
     }
 
     private void crearAdminSiNoExiste() {
         if (clientManager.getClientTable().get("admin") != null) return;
         clientManager.registerFull("admin", "Administrador", "admin@proptech.com",
-                "000-000-0000", "ADMIN", 0.0, "N/A", null, 0, "ACTIVE", "Admin1234");
+                "000-000-0000", "ADMIN", 0.0,"N/A", "N/A", null, 0, "ACTIVE", "Admin1234");
     }
 
     public void saveAll() {

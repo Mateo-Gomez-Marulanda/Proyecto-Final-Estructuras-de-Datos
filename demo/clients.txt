@@ -1,2 +1,3 @@
 admin;Administrador;ejemplo@gmail.com;456;ADMIN;200000,00;Sin definir;APARTAMENTO;2;ACTIVE;Admin1234
 789;Pedro;ejemplo@gmail.com;456;Regular;0,00;Sin definir;APARTAMENTO;2;INACTIVE;quetalbro
+1234;Andres;ejemplo@gmail.com;546;POTENTIAL;5500000,00;Norte;CASA;3;INACTIVE;Andres1234

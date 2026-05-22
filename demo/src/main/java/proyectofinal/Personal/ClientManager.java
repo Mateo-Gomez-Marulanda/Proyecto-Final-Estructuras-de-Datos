@@ -17,44 +17,50 @@ public class ClientManager {
 
     public void login(String id, String password) {
         Client found = clientTable.get(id);
-        if (found == null) throw new RuntimeException("Usuario no encontrado.");
-        if (!found.getPassword().equals(password)) throw new RuntimeException("Contraseña incorrecta.");
-        
+        if (found == null)
+            throw new RuntimeException("Usuario no encontrado.");
+        if (!found.getPassword().equals(password))
+            throw new RuntimeException("Contraseña incorrecta.");
+
         this.current = found;
     }
 
     // Registro rápido para GUI: incluye validación de seguridad de contraseña
     public void registerBasic(String id, String name, String email, String password, String phoneNumber) {
-        if (clientTable.containsKey(id)) throw new RuntimeException("El ID ya existe.");
-        
+        if (clientTable.containsKey(id))
+            throw new RuntimeException("El ID ya existe.");
+
         validatePassword(password);
-        
-        Client newClient = new Client(id, name, email, password,phoneNumber);
+
+        Client newClient = new Client(id, name, email, password, phoneNumber);
         clients.add(newClient);
         clientTable.put(id, newClient);
     }
 
     // Registro completo: útil para la carga masiva desde archivos persistentes
     public void registerFull(String id, String name, String email, String phoneNumber, String clientType,
-                            double budget, String interestZones, TypeProperty desiredPropertyType, 
-                            int minRooms, String searchStatus, String password) {
-        
-        Client newClient = new Client(id, name, email, phoneNumber, clientType, budget, 
-                                     interestZones, desiredPropertyType, minRooms, searchStatus, password);
+            double budget, String interestZones, String interestCity, TypeProperty desiredPropertyType, int minRooms,
+            String searchStatus, String password) {
+
+        Client newClient = new Client(id, name, email, phoneNumber, clientType, budget,
+                interestZones,interestCity,desiredPropertyType, minRooms, searchStatus, password);
         clients.add(newClient);
         clientTable.put(id, newClient);
     }
 
     // Valida requisitos mínimos de seguridad antes de crear el objeto
     private void validatePassword(String password) {
-        if (password == null || password.length() < 8) 
+        if (password == null || password.length() < 8)
             throw new RuntimeException("Contraseña debe tener al menos 8 caracteres.");
 
         boolean hasDigit = false, hasUpper = false, hasLower = false;
         for (char c : password.toCharArray()) {
-            if (Character.isDigit(c)) hasDigit = true;
-            else if (Character.isUpperCase(c)) hasUpper = true;
-            else if (Character.isLowerCase(c)) hasLower = true;
+            if (Character.isDigit(c))
+                hasDigit = true;
+            else if (Character.isUpperCase(c))
+                hasUpper = true;
+            else if (Character.isLowerCase(c))
+                hasLower = true;
         }
 
         if (!hasDigit || !hasUpper || !hasLower) {
@@ -64,17 +70,19 @@ public class ClientManager {
 
     // Elimina de forma síncrona en Lista y HashTable para mantener integridad
     public void deleteAccount() {
-        if (current == null) throw new RuntimeException("No hay sesión activa.");
-        
+        if (current == null)
+            throw new RuntimeException("No hay sesión activa.");
+
         String idToDelete = current.getId();
-        clients.remove(current);       
-        clientTable.remove(idToDelete); 
+        clients.remove(current);
+        clientTable.remove(idToDelete);
         logout();
     }
 
-    public void updateClient(String email, String phoneNumber, double budget, 
-                             String interestZones, TypeProperty desiredPropertyType, int minRooms) {
-        if (current == null) throw new RuntimeException("No hay sesión activa para actualizar.");
+    public void updateClient(String email, String phoneNumber, double budget,
+            String interestZones, TypeProperty desiredPropertyType, int minRooms) {
+        if (current == null)
+            throw new RuntimeException("No hay sesión activa para actualizar.");
 
         current.setEmail(email);
         current.setPhoneNumber(phoneNumber);
@@ -86,36 +94,68 @@ public class ClientManager {
 
     // Filtra el inventario basado en el perfil del cliente loggeado
     public SimpleLinkedList<Property> getRecommendations(SimpleLinkedList<Property> inventory) {
-        if (current == null) return new SimpleLinkedList<>();
+        if (current == null)
+            return new SimpleLinkedList<>();
 
         SimpleLinkedList<Property> matches = new SimpleLinkedList<>();
-        for (Property p : inventory) {
-            boolean matchZone = p.getZone().equalsIgnoreCase(current.getInterestZones());
-            boolean matchType = p.getType().equals(current.getDesiredPropertyType());
-            boolean matchRooms = p.getRooms() >= current.getMinRooms();
-            boolean matchPrice = p.getPrice() <= (current.getBudget() * 1.10);
+        double maxBudget = current.getBudget() * 1.10; // Margen del 10%
 
-            if (matchType && matchRooms && matchPrice && matchZone) {
+        for (Property p : inventory) {
+            // FILTRO DURO: Si no está disponible o supera el presupuesto máximo, se ignora
+            if (!p.isAvailable() || p.getPrice() > maxBudget) {
+                continue;
+            }
+
+            int score = 0;
+
+            // FILTROS BLANDOS: Sumamos puntos por cada coincidencia
+            if (p.getZone().equalsIgnoreCase(current.getInterestZones())) {
+                score += 5;
+            }
+            if (p.getType().equals(current.getDesiredPropertyType())) {
+                score += 3;
+            }
+            if (p.getRooms() >= current.getMinRooms()) {
+                score += 2;
+            }
+            if (p.getPrice() <= current.getBudget()) {
+                score += 1; // Punto extra por estar en el presupuesto ideal sin el 10%
+            }
+
+            // Si cumple con el umbral mínimo de afinidad, se añade directamente
+            if (score >= 5) {
                 matches.add(p);
             }
         }
+
         return matches;
     }
 
-    public void logout() { this.current = null; }
-    public Client getCurrent() { return current; }
-    public SimpleLinkedList<Client> getAllClients() { return clients; }
+    public void logout() {
+        this.current = null;
+    }
+
+    public Client getCurrent() {
+        return current;
+    }
+
+    public SimpleLinkedList<Client> getAllClients() {
+        return clients;
+    }
+
     public HashTable<String, Client> getClientTable() {
         return clientTable;
     }
+
     public void setClientTable(HashTable<String, Client> clientTable) {
         this.clientTable = clientTable;
     }
 
     public void markAsFavorite(Property p) {
-    if (current == null) throw new RuntimeException("No hay sesión activa.");
-    if (current.getFavoriteProperties().indexOf(p) == -1) {
-        current.getFavoriteProperties().add(p);
+        if (current == null)
+            throw new RuntimeException("No hay sesión activa.");
+        if (current.getFavoriteProperties().indexOf(p) == -1) {
+            current.getFavoriteProperties().add(p);
+        }
     }
-}
 }
