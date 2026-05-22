@@ -9,6 +9,7 @@ import proyectofinal.Personal.Advisor;
 import proyectofinal.Personal.ClientManager;
 import proyectofinal.SistemaGestion.AgendamientoVisitas.VisitManager;
 import proyectofinal.SistemaGestion.Alertas.Alert;
+import proyectofinal.SistemaGestion.Alertas.AlertEngine;
 import proyectofinal.SistemaGestion.GestionInmuebles.PropertyManager;
 import proyectofinal.SistemaGestion.Observer.ContractGeneratorObserver;
 import proyectofinal.SistemaGestion.Observer.OperationPublisher;
@@ -47,10 +48,10 @@ public class AppContext {
     }
 
     private void loadPersistedData() {
-        PersistenceManager.loadAll(propertyManager, clientManager.getAllClients(), advisors, visitManager);
-        for (var client : clientManager.getAllClients()) {
-            clientManager.getClientTable().put(client.getId(), client);
-        }
+        // ENTRADA SÍNCRONA: Pasamos 'clientManager' directamente. 
+        // Desaparece el bucle 'for' porque la indexación en la HashTable ocurre abajo.
+        PersistenceManager.loadAll(propertyManager, clientManager, advisors, visitManager);
+        AlertEngine.checkAndGenerateAlerts();
     }
 
     private void crearAdminSiNoExiste() {
@@ -60,7 +61,8 @@ public class AppContext {
     }
 
     public void saveAll() {
-        PersistenceManager.saveAll(propertyManager, clientManager.getAllClients(), advisors, visitManager);
+        // Guardamos pasándole el manager para extraer la lista limpiamente
+        PersistenceManager.saveAll(propertyManager, clientManager, advisors, visitManager);
     }
 
     public PropertyManager getPropertyManager()              { return propertyManager; }

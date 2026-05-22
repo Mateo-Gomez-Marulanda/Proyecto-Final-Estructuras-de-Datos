@@ -10,6 +10,8 @@ import javafx.scene.control.*;
 import proyectofinal.SistemaGestion.Alertas.Alert;
 import proyectofinal.SistemaGestion.Alertas.AlertStatus;
 import proyectofinal.SistemaGestion.Alertas.AlertType;
+import proyectofinal.SistemaGestion.Alertas.AlertEngine; // Importamos el motor
+import proyectofinal.EstructurasDeDatos.Colas.Queue;     // Estructura de datos propia
 
 public class AlertasController {
 
@@ -61,14 +63,12 @@ public class AlertasController {
     // ─────────────────────────────────────────────────────────
 
     private void configurarColumnasPendientes() {
-        // Alert has JavaFX properties — bind directly
         colPendId.setCellValueFactory(d ->          d.getValue().idProperty());
         colPendTipo.setCellValueFactory(d ->         d.getValue().alertTypeProperty().asString());
         colPendDescripcion.setCellValueFactory(d ->  d.getValue().descriptionProperty());
         colPendEntidad.setCellValueFactory(d ->      d.getValue().relatedEntityTypeProperty());
         colPendCodigo.setCellValueFactory(d ->       d.getValue().relatedEntityCodeProperty());
-        colPendFecha.setCellValueFactory(d ->        new SimpleStringProperty(
-                d.getValue().getGeneratedAtFormatted()));
+        colPendFecha.setCellValueFactory(d ->        new SimpleStringProperty(d.getValue().getGeneratedAtFormatted()));
     }
 
     private void configurarColumnasHistorial() {
@@ -76,10 +76,8 @@ public class AlertasController {
         colHistTipo.setCellValueFactory(d ->          d.getValue().alertTypeProperty().asString());
         colHistDescripcion.setCellValueFactory(d ->   d.getValue().descriptionProperty());
         colHistEstado.setCellValueFactory(d ->        d.getValue().alertStatusProperty().asString());
-        colHistGenerada.setCellValueFactory(d ->      new SimpleStringProperty(
-                d.getValue().getGeneratedAtFormatted()));
-        colHistGestionada.setCellValueFactory(d ->    new SimpleStringProperty(
-                d.getValue().getResolvedAtFormatted()));
+        colHistGenerada.setCellValueFactory(d ->      new SimpleStringProperty(d.getValue().getGeneratedAtFormatted()));
+        colHistGestionada.setCellValueFactory(d ->    new SimpleStringProperty(d.getValue().getResolvedAtFormatted()));
         colHistObservaciones.setCellValueFactory(d -> d.getValue().observationsProperty());
     }
 
@@ -109,9 +107,7 @@ public class AlertasController {
 
     private void refrescarPendientes() {
         pendingSnapshot = FXCollections.observableArrayList();
-        // Drain the queue into a snapshot for display — non-destructive
         var queue = AppContext.getInstance().getPendingAlerts();
-        // Since Queue is FIFO, iterate using its iterator (Iterable<T>)
         for (Alert a : queue) {
             pendingSnapshot.add(a);
         }
@@ -128,12 +124,12 @@ public class AlertasController {
     }
 
     private void actualizarContadores() {
-        int pendientes = 0, revisadas = 0, descartadas = 0;
+        int revisadas = 0, descartadas = 0;
         for (Alert a : AppContext.getInstance().getAlertHistory()) {
             if (a.getAlertStatus() == AlertStatus.REVIEWED)  revisadas++;
             if (a.getAlertStatus() == AlertStatus.DISMISSED) descartadas++;
         }
-        pendientes = AppContext.getInstance().getPendingAlerts().size();
+        int pendientes = AppContext.getInstance().getPendingAlerts().size();
         numPendientes.setText(String.valueOf(pendientes));
         numRevisadas.setText(String.valueOf(revisadas));
         numDescartadas.setText(String.valueOf(descartadas));
@@ -153,6 +149,8 @@ public class AlertasController {
         dialog.setHeaderText("Observaciones (opcional):");
         dialog.showAndWait().ifPresent(obs -> {
             selected.markAsReviewed(obs.isEmpty() ? "Sin observaciones" : obs);
+            // EFECTO COLATERAL SOLUCIONADO: Eliminar de la cola de pendientes primero
+            removerDeColaPendientes(selected);
             moverAlHistorial(selected);
         });
     }
@@ -167,6 +165,8 @@ public class AlertasController {
         dialog.setHeaderText("Motivo del descarte:");
         dialog.showAndWait().ifPresent(motivo -> {
             selected.markAsDismissed(motivo.isEmpty() ? "Sin motivo" : motivo);
+            // EFECTO COLATERAL SOLUCIONADO: Eliminar de la cola de pendientes primero
+            removerDeColaPendientes(selected);
             moverAlHistorial(selected);
         });
     }
@@ -174,35 +174,41 @@ public class AlertasController {
     @FXML
     public void procesarSiguienteAlerta() {
         var queue = AppContext.getInstance().getPendingAlerts();
-        if (queue.isEmpty()) { mostrarInfo("No hay alertas pendientes."); return; }
+        if (queue.isEmpty()) { 
+            mostrarInfo("No hay alertas pendientes."); 
+            return; 
+        }
+        // Atendemos de forma nativa el frente de la estructura FIFO
         Alert next = queue.dequeue();
-        mostrarInfo("Procesando: " + next.getDescription()
-                + "\nEntidad: " + next.getRelatedEntityType()
-                + " — " + next.getRelatedEntityCode());
+        
+        mostrarInfo("Procesando la alerta más antigua en cola:\n" 
+                + "ID: " + next.getId() + "\n"
+                + "Descripción: " + next.getDescription() + "\n"
+                + "Entidad: " + next.getRelatedEntityType() + " — " + next.getRelatedEntityCode());
+        
+        // Al ser procesada directamente mediante descolamiento rápido, pasa al historial como REVISADA por defecto
+        next.markAsReviewed("Procesada secuencialmente por el asesor.");
+        AppContext.getInstance().getAlertHistory().add(next);
+        
         refrescarTodo();
     }
 
     @FXML
     public void generarAlertasAutomaticas() {
-        // Check all contracts for expiring soon (within 30 days)
-        int generadas = 0;
-        for (var contract : proyectofinal.SistemaGestion.Contratos.Contract.getContractRegistry()) {
-            contract.checkExpiration();
-            if (contract.isExpiringSoon(30)) {
-                Alert alerta = new Alert(
-                        "ALT-" + System.currentTimeMillis(),
-                        proyectofinal.SistemaGestion.Alertas.AlertType.CONTRACT_EXPIRING_SOON,
-                        "Contrato próximo a vencer: " + contract.getName(),
-                        contract.getId(),
-                        "CONTRACT"
-                );
-                AppContext.getInstance().getPendingAlerts().enqueue(alerta);
-                generadas++;
-            }
+        // Obtenemos el tamaño de la cola antes de ejecutar el análisis matemático del motor
+        int inicial = AppContext.getInstance().getPendingAlerts().size();
+        
+        // Delegamos TODAS las reglas de negocio (Contratos, Inmuebles, Clientes, Visitas) al motor centralizado
+        AlertEngine.checkAndGenerateAlerts();
+        
+        int finalAlerts = AppContext.getInstance().getPendingAlerts().size();
+        int creadas = finalAlerts - inicial;
+
+        if (creadas > 0) {
+            mostrarInfo("¡Análisis completado! Se detectaron y agregaron " + creadas + " alertas nuevas a la cola.");
+        } else {
+            mostrarInfo("El sistema se encuentra al día. No se detectaron situaciones de riesgo urgentes.");
         }
-        mostrarInfo(generadas > 0
-                ? generadas + " alerta(s) generada(s)."
-                : "No se detectaron situaciones que requieran alertas.");
         refrescarTodo();
     }
 
@@ -232,6 +238,23 @@ public class AlertasController {
     // ─────────────────────────────────────────────────────────
     // Helpers
     // ─────────────────────────────────────────────────────────
+
+    private void removerDeColaPendientes(Alert target) {
+        Queue<Alert> queue = AppContext.getInstance().getPendingAlerts();
+        Queue<Alert> aux = new Queue<>();
+
+        // Ciclo no destructivo para filtrar el elemento seleccionado usando una cola auxiliar
+        while (!queue.isEmpty()) {
+            Alert actual = queue.dequeue();
+            if (!actual.getId().equals(target.getId())) {
+                aux.enqueue(actual);
+            }
+        }
+        // Reconstruimos la cola original sin la alerta procesada
+        while (!aux.isEmpty()) {
+            queue.enqueue(aux.dequeue());
+        }
+    }
 
     private void moverAlHistorial(Alert alerta) {
         AppContext.getInstance().getAlertHistory().add(alerta);
