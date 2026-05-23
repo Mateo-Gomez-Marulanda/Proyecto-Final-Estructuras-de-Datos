@@ -8,6 +8,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import proyectofinal.Inmueble.Property;
 import proyectofinal.Inmueble.TypeProperty;
+import proyectofinal.SistemaGestion.GestionInmuebles.PropertySorter;
+import proyectofinal.EstructurasDeDatos.Listas.SimpleLinkedList;
 
 public class ClientCatalogController {
 
@@ -27,6 +29,7 @@ public class ClientCatalogController {
     @FXML private ComboBox<TypeProperty> filtroTipo;
     @FXML private ComboBox<String>       filtroFinalidad;
     @FXML private ComboBox<String>       filtroPrecio;
+    @FXML private ComboBox<String>       filtroOrden;
 
     @FXML private Button btnFavorito;
     @FXML private Button btnAgendar;
@@ -47,7 +50,7 @@ public class ClientCatalogController {
         colCodigo.setCellValueFactory(d ->    new SimpleStringProperty(d.getValue().getCode()));
         colDireccion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getAddress()));
         colCiudad.setCellValueFactory(d ->    new SimpleStringProperty(d.getValue().getCity()));
-        colZona.setCellValueFactory(d ->      new SimpleStringProperty(d.getValue().getZone()));
+        colZona.setCellValueFactory(d ->      new SimpleStringProperty(d.getValue().getZone().name()));
         colTipo.setCellValueFactory(d ->      new SimpleStringProperty(d.getValue().getType().toString()));
         colFinalidad.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getPurpose()));
         colPrecio.setCellValueFactory(d ->    new SimpleStringProperty(
@@ -66,6 +69,60 @@ public class ClientCatalogController {
         filtroPrecio.getItems().setAll(
                 "Hasta $500.000", "Hasta $1.000.000",
                 "Hasta $5.000.000", "Más de $5.000.000");
+                
+        // Opciones de ordenamiento
+        if (filtroOrden != null) {
+            filtroOrden.getItems().setAll(
+                "Precio: Menor a Mayor", 
+                "Precio: Mayor a Menor", 
+                "Área: Mayor a Menor", 
+                "Más Visitados (Demanda)"
+            );
+            filtroOrden.setOnAction(e -> aplicarOrden());
+        }
+    }
+
+    @FXML
+    public void aplicarOrden() {
+        if (filtroOrden.getValue() == null) return;
+        
+        String seleccion = filtroOrden.getValue();
+        SimpleLinkedList<Property> listaOrdenada = null;
+        
+        var pm = AppContext.getInstance().getPropertyManager();
+        var vm = AppContext.getInstance().getVisitManager();
+
+        switch (seleccion) {
+            case "Precio: Menor a Mayor":
+                listaOrdenada = pm.getPriceTree().getInOrderList(); 
+                break;
+            case "Precio: Mayor a Menor":
+                listaOrdenada = pm.getPriceTree().getReverseInOrderList();
+                break;
+            case "Área: Mayor a Menor":
+                listaOrdenada = PropertySorter.sortProperties(
+                        pm.getProperties(), 
+                        PropertySorter.SortCriterion.AREA_DESC, 
+                        vm
+                );
+                break;
+            case "Más Visitados (Demanda)":
+                listaOrdenada = PropertySorter.sortProperties(
+                        pm.getProperties(), 
+                        PropertySorter.SortCriterion.DEMAND_DESC, 
+                        vm
+                );
+                break;
+        }
+
+        if (listaOrdenada != null) {
+            masterList.clear();
+            for (Property p : listaOrdenada) {
+                if (p.isAvailable()) {
+                    masterList.add(p);
+                }
+            }
+        }
     }
 
     private void cargarDatos() {
@@ -100,12 +157,13 @@ public class ClientCatalogController {
 
             boolean matchTexto = texto.isEmpty()
                     || p.getCity().toLowerCase().contains(texto)
-                    || p.getZone().toLowerCase().contains(texto)
+                    || p.getZone().name().toLowerCase().contains(texto)
                     || p.getAddress().toLowerCase().contains(texto);
-            boolean matchTipo     = tipo == null || p.getType() == tipo;
+            
+            boolean matchTipo      = tipo == null || p.getType() == tipo;
             boolean matchFinalidad = finalidad == null
                     || p.getPurpose().equalsIgnoreCase(finalidad);
-            boolean matchPrecio   = rango == null || matchesPrecio(p.getPrice(), rango);
+            boolean matchPrecio    = rango == null || matchesPrecio(p.getPrice(), rango);
 
             return matchTexto && matchTipo && matchFinalidad && matchPrecio;
         });
@@ -127,6 +185,9 @@ public class ClientCatalogController {
         filtroTipo.setValue(null);
         filtroFinalidad.setValue(null);
         filtroPrecio.setValue(null);
+        if (filtroOrden != null) filtroOrden.setValue(null);
+        
+        cargarDatos(); 
         filteredList.setPredicate(p -> p.isAvailable());
     }
 

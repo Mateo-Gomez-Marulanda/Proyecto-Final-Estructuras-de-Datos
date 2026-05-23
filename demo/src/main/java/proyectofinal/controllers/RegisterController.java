@@ -52,7 +52,8 @@ public class RegisterController {
                 context.getPropertyManager(),
                 context.getClientManager(),
                 context.getAdvisors(), 
-                context.getVisitManager()
+                context.getVisitManager(),
+                context.getContracts()
             );
 
             mostrarExito("¡Cuenta creada exitosamente! Redirigiendo...");

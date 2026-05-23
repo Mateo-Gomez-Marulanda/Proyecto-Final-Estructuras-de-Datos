@@ -103,14 +103,14 @@ public class ClientManager {
 
         for (Property p : inventory) {
             // FILTRO DURO: Si no está disponible o supera el presupuesto máximo, se ignora
-            if (!p.isAvailable() || p.getPrice() > maxBudget) {
+            if (!p.isAvailable() || p.getPrice() > maxBudget || !p.getCity().equalsIgnoreCase(current.getInterestCity())) {
                 continue;
             }
 
             int score = 0;
 
             // FILTROS BLANDOS: Sumamos puntos por cada coincidencia
-            if (p.getZone().equalsIgnoreCase(current.getInterestZones())) {
+            if (p.getZone().name().equalsIgnoreCase(current.getInterestZones())) {
                 score += 5;
             }
             if (p.getType().equals(current.getDesiredPropertyType())) {

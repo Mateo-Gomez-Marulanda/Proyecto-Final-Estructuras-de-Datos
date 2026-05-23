@@ -34,6 +34,10 @@
                   styleClass="combo-filtro"
                   promptText="Rango de precio"
                   onAction="#filtrar"/>
+        <ComboBox fx:id="filtroOrden"
+                  styleClass="combo-filtro"
+                  promptText="Ordenar por..."
+                  onAction="#aplicarOrden"/>
         <Button text="Limpiar" styleClass="boton-secundario" onAction="#limpiarFiltros"/>
     </HBox>
 

@@ -93,10 +93,11 @@
                     <!-- Zona -->
                     <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
                         <Label text="Zona *"
-                               style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
-                        <TextField fx:id="campoZona"
-                                   promptText="Ej: Norte, Sur, Centro"
-                                   styleClass="campo-texto"/>
+                                style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
+                        <ComboBox fx:id="campoZona"
+                                    promptText="Seleccione zona"
+                                    maxWidth="Infinity"
+                                    styleClass="combo-filtro"/>
                     </VBox>
                 </GridPane>
             </VBox>

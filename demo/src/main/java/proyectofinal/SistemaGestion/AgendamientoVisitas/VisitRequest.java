@@ -24,7 +24,6 @@ public class VisitRequest {
         this.notes = "";
     }
 
-
     public void markAsCompleted() {
         this.status = "COMPLETED";
     }
@@ -39,6 +38,12 @@ public class VisitRequest {
 
     public void markAsRecheduled(){
         this.status= "RECHEDULED";
+    }
+
+    public void setStatus(String status) {
+        if (status != null && !status.trim().isEmpty()) {
+            this.status = status.toUpperCase();
+        }
     }
 
     public Client getClient() {
@@ -81,7 +86,6 @@ public class VisitRequest {
         return String.format("[%s] Cliente: %s - Inmueble: %s - Fecha: %s", 
                 status, client.getName(), property.getCode(), getFormattedDate());
     }
-
 
     public void setDateTime(LocalDateTime newDate) {
         this.dateTime = newDate;

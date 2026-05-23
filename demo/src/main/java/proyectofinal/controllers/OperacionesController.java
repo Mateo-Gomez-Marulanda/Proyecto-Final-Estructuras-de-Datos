@@ -214,6 +214,9 @@ public class OperacionesController implements OperationObserver {
                     op.advanceStatus();
                     tablaOperaciones.refresh();
                     actualizarContadores();
+                    
+                    AppContext.getInstance().saveAll();
+                    
                 } catch (RuntimeException e) {
                     mostrarError(e.getMessage());
                 }

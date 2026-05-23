@@ -7,6 +7,7 @@ import javafx.util.StringConverter;
  
 import proyectofinal.Inmueble.Property;
 import proyectofinal.Inmueble.TypeProperty;
+import proyectofinal.Inmueble.ZoneProperty;
 import proyectofinal.Personal.Advisor;
  
 import java.util.function.Consumer;
@@ -20,7 +21,7 @@ public class RegistroInmuebleController {
     // ── Ubicación ─────────────────────────────────────────────
     @FXML private TextField campoDireccion;
     @FXML private TextField campoCiudad;
-    @FXML private TextField campoZona;
+    @FXML private ComboBox<ZoneProperty> campoZona;
  
     // ── Características ───────────────────────────────────────
     @FXML private TextField          campoArea;
@@ -45,7 +46,8 @@ public class RegistroInmuebleController {
     // ─────────────────────────────────────────────────────────
  
     @FXML
-    public void initialize() {
+    public void initialize(){
+        configurarComboZona();
         configurarComboTipo();
         configurarComboFinalidad();
         configurarComboEstado();
@@ -55,6 +57,10 @@ public class RegistroInmuebleController {
  
     private void configurarComboTipo() {
         campoTipo.getItems().setAll(TypeProperty.values());
+    }
+
+    private void configurarComboZona() {
+        campoZona.getItems().setAll(ZoneProperty.values());
     }
  
     private void configurarComboFinalidad() {
@@ -120,7 +126,7 @@ public class RegistroInmuebleController {
         String codigo     = campoCodigo.getText().trim();
         String direccion  = campoDireccion.getText().trim();
         String ciudad     = campoCiudad.getText().trim();
-        String zona       = campoZona.getText().trim();
+        ZoneProperty zona       = campoZona.getValue();
         TypeProperty tipo = campoTipo.getValue();
         String finalidad  = campoFinalidad.getValue();
         String estado     = campoEstado.getValue();
@@ -128,7 +134,7 @@ public class RegistroInmuebleController {
         if (codigo.isEmpty())    { mostrarError("El código es obligatorio.");           return; }
         if (direccion.isEmpty()) { mostrarError("La dirección es obligatoria.");        return; }
         if (ciudad.isEmpty())    { mostrarError("La ciudad es obligatoria.");           return; }
-        if (zona.isEmpty())      { mostrarError("La zona es obligatoria.");             return; }
+        if (zona == null)      { mostrarError("La zona es obligatoria.");             return; }
         if (tipo == null)        { mostrarError("Seleccione el tipo de inmueble.");     return; }
         if (finalidad == null)   { mostrarError("Seleccione la finalidad.");            return; }
         if (estado == null)      { mostrarError("Seleccione el estado del inmueble."); return; }

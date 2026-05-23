@@ -1,1 +1,2 @@
-admin;Administrador;admin@proptech.com;000-000-0000;ADMIN;0,00;N/A;null;0;ACTIVE;Admin1234
+1234;Andres;ejemplo@gmail.com;895;POTENTIAL;5500000.0;Norte;Armenia;APARTAMENTO;3;INACTIVE;Andres123
+admin;Administrador;admin@proptech.com;000-000-0000;ADMIN;0.0;N/A;N/A;NONE;0;ACTIVE;Admin1234

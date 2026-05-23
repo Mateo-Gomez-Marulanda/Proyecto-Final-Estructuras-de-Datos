@@ -13,17 +13,16 @@ import java.time.format.DateTimeFormatter;
 
 public class Contract {
 
-    private static final DateTimeFormatter FORMATTER =
-            DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     // JavaFX observable properties
     private final SimpleStringProperty id;
     private final SimpleStringProperty name;
     private final SimpleStringProperty address;
-    private final SimpleObjectProperty<Client>         owner;          // registered client
-    private final SimpleObjectProperty<Property>       relatedProperty;
-    private final SimpleObjectProperty<LocalDate>      creationDate;
-    private final SimpleObjectProperty<LocalDate>      expirationDate;
-    private final SimpleObjectProperty<Advisor>        approvingAdvisor;
+    private final SimpleObjectProperty<Client> owner; // registered client
+    private final SimpleObjectProperty<Property> relatedProperty;
+    private final SimpleObjectProperty<LocalDate> creationDate;
+    private final SimpleObjectProperty<LocalDate> expirationDate;
+    private final SimpleObjectProperty<Advisor> approvingAdvisor;
     private final SimpleObjectProperty<ContractStatus> status;
 
     // Static contract registry (managed by a list
@@ -35,22 +34,24 @@ public class Contract {
      * Creates a new contract and automatically registers it in the system list.
      * Status always starts as PENDING_APPROVAL until an advisor approves it.
      *
-     * NOTE: Auto-registration here is the hook point for the future Observer pattern.
-     * When implemented, the Observer notification will go right after contractRegistry.addLast(this).
+     * NOTE: Auto-registration here is the hook point for the future Observer
+     * pattern.
+     * When implemented, the Observer notification will go right after
+     * contractRegistry.addLast(this).
      */
     public Contract(String id, String name, String address, Client owner,
-                    Property relatedProperty, LocalDate creationDate,
-                    LocalDate expirationDate, Advisor approvingAdvisor) {
+            Property relatedProperty, LocalDate creationDate,
+            LocalDate expirationDate, Advisor approvingAdvisor) {
 
-        this.id               = new SimpleStringProperty(id);
-        this.name             = new SimpleStringProperty(name);
-        this.address          = new SimpleStringProperty(address);
-        this.owner            = new SimpleObjectProperty<>(owner);
-        this.relatedProperty  = new SimpleObjectProperty<>(relatedProperty);
-        this.creationDate     = new SimpleObjectProperty<>(creationDate);
-        this.expirationDate   = new SimpleObjectProperty<>(expirationDate);
+        this.id = new SimpleStringProperty(id);
+        this.name = new SimpleStringProperty(name);
+        this.address = new SimpleStringProperty(address);
+        this.owner = new SimpleObjectProperty<>(owner);
+        this.relatedProperty = new SimpleObjectProperty<>(relatedProperty);
+        this.creationDate = new SimpleObjectProperty<>(creationDate);
+        this.expirationDate = new SimpleObjectProperty<>(expirationDate);
         this.approvingAdvisor = new SimpleObjectProperty<>(approvingAdvisor);
-        this.status           = new SimpleObjectProperty<>(ContractStatus.PENDING_APPROVAL);
+        this.status = new SimpleObjectProperty<>(ContractStatus.PENDING_APPROVAL);
 
         // Auto-register in the system list
         // FUTURE OBSERVER: notify listeners here
@@ -82,7 +83,8 @@ public class Contract {
     }
 
     /**
-     * Checks if the contract has passed its expiration date and updates status if needed.
+     * Checks if the contract has passed its expiration date and updates status if
+     * needed.
      * Call this on system load or periodically to keep statuses current.
      *
      * FUTURE OBSERVER: when this triggers EXPIRED, notify listeners to generate
@@ -100,15 +102,27 @@ public class Contract {
      * Useful for the alert system (AlertType.CONTRACT_EXPIRING_SOON).
      */
     public boolean isExpiringSoon(int withinDays) {
-        if (status.get() != ContractStatus.ACTIVE) return false;
+        if (status.get() != ContractStatus.ACTIVE)
+            return false;
         LocalDate threshold = LocalDate.now().plusDays(withinDays);
         return !expirationDate.get().isAfter(threshold);
     }
 
-    public boolean isActive()         { return status.get() == ContractStatus.ACTIVE; }
-    public boolean isPendingApproval(){ return status.get() == ContractStatus.PENDING_APPROVAL; }
-    public boolean isExpired()        { return status.get() == ContractStatus.EXPIRED; }
-    public boolean isCancelled()      { return status.get() == ContractStatus.CANCELLED; }
+    public boolean isActive() {
+        return status.get() == ContractStatus.ACTIVE;
+    }
+
+    public boolean isPendingApproval() {
+        return status.get() == ContractStatus.PENDING_APPROVAL;
+    }
+
+    public boolean isExpired() {
+        return status.get() == ContractStatus.EXPIRED;
+    }
+
+    public boolean isCancelled() {
+        return status.get() == ContractStatus.CANCELLED;
+    }
 
     // ─────────────────────────────────────────────
     // Static registry access
@@ -120,7 +134,8 @@ public class Contract {
 
     public static Contract findById(String id) {
         for (Contract c : contractRegistry) {
-            if (c.getId().equals(id)) return c;
+            if (c.getId().equals(id))
+                return c;
         }
         return null;
     }
@@ -129,45 +144,120 @@ public class Contract {
     // Property getters (for TableView binding)
     // ─────────────────────────────────────────────
 
-    public SimpleStringProperty idProperty()                            { return id; }
-    public SimpleStringProperty nameProperty()                          { return name; }
-    public SimpleStringProperty addressProperty()                       { return address; }
-    public SimpleObjectProperty<Client> ownerProperty()                 { return owner; }
-    public SimpleObjectProperty<Property> relatedPropertyProperty()     { return relatedProperty; }
-    public SimpleObjectProperty<LocalDate> creationDateProperty()       { return creationDate; }
-    public SimpleObjectProperty<LocalDate> expirationDateProperty()     { return expirationDate; }
-    public SimpleObjectProperty<Advisor> approvingAdvisorProperty()     { return approvingAdvisor; }
-    public SimpleObjectProperty<ContractStatus> statusProperty()        { return status; }
+    public SimpleStringProperty idProperty() {
+        return id;
+    }
+
+    public SimpleStringProperty nameProperty() {
+        return name;
+    }
+
+    public SimpleStringProperty addressProperty() {
+        return address;
+    }
+
+    public SimpleObjectProperty<Client> ownerProperty() {
+        return owner;
+    }
+
+    public SimpleObjectProperty<Property> relatedPropertyProperty() {
+        return relatedProperty;
+    }
+
+    public SimpleObjectProperty<LocalDate> creationDateProperty() {
+        return creationDate;
+    }
+
+    public SimpleObjectProperty<LocalDate> expirationDateProperty() {
+        return expirationDate;
+    }
+
+    public SimpleObjectProperty<Advisor> approvingAdvisorProperty() {
+        return approvingAdvisor;
+    }
+
+    public SimpleObjectProperty<ContractStatus> statusProperty() {
+        return status;
+    }
 
     // ─────────────────────────────────────────────
     // Value getters
     // ─────────────────────────────────────────────
 
-    public String getId()                  { return id.get(); }
-    public String getName()                { return name.get(); }
-    public String getAddress()             { return address.get(); }
-    public Client getOwner()               { return owner.get(); }
-    public Property getRelatedProperty()   { return relatedProperty.get(); }
-    public LocalDate getCreationDate()     { return creationDate.get(); }
-    public LocalDate getExpirationDate()   { return expirationDate.get(); }
-    public Advisor getApprovingAdvisor()   { return approvingAdvisor.get(); }
-    public ContractStatus getStatus()      { return status.get(); }
+    public String getId() {
+        return id.get();
+    }
+
+    public String getName() {
+        return name.get();
+    }
+
+    public String getAddress() {
+        return address.get();
+    }
+
+    public Client getOwner() {
+        return owner.get();
+    }
+
+    public Property getRelatedProperty() {
+        return relatedProperty.get();
+    }
+
+    public LocalDate getCreationDate() {
+        return creationDate.get();
+    }
+
+    public LocalDate getExpirationDate() {
+        return expirationDate.get();
+    }
+
+    public Advisor getApprovingAdvisor() {
+        return approvingAdvisor.get();
+    }
+
+    public ContractStatus getStatus() {
+        return status.get();
+    }
 
     // ─────────────────────────────────────────────
     // Value setters
     // ─────────────────────────────────────────────
 
-    public void setId(String id)                         { this.id.set(id); }
-    public void setName(String name)                     { this.name.set(name); }
-    public void setAddress(String address)               { this.address.set(address); }
-    public void setOwner(Client owner)                   { this.owner.set(owner); }
-    public void setRelatedProperty(Property p)           { this.relatedProperty.set(p); }
-    public void setCreationDate(LocalDate date)          { this.creationDate.set(date); }
-    public void setExpirationDate(LocalDate date)        { this.expirationDate.set(date); }
-    public void setApprovingAdvisor(Advisor advisor)     { this.approvingAdvisor.set(advisor); }
+    public void setId(String id) {
+        this.id.set(id);
+    }
+
+    public void setName(String name) {
+        this.name.set(name);
+    }
+
+    public void setAddress(String address) {
+        this.address.set(address);
+    }
+
+    public void setOwner(Client owner) {
+        this.owner.set(owner);
+    }
+
+    public void setRelatedProperty(Property p) {
+        this.relatedProperty.set(p);
+    }
+
+    public void setCreationDate(LocalDate date) {
+        this.creationDate.set(date);
+    }
+
+    public void setExpirationDate(LocalDate date) {
+        this.expirationDate.set(date);
+    }
+
+    public void setApprovingAdvisor(Advisor advisor) {
+        this.approvingAdvisor.set(advisor);
+    }
 
     // Formatted strings — convenient for TableView cells
-    public String getCreationDateFormatted()   {
+    public String getCreationDateFormatted() {
         return creationDate.get() != null ? creationDate.get().format(FORMATTER) : "—";
     }
 
@@ -190,5 +280,9 @@ public class Contract {
                 + " | Expires: " + getExpirationDateFormatted()
                 + " | Advisor: " + (getApprovingAdvisor() != null ? getApprovingAdvisor().getName() : "—")
                 + " | Status: " + getStatus();
+    }
+
+    public void setStatus(ContractStatus status) {
+        this.status.set(status);
     }
 }

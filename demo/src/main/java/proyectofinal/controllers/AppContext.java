@@ -2,7 +2,6 @@ package proyectofinal.controllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import proyectofinal.EstructurasDeDatos.Colas.Queue;
 import proyectofinal.EstructurasDeDatos.Listas.SimpleLinkedList;
 import proyectofinal.Personal.Advisor;
@@ -10,6 +9,7 @@ import proyectofinal.Personal.ClientManager;
 import proyectofinal.SistemaGestion.AgendamientoVisitas.VisitManager;
 import proyectofinal.SistemaGestion.Alertas.Alert;
 import proyectofinal.SistemaGestion.Alertas.AlertEngine;
+import proyectofinal.SistemaGestion.Contratos.Contract; // Importación necesaria
 import proyectofinal.SistemaGestion.GestionInmuebles.PropertyManager;
 import proyectofinal.SistemaGestion.Observer.ContractGeneratorObserver;
 import proyectofinal.SistemaGestion.Observer.OperationPublisher;
@@ -24,6 +24,7 @@ public class AppContext {
     private final ClientManager   clientManager;
     private final VisitManager    visitManager;
     private final SimpleLinkedList<Advisor>         advisors;
+    private final SimpleLinkedList<Contract>        contracts; // 1. Declarar la lista
     private final ObservableList<BusinessOperation> operations;
     private final Queue<Alert>                      pendingAlerts;
     private final SimpleLinkedList<Alert>           alertHistory;
@@ -33,6 +34,7 @@ public class AppContext {
         clientManager   = new ClientManager();
         visitManager    = new VisitManager();
         advisors        = new SimpleLinkedList<>();
+        contracts       = new SimpleLinkedList<>(); // 2. Inicializar la lista
         operations      = FXCollections.observableArrayList();
         pendingAlerts   = new Queue<>();
         alertHistory    = new SimpleLinkedList<>();
@@ -48,23 +50,18 @@ public class AppContext {
     }
 
     private void loadPersistedData() {
-        // ENTRADA SÍNCRONA: Pasamos 'clientManager' directamente. 
-        // Desaparece el bucle 'for' porque la indexación en la HashTable ocurre abajo.
-        PersistenceManager.loadAll(propertyManager, clientManager, advisors, visitManager);
+        // Carga los contratos mediante la lógica que implementamos en PersistenceManager
+        PersistenceManager.loadAll(propertyManager, clientManager, advisors, visitManager,contracts);
         AlertEngine.checkAndGenerateAlerts(this);
     }
 
-    private void crearAdminSiNoExiste() {
-        if (clientManager.getClientTable().get("admin") != null) return;
-        clientManager.registerFull("admin", "Administrador", "admin@proptech.com",
-                "000-000-0000", "ADMIN", 0.0,"N/A", "N/A", null, 0, "ACTIVE", "Admin1234");
-    }
-
     public void saveAll() {
-        // Guardamos pasándole el manager para extraer la lista limpiamente
-        PersistenceManager.saveAll(propertyManager, clientManager, advisors, visitManager);
+        // 3. Pasar la lista de contratos al método de guardado
+        PersistenceManager.saveAll(propertyManager, clientManager, advisors, visitManager, contracts);
     }
 
+    // Getters
+    public SimpleLinkedList<Contract> getContracts() { return contracts; }
     public PropertyManager getPropertyManager()              { return propertyManager; }
     public ClientManager   getClientManager()                { return clientManager; }
     public VisitManager    getVisitManager()                 { return visitManager; }
@@ -72,4 +69,10 @@ public class AppContext {
     public ObservableList<BusinessOperation> getOperations() { return operations; }
     public Queue<Alert>    getPendingAlerts()                { return pendingAlerts; }
     public SimpleLinkedList<Alert> getAlertHistory()         { return alertHistory; }
+
+    private void crearAdminSiNoExiste() {
+        if (clientManager.getClientTable().get("admin") != null) return;
+        clientManager.registerFull("admin", "Administrador", "admin@proptech.com",
+                "000-000-0000", "ADMIN", 0.0,"N/A", "N/A", null, 0, "ACTIVE", "Admin1234");
+    }
 }

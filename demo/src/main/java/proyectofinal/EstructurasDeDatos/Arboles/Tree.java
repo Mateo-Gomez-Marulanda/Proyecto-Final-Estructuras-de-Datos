@@ -1,5 +1,5 @@
 package proyectofinal.EstructurasDeDatos.Arboles;
-
+import proyectofinal.EstructurasDeDatos.Listas.SimpleLinkedList;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -302,5 +302,40 @@ public class Tree<T extends Comparable<T>> {
         }
 
         return sb.toString().trim(); // Retorna la cadena sin espacios al final
+    }
+    /**
+     * Retorna una lista con los elementos ordenados de MENOR a MAYOR.
+     * Ideal para ordenar por Precio Ascendente.
+     */
+    public SimpleLinkedList<T> getInOrderList() {
+        SimpleLinkedList<T> list = new SimpleLinkedList<>();
+        getInOrderListR(root, list);
+        return list;
+    }
+
+    private void getInOrderListR(Node<T> current, SimpleLinkedList<T> list) {
+        if (current != null) {
+            getInOrderListR(current.getLeft(), list); // Izquierda
+            list.add(current.getValue());             // Raíz
+            getInOrderListR(current.getRight(), list); // Derecha
+        }
+    }
+
+    /**
+     * Retorna una lista con los elementos ordenados de MAYOR a MENOR.
+     * Ideal para ordenar por Precio Descendente.
+     */
+    public SimpleLinkedList<T> getReverseInOrderList() {
+        SimpleLinkedList<T> list = new SimpleLinkedList<>();
+        getReverseInOrderListR(root, list);
+        return list;
+    }
+
+    private void getReverseInOrderListR(Node<T> current, SimpleLinkedList<T> list) {
+        if (current != null) {
+            getReverseInOrderListR(current.getRight(), list); // Derecha primero
+            list.add(current.getValue());                     // Raíz
+            getReverseInOrderListR(current.getLeft(), list);  // Izquierda
+        }
     }
 }

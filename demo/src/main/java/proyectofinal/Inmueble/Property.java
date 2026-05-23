@@ -6,7 +6,7 @@ public class Property implements Comparable<Property> {
     private String code;
     private String address;
     private String city;
-    private String zone;
+    private ZoneProperty zone;
     private TypeProperty propertyType;
     private String purpose; // venta o arriendo
     private double price;
@@ -16,8 +16,9 @@ public class Property implements Comparable<Property> {
     private String propertyStatus;
     private boolean isAvailable;
     private Advisor responsibleAdvisor;
+    private int priceChangeCount = 0;
 
-    public Property(String code, String address, String city, String zone, TypeProperty propertyType,
+    public Property(String code, String address, String city, ZoneProperty zone, TypeProperty propertyType,
             String purpose, double price, double area, int rooms, int bathrooms,
             String propertyStatus, boolean isAvailable, Advisor responsibleAdvisor) {
         this.code = code;
@@ -59,11 +60,11 @@ public class Property implements Comparable<Property> {
         this.city = city;
     }
 
-    public String getZone() {
+    public ZoneProperty getZone() {
         return zone;
     }
 
-    public void setZone(String zone) {
+    public void setZone(ZoneProperty zone) {
         this.zone = zone;
     }
 
@@ -87,8 +88,11 @@ public class Property implements Comparable<Property> {
         return price;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+   public void setPrice(double newPrice) {
+        if (this.price != newPrice) {
+            this.price = newPrice;
+            this.priceChangeCount++;
+        }
     }
 
     public double getArea() {
@@ -157,4 +161,13 @@ public class Property implements Comparable<Property> {
 
         return this.code.compareTo(other.code);
     }
+
+    public int getPriceChangeCount() {
+        return priceChangeCount;
+    }
+
+    public void setPriceChangeCount(int priceChangeCount) {
+        this.priceChangeCount = priceChangeCount;
+    }
+
 }
