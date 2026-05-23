@@ -23,16 +23,14 @@ public class EdicionClienteController {
     @FXML private ComboBox<TypeProperty> campoTipoInmueble;
     @FXML private TextField              campoPresupuesto;
     @FXML private Spinner<Integer>       campoHabitaciones;
-    @FXML private TextField              campoZona;
+    @FXML private ComboBox<String>       campoZona;
+    @FXML private TextField              campoCiudadInteres;
  
-    // ── Feedback ─────────────────────────────────────────────
     @FXML private Label labelError;
  
     private Client clientToEdit;
     private Runnable onEdicionExitosa;
- 
-    // ─────────────────────────────────────────────────────────
-    // Init
+
     // ─────────────────────────────────────────────────────────
  
     @FXML
@@ -40,6 +38,7 @@ public class EdicionClienteController {
         campoTipoCliente.getItems().setAll("POTENTIAL", "Regular", "Frecuente", "Premium");
         campoEstadoBusqueda.getItems().setAll("INACTIVE", "Buscando", "Interesado",
                 "En negociación", "Inactivo");
+        campoZona.getItems().setAll("Norte", "Centro", "Sur");
  
         campoTipoInmueble.setConverter(new StringConverter<>() {
             @Override public String toString(TypeProperty t) {
@@ -69,21 +68,34 @@ public class EdicionClienteController {
  
     private void preCargarCampos() {
         campoId.setText(clientToEdit.getId());
- 
         campoNombre.setText(clientToEdit.getName());
         campoCorreo.setText(clientToEdit.getEmail() != null ? clientToEdit.getEmail() : "");
-        campoTelefono.setText(clientToEdit.getPhoneNumber() != null ? clientToEdit.getPhoneNumber() : "");
- 
+        campoTelefono.setText(clientToEdit.getPhoneNumber() != null
+                ? clientToEdit.getPhoneNumber() : "");
         campoTipoCliente.setValue(clientToEdit.getClientType());
         campoEstadoBusqueda.setValue(clientToEdit.getSearchStatus());
         campoTipoInmueble.setValue(clientToEdit.getDesiredPropertyType());
- 
         campoPresupuesto.setText(String.valueOf((int) clientToEdit.getBudget()));
-        campoZona.setText(clientToEdit.getInterestZones() != null
-                ? clientToEdit.getInterestZones() : "");
- 
+        campoCiudadInteres.setText(clientToEdit.getInterestCity() != null
+                ? clientToEdit.getInterestCity() : "");
+    
         if (campoHabitaciones.getValueFactory() != null) {
             campoHabitaciones.getValueFactory().setValue(clientToEdit.getMinRooms());
+        }
+        String zonaGuardada = clientToEdit.getInterestZones();
+        if (zonaGuardada != null && !zonaGuardada.trim().isEmpty()) {
+            String zonaNormalizada = zonaGuardada.trim().substring(0, 1).toUpperCase() 
+                                + zonaGuardada.trim().substring(1).toLowerCase();
+            if (campoZona.getItems().contains(zonaNormalizada)) {
+                campoZona.setValue(zonaNormalizada);
+            } else {
+                if (!campoZona.getItems().contains(zonaGuardada)) {
+                    campoZona.getItems().add(zonaGuardada);
+                }
+                campoZona.setValue(zonaGuardada);
+            }
+        } else {
+            campoZona.setValue(null);
         }
     }
  
@@ -117,55 +129,36 @@ public class EdicionClienteController {
             }
         }
  
+        String zona = (campoZona.getValue() == null || campoZona.getValue().isEmpty()) 
+        ? "Sin definir" : campoZona.getValue();
+        String ciudad = campoCiudadInteres.getText().trim().isEmpty() // ✅
+                ? "Sin definir" : campoCiudadInteres.getText().trim();
+ 
         // Aplicar cambios directamente sobre el objeto
         clientToEdit.setName(nombre);
+        clientToEdit.setEmail(correo);
+        clientToEdit.setPhoneNumber(telefono);
+        clientToEdit.setBudget(presupuesto);
+        clientToEdit.setInterestZones(zona);
+        clientToEdit.setInterestCity(ciudad);                         // ✅
+        clientToEdit.setDesiredPropertyType(campoTipoInmueble.getValue());
+        clientToEdit.setMinRooms(campoHabitaciones.getValue());
  
-        String zona = campoZona.getText().trim().isEmpty()
-                ? "Sin definir" : campoZona.getText().trim();
- 
-        try {
-            AppContext.getInstance().getClientManager().updateClient(
-                    correo,
-                    telefono,
-                    presupuesto,
-                    zona,
-                    campoTipoInmueble.getValue(),
-                    campoHabitaciones.getValue()
-            );
-        } catch (RuntimeException e) {
-            // updateClient opera sobre el current — si el cliente editado no es el
-            // current, actualizamos los campos directamente
-            clientToEdit.setEmail(correo);
-            clientToEdit.setPhoneNumber(telefono);
-            clientToEdit.setBudget(presupuesto);
-            clientToEdit.setInterestZones(zona);
-            clientToEdit.setDesiredPropertyType(campoTipoInmueble.getValue());
-            clientToEdit.setMinRooms(campoHabitaciones.getValue());
-        }
- 
-        if (campoTipoCliente.getValue() != null) {
+        if (campoTipoCliente.getValue() != null)
             clientToEdit.setClientType(campoTipoCliente.getValue());
-        }
-        if (campoEstadoBusqueda.getValue() != null) {
+        if (campoEstadoBusqueda.getValue() != null)
             clientToEdit.setSearchStatus(campoEstadoBusqueda.getValue());
-        }
-        if (!password.isEmpty()) {
+        if (!password.isEmpty())
             clientToEdit.setPassword(password);
-        }
  
         if (onEdicionExitosa != null) onEdicionExitosa.run();
         cerrarVentana();
     }
  
     @FXML
-    public void cancelar() {
-        cerrarVentana();
-    }
+    public void cancelar() { cerrarVentana(); }
  
-    // ─────────────────────────────────────────────────────────
     // Helpers
-    // ─────────────────────────────────────────────────────────
- 
     private void cerrarVentana() {
         ((Stage) campoId.getScene().getWindow()).close();
     }
@@ -175,7 +168,6 @@ public class EdicionClienteController {
         labelError.setVisible(true);
         labelError.setManaged(true);
     }
- 
     private void ocultarError() {
         labelError.setVisible(false);
         labelError.setManaged(false);
