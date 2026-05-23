@@ -80,7 +80,7 @@ public class ClientManager {
     }
 
     public void updateClient(String email, String phoneNumber, double budget,
-            String interestZones, TypeProperty desiredPropertyType, int minRooms) {
+        String interestZones, String interestCity, TypeProperty desiredPropertyType, int minRooms) {
         if (current == null)
             throw new RuntimeException("No hay sesión activa para actualizar.");
 
@@ -88,6 +88,7 @@ public class ClientManager {
         current.setPhoneNumber(phoneNumber);
         current.setBudget(budget);
         current.setInterestZones(interestZones);
+        current.setInterestCity(interestCity);
         current.setDesiredPropertyType(desiredPropertyType);
         current.setMinRooms(minRooms);
     }

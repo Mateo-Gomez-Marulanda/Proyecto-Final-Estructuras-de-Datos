@@ -42,43 +42,32 @@
                     <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0">
                         <Label text="Identificación"
                                style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
-                        <TextField fx:id="campoId"
-                                   promptText="Número de documento"
-                                   disable="true"
-                                   style="-fx-opacity: 0.6;"/>
+                        <TextField fx:id="campoId" disable="true" style="-fx-opacity: 0.6;"/>
                     </VBox>
 
-                    <!-- Nombre -->
                     <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
                         <Label text="Nombre completo *"
                                style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
-                        <TextField fx:id="campoNombre"
-                                   promptText="Nombre y apellidos"/>
+                        <TextField fx:id="campoNombre" promptText="Nombre y apellidos"/>
                     </VBox>
 
-                    <!-- Correo -->
                     <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="1">
                         <Label text="Correo electrónico *"
                                style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
-                        <TextField fx:id="campoCorreo"
-                                   promptText="correo@ejemplo.com"/>
+                        <TextField fx:id="campoCorreo" promptText="correo@ejemplo.com"/>
                     </VBox>
 
-                    <!-- Teléfono -->
                     <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
                         <Label text="Teléfono *"
                                style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
-                        <TextField fx:id="campoTelefono"
-                                   promptText="Número de contacto"/>
+                        <TextField fx:id="campoTelefono" promptText="Número de contacto"/>
                     </VBox>
 
-                    <!-- Nueva contraseña -->
                     <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="2"
                           GridPane.columnSpan="2">
                         <Label text="Nueva contraseña (dejar vacío para no cambiar)"
                                style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
-                        <PasswordField fx:id="campoContrasena"
-                                       promptText="Mín. 8 caracteres"/>
+                        <PasswordField fx:id="campoContrasena" promptText="Mín. 8 caracteres"/>
                     </VBox>
                 </GridPane>
             </VBox>
@@ -94,68 +83,55 @@
                         <ColumnConstraints percentWidth="50"/>
                     </columnConstraints>
 
-                    <!-- Tipo de cliente -->
                     <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0">
                         <Label text="Tipo de cliente"
                                style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
-                        <ComboBox fx:id="campoTipoCliente"
-                                  promptText="Seleccione tipo"
-                                  maxWidth="Infinity"/>
+                        <ComboBox fx:id="campoTipoCliente" promptText="Seleccione tipo" maxWidth="Infinity"/>
                     </VBox>
 
-                    <!-- Estado de búsqueda -->
                     <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
                         <Label text="Estado de búsqueda"
                                style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
-                        <ComboBox fx:id="campoEstadoBusqueda"
-                                  promptText="Seleccione estado"
-                                  maxWidth="Infinity"/>
+                        <ComboBox fx:id="campoEstadoBusqueda" promptText="Seleccione estado" maxWidth="Infinity"/>
                     </VBox>
 
-                    <!-- Presupuesto -->
                     <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="1">
                         <Label text="Presupuesto máximo ($)"
                                style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
-                        <TextField fx:id="campoPresupuesto"
-                                   promptText="Ej: 500000000"/>
+                        <TextField fx:id="campoPresupuesto" promptText="Ej: 500000000"/>
                     </VBox>
 
-                    <!-- Habitaciones mínimas -->
                     <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
                         <Label text="Habitaciones mínimas"
                                style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
-                        <Spinner fx:id="campoHabitaciones"
-                                 min="0" max="20" initialValue="1"
-                                 editable="true"/>
+                        <Spinner fx:id="campoHabitaciones" min="0" max="20" initialValue="1" editable="true"/>
                     </VBox>
 
-                    <!-- Inmueble deseado -->
                     <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="2">
                         <Label text="Inmueble deseado"
                                style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
-                        <ComboBox fx:id="campoTipoInmueble"
-                                  promptText="Sin definir"
-                                  maxWidth="Infinity"/>
+                        <ComboBox fx:id="campoTipoInmueble" promptText="Sin definir" maxWidth="Infinity"/>
                     </VBox>
 
-                    <!-- Zona de interés -->
                     <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="2">
                         <Label text="Zona de interés"
+                                style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
+                        <ComboBox fx:id="campoZona" promptText="Seleccione zona" maxWidth="Infinity"/>
+                    </VBox>
+
+                    <!-- ✅ Campo ciudad de interés -->
+                    <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="3"
+                          GridPane.columnSpan="2">
+                        <Label text="Ciudad de interés"
                                style="-fx-font-size: 12px; -fx-text-fill: #374151; -fx-font-weight: bold;"/>
-                        <TextField fx:id="campoZona"
-                                   promptText="Ej: Norte, Laureles..."/>
+                        <TextField fx:id="campoCiudadInteres" promptText="Ej: Medellín, Bogotá..."/>
                     </VBox>
                 </GridPane>
             </VBox>
 
-            <!-- ── Label de error ── -->
-            <Label fx:id="labelError"
-                   text=""
+            <Label fx:id="labelError" text=""
                    style="-fx-text-fill: #dc2626; -fx-font-size: 12px;"
-                   wrapText="true"
-                   visible="false"
-                   managed="false"/>
-
+                   wrapText="true" visible="false" managed="false"/>
         </VBox>
     </ScrollPane>
 
@@ -163,13 +139,9 @@
     <HBox spacing="12" alignment="CENTER_RIGHT"
           style="-fx-background-color: #f1f5f9; -fx-padding: 16 24 16 24;
                  -fx-border-color: #e2e8f0; -fx-border-width: 1 0 0 0;">
-        <Button text="Cancelar"
-                styleClass="boton-secundario"
-                onAction="#cancelar"/>
-        <Button text="✔  Guardar cambios"
-                styleClass="boton-primario"
-                defaultButton="true"
-                onAction="#guardarCambios"/>
+        <Button text="Cancelar" styleClass="boton-secundario" onAction="#cancelar"/>
+        <Button text="✔  Guardar cambios" styleClass="boton-primario"
+                defaultButton="true" onAction="#guardarCambios"/>
     </HBox>
 
 </VBox>

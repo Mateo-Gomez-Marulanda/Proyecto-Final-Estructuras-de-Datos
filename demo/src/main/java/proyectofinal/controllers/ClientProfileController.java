@@ -12,7 +12,8 @@ public class ClientProfileController {
     @FXML private TextField  campoTelefono;
     @FXML private PasswordField campoContrasena;
     @FXML private TextField  campoPresupuesto;
-    @FXML private TextField  campoZona;
+    @FXML private ComboBox<String> campoZona;
+    @FXML private TextField      campoCiudadInteres;
     @FXML private ComboBox<TypeProperty> comboTipoInmueble;
     @FXML private Spinner<Integer>       spinnerHab;
     @FXML private Label      mensajeFeedback;
@@ -20,6 +21,7 @@ public class ClientProfileController {
     @FXML
     public void initialize() {
         comboTipoInmueble.getItems().setAll(TypeProperty.values());
+        campoZona.getItems().setAll("Norte", "Centro", "Sur");
         cargarDatosActuales();
     }
 
@@ -31,11 +33,28 @@ public class ClientProfileController {
         campoCorreo.setText(client.getEmail());
         campoTelefono.setText(client.getPhoneNumber() != null ? client.getPhoneNumber() : "");
         campoPresupuesto.setText(String.valueOf((int) client.getBudget()));
-        campoZona.setText(client.getInterestZones() != null ? client.getInterestZones() : "");
         comboTipoInmueble.setValue(client.getDesiredPropertyType());
+        campoCiudadInteres.setText(client.getInterestCity() != null ? client.getInterestCity() : "");
 
         if (spinnerHab.getValueFactory() != null) {
             spinnerHab.getValueFactory().setValue(client.getMinRooms());
+        }
+
+        String zonaGuardada = client.getInterestZones();
+        if (zonaGuardada != null && !zonaGuardada.trim().isEmpty()) {
+            String zonaNormalizada = zonaGuardada.trim().substring(0, 1).toUpperCase() 
+                                   + zonaGuardada.trim().substring(1).toLowerCase();
+            
+            if (campoZona.getItems().contains(zonaNormalizada)) {
+                campoZona.setValue(zonaNormalizada);
+            } else {
+                if (!campoZona.getItems().contains(zonaGuardada)) {
+                    campoZona.getItems().add(zonaGuardada);
+                }
+                campoZona.setValue(zonaGuardada);
+            }
+        } else {
+            campoZona.setValue(null);
         }
     }
 
@@ -48,8 +67,11 @@ public class ClientProfileController {
         String correo      = campoCorreo.getText().trim();
         String telefono    = campoTelefono.getText().trim();
         String presupuesto = campoPresupuesto.getText().trim();
-        String zona        = campoZona.getText().trim();
+        String zona = (campoZona.getValue() == null || campoZona.getValue().isEmpty()) 
+                      ? "Sin definir" : campoZona.getValue();
         String password    = campoContrasena.getText();
+        String ciudad = campoCiudadInteres.getText().trim().isEmpty() 
+                    ? "Sin definir" : campoCiudadInteres.getText().trim();
 
         if (nombre.isEmpty() || correo.isEmpty()) {
             mostrarError("Nombre y correo son obligatorios.");
@@ -66,7 +88,7 @@ public class ClientProfileController {
 
         try {
             AppContext.getInstance().getClientManager().updateClient(
-                    correo, telefono, budget, zona,
+                    correo, telefono, budget, zona, ciudad,
                     comboTipoInmueble.getValue(),
                     spinnerHab.getValue()
             );
