@@ -6,6 +6,9 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import proyectofinal.Inmueble.Property;
 import proyectofinal.Inmueble.TypeProperty;
 import proyectofinal.SistemaGestion.GestionInmuebles.PropertySorter;
@@ -208,7 +211,83 @@ public class ClientCatalogController {
     public void verDetalles() {
         Property p = tablaInmuebles.getSelectionModel().getSelectedItem();
         if (p == null) return;
-        mostrarInfo(p.toString());
+    
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Ficha Técnica — " + p.getCode());
+        dialog.initOwner(tablaInmuebles.getScene().getWindow());
+    
+        ButtonType btnCerrar = new ButtonType("Entendido", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().add(btnCerrar);
+    
+        VBox root = new VBox(16);
+        root.setPadding(new javafx.geometry.Insets(24));
+        root.setPrefWidth(450);
+        root.setStyle("-fx-background-color: #f8fafc;"); // Fondo claro moderno
+    
+        VBox header = new VBox(4);
+        Label lblTitulo = new Label(p.getType().toString() + " en " + p.getPurpose());
+        lblTitulo.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1e293b;");
+        Label lblCodigo = new Label("Código del inmueble: " + p.getCode());
+        lblCodigo.setStyle("-fx-font-size: 12px; -fx-text-fill: #64748b;");
+        header.getChildren().addAll(lblTitulo, lblCodigo);
+    
+        HBox precioBox = new HBox();
+        precioBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        precioBox.setStyle("-fx-background-color: #f1f5f9; -fx-padding: 12 16 12 16; -fx-background-radius: 8;");
+        Label lblPrecioVal = new Label(String.format("$%,.0f COP", p.getPrice()));
+        lblPrecioVal.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #0f172a;");
+        precioBox.getChildren().add(lblPrecioVal);
+    
+        GridPane grid = new GridPane();
+        grid.setHgap(20);
+        grid.setVgap(12);
+        grid.setStyle("-fx-padding: 8 0 8 0;");
+    
+        String[][] datos = {
+            {"📍 Ubicación:", p.getAddress()},
+            {"🏙️ Ciudad:", p.getCity() + " (" + p.getZone().name() + ")"},
+            {"📐 Área Privada:", p.getArea() + " m²"},
+            {"🛏️ Habitaciones:", String.valueOf(p.getRooms())},
+            {"🚽 Baños:", String.valueOf(p.getBathrooms())},
+            {"💼 Asesor a cargo:", p.getResponsibleAdvisor() != null ? p.getResponsibleAdvisor().getName() : "Por asignar"}
+        };
+    
+        for (int i = 0; i < datos.length; i++) {
+            Label lblIcono = new Label(datos[i][0]);
+            lblIcono.setStyle("-fx-font-weight: bold; -fx-text-fill: #475569; -fx-font-size: 13px;");
+            
+            Label lblValor = new Label(datos[i][1]);
+            lblValor.setStyle("-fx-text-fill: #334155; -fx-font-size: 13px;");
+            lblValor.setWrapText(true);
+    
+            grid.add(lblIcono, 0, i);
+            grid.add(lblValor, 1, i);
+        }
+    
+        HBox estadoBox = new HBox(8);
+        estadoBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        Label lblEstadoTit = new Label("Estado actual:");
+        lblEstadoTit.setStyle("-fx-font-weight: bold; -fx-text-fill: #475569; -fx-font-size: 13px;");
+        
+        Label lblEstadoBadge = new Label(" " + p.getPropertyStatus().toUpperCase() + " ");
+        if (p.isAvailable()) {
+            lblEstadoBadge.setStyle("-fx-background-color: #dcfce7; -fx-text-fill: #15803d; -fx-font-weight: bold; -fx-background-radius: 4; -fx-font-size: 11px;");
+        } else {
+            lblEstadoBadge.setStyle("-fx-background-color: #fee2e2; -fx-text-fill: #b91c1c; -fx-font-weight: bold; -fx-background-radius: 4; -fx-font-size: 11px;");
+        }
+        estadoBox.getChildren().addAll(lblEstadoTit, lblEstadoBadge);
+    
+        Separator sep1 = new Separator();
+        Separator sep2 = new Separator();
+    
+        root.getChildren().addAll(header, sep1, precioBox, grid, sep2, estadoBox);
+        dialog.getDialogPane().setContent(root);
+    
+        if (!tablaInmuebles.getScene().getStylesheets().isEmpty()) {
+            dialog.getDialogPane().getStylesheets().addAll(tablaInmuebles.getScene().getStylesheets());
+        }
+    
+        dialog.showAndWait();
     }
 
     private void mostrarInfo(String msg) {
