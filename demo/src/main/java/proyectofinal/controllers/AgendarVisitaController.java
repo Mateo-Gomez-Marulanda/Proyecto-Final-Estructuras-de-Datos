@@ -24,7 +24,6 @@ public class AgendarVisitaController {
     @FXML private Spinner<Integer>   campoMinutos;
     @FXML private Label              labelError;
 
-    // Optional: pre-fill client or property (used from client portal)
     private Client clientePreseleccionado;
     private Property inmueblePreseleccionado;
 

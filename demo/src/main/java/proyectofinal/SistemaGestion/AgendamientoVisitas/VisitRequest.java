@@ -4,12 +4,14 @@ import proyectofinal.Personal.Client;
 import proyectofinal.Inmueble.Property;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 /**
  * Clase de apoyo que representa una solicitud de visita.
  * Actúa como el contenedor de datos (DTO) para las Colas y el Historial.
  */
 public class VisitRequest {
+    private String code;
     private Client client;
     private Property property;
     private LocalDateTime dateTime;
@@ -17,27 +19,40 @@ public class VisitRequest {
     private String notes;
 
     public VisitRequest(Client client, Property property, LocalDateTime dateTime) {
+        this.code = generateUniqueCode();
         this.client = client;
         this.property = property;
         this.dateTime = dateTime;
-        this.status = "PENDING";
+        this.status = "PENDIENTE";
         this.notes = "";
     }
 
+    private String generateUniqueCode() {
+        return "VR-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     public void markAsCompleted() {
-        this.status = "COMPLETED";
+        this.status = "REALIZADA";
     }
 
     public void markAsCancelled() {
-        this.status = "CANCELLED";
+        this.status = "CANCELADA";
     }
 
     public void markAsConfirm(){
-        this.status = "CONFIRM";
+        this.status = "CONFIRMADA";
     }
 
-    public void markAsRecheduled(){
-        this.status= "RECHEDULED";
+    public void markAsRescheduled(){
+        this.status= "REPROGRAMADA";
     }
 
     public void setStatus(String status) {

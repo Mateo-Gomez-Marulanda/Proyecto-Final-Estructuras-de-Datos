@@ -5,5 +5,5 @@ public enum VisitStatus {
     CONFIRM,
     COMPLETED,
     CANCELLED,
-    RECHEDULED
+    RESCHEDULED
 }

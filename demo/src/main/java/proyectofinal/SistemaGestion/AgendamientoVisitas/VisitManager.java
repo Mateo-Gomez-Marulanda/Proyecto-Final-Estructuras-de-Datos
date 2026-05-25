@@ -1,7 +1,6 @@
 package proyectofinal.SistemaGestion.AgendamientoVisitas;
 
 import java.time.LocalDateTime;
-
 import proyectofinal.EstructurasDeDatos.Colas.Queue;
 import proyectofinal.EstructurasDeDatos.ColasDePrioridad.PriorityQueue;
 import proyectofinal.EstructurasDeDatos.Listas.SimpleLinkedList;
@@ -20,65 +19,74 @@ public class VisitManager {
         this.visitHistory = new SimpleLinkedList<>();
     }
 
-
     public void scheduleVisit(Client client, Property property, LocalDateTime date) {
         VisitRequest request = new VisitRequest(client, property, date);
-
         if (client.getClientType().equalsIgnoreCase("Premium")) {
-            priorityVisits.enqueue(request, 1); // Prioridad Máxima
+            priorityVisits.enqueue(request, 1);
         } else if (client.getClientType().equalsIgnoreCase("Frecuente")) {
-            priorityVisits.enqueue(request, 2); // Prioridad Media
+            priorityVisits.enqueue(request, 2);
         } else {
-            pendingVisits.enqueue(request); // Cola Normal (FIFO)
+            pendingVisits.enqueue(request);
         }
     }
 
     public void confirmVisit(VisitRequest request) {
-        if (request != null) {
-            request.markAsConfirm();
-        }
+        if (request == null) return;
+        request.markAsConfirm();
+        removeVisitFromQueues(request);
+        visitHistory.add(request);
     }
 
     public void rescheduleVisit(VisitRequest request, LocalDateTime newDate) {
         if (request == null) return;
-
-        // Actualizamos datos del ticket
         request.setDateTime(newDate); 
-        request.markAsRecheduled();
-        
-        // Al reprogramar, le damos prioridad 2 para que no pierda su lugar frente a solicitudes nuevas de clientes normales.
-        priorityVisits.enqueue(request, 2);
+        request.markAsRescheduled();
+        removeVisitFromQueues(request);
+        visitHistory.add(request);
     }
 
     public void cancelVisit(VisitRequest request, String reason) {
         if (request == null) return;
-        
         request.markAsCancelled();
         request.setNotes("Motivo cancelación: " + reason);
+        removeVisitFromQueues(request);
         visitHistory.add(request);
     }
 
-
-    /**
-     * Obtiene la siguiente visita para ser atendida por un asesor.
-     */
     public VisitRequest getNextVisitToAttend() {
-        if (!priorityVisits.isEmpty()) {
-            return priorityVisits.dequeue();
-        } 
-        if (!pendingVisits.isEmpty()) {
-            return pendingVisits.dequeue();
-        }
+        if (!priorityVisits.isEmpty()) return priorityVisits.dequeue();
+        if (!pendingVisits.isEmpty()) return pendingVisits.dequeue();
         return null;
     }
 
-    /**
-     * Cierre definitivo de la visita tras la atención del asesor.
-     */
-    public void processVisitCompletion(VisitRequest request, String resultNotes, boolean interested) {
-        if (request == null) {
-            throw new IllegalArgumentException("La solicitud de visita no puede ser nula.");
+    public void removeVisitFromQueues(VisitRequest target) {
+        if (target == null) return;
+
+        // Limpieza segura en Cola de Prioridad
+        PriorityQueue<VisitRequest> tempPriority = new PriorityQueue<>();
+        while (!priorityVisits.isEmpty()) {
+            int p = priorityVisits.peekPriority();
+            VisitRequest v = priorityVisits.dequeue();
+            // Comparamos los códigos únicos de visita
+            if (!v.getCode().trim().equalsIgnoreCase(target.getCode().trim())) {
+                tempPriority.enqueue(v, p);
+            }
         }
+        this.priorityVisits = tempPriority;
+
+        // Limpieza segura en Cola Normal
+        Queue<VisitRequest> tempPending = new Queue<>();
+        while (!pendingVisits.isEmpty()) {
+            VisitRequest v = pendingVisits.dequeue();
+            if (!v.getCode().trim().equalsIgnoreCase(target.getCode().trim())) {
+                tempPending.enqueue(v);
+            }
+        }
+        this.pendingVisits = tempPending;
+    }
+
+    public void processVisitCompletion(VisitRequest request, String resultNotes, boolean interested) {
+        if (request == null) throw new IllegalArgumentException("La solicitud no puede ser nula.");
 
         request.markAsCompleted();
         request.setNotes(resultNotes);
@@ -86,10 +94,8 @@ public class VisitManager {
         Client client = request.getClient();
         Property property = request.getProperty();
         
-        // Registrar en el historial del cliente (Requisito 4.5)
         client.getVisitedPropertiesHistory().add(property);
 
-        // Lógica de Negocio (Requisito 4.6)
         if (interested) {
             property.setPropertyStatus("EN NEGOCIACIÓN");
             property.setAvailable(false); 
@@ -99,10 +105,32 @@ public class VisitManager {
             property.setAvailable(true);
         }
 
-        // Mover al historial definitivo
         visitHistory.add(request);
     }
 
+    public SimpleLinkedList<VisitRequest> getAllPendingAndActiveVisits() {
+        SimpleLinkedList<VisitRequest> list = new SimpleLinkedList<>();
+        
+        PriorityQueue<VisitRequest> tempPriority = new PriorityQueue<>();
+        Queue<VisitRequest> tempPending = new Queue<>();
+
+        while (!priorityVisits.isEmpty()) {
+            int p = priorityVisits.peekPriority();
+            VisitRequest v = priorityVisits.dequeue();
+            list.add(v);
+            tempPriority.enqueue(v, p);
+        }
+        this.priorityVisits = tempPriority;
+
+        while (!pendingVisits.isEmpty()) {
+            VisitRequest v = pendingVisits.dequeue();
+            list.add(v);
+            tempPending.enqueue(v);
+        }
+        this.pendingVisits = tempPending;
+
+        return list;
+    }
 
     public int getTotalPending() {
         return pendingVisits.size() + priorityVisits.size();

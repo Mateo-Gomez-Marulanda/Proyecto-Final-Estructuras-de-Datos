@@ -42,7 +42,6 @@ public class Queue<T> implements Iterable<T> {
         if (isEmpty()) {
             front = newNode;
             rear = newNode;
-            size++;
         } else {
             rear.setNextNode(newNode);
             rear = newNode;
