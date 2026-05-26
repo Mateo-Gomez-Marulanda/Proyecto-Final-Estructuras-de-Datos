@@ -1,3 +1,9 @@
 123;El matadero;Cali;NORTE;APARTAMENTO;Venta;2313213,00;23,00;4;2;Disponible;true;NONE;0
 234;Oro negro;Armenia;NORTE;CASA;Venta;6000000,00;85,00;3;2;Disponible;false;3456;0
 564;Puerto Espejo;Armenia;SUR;LOTE;Venta;20000000,00;100,00;0;0;Disponible;true;3456;0
+INM-004;Av. Centenario Calle 3 N;Armenia;CENTRO;CASA;Arriendo;450000000,00;160,00;4;3;Disponible;true;3456;0
+INM-005;Carrera 14 # 15-22;Armenia;CENTRO;LOCAL_COMERCIAL;Arriendo;180000000,00;45,50;2;1;Disponible;true;3456;0
+INM-006;Sector Unicentro;Armenia;CENTRO;APARTAMENTO;Arriendo;240000000,00;68,00;2;2;Disponible;true;3456;0
+INM-008;Zona Industrial Fontibón;Bogotá;SUR;BODEGA;Arriendo;8500000,00;320,00;0;2;Disponible;true;1122;0
+INM-009;Barrio Granada;Cali;CENTRO;APARTAMENTO;Arriendo;1300000,00;55,00;1;1;Disponible;true;7890;0
+INM-010;Edificio Inteligente Piso 5;Bogotá;CENTRO;OFICINA;Arriendo;1800000,00;35,00;0;1;Disponible;true;1122;0

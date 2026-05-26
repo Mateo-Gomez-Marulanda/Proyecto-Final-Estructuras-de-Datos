@@ -1,1 +1,3 @@
 3456;Mateo;456;Armenia;null;0
+7890;Camila Gómez;3101234567;Cali;null;2
+1122;Carlos Mendoza;carlos@proptech.com;Bogotá;null;5

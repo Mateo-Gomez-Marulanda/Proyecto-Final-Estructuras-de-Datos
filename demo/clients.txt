@@ -1,2 +1,4 @@
 1234;Andres;ejemplo@gmail.com;895;POTENTIAL;5500000.0;Norte;Armenia;APARTAMENTO;3;INACTIVE;Andres123
 admin;Administrador;admin@proptech.com;000-000-0000;ADMIN;0.0;N/A;N/A;NONE;0;ACTIVE;Admin1234
+5678;Liliana Restrepo;lili@outlook.com;3154445566;POTENTIAL;2.5E8;Centro;Cali;LOCAL_COMERCIAL;3;INACTIVE;lili1234
+9012;Roberto Castro;roberto.c@gmail.com;6013334455;Regular;2.0E7;Norte;Bogotá;OFICINA;1;INACTIVE;roberto1234
