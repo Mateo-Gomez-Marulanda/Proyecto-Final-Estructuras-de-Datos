@@ -240,7 +240,7 @@ public void agendarVisita() {
     }
 
     try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/proyectofinal/views/AgendarVisitaCLI.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/proyectofinal/views/agendar-visita-cliente.fxml"));
         Parent root = loader.load();
 
         AgendarVisitaCLIController controller = loader.getController();

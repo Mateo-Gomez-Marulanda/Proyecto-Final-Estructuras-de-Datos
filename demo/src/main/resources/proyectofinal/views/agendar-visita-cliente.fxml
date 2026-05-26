@@ -28,7 +28,7 @@
             
             <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="0">
                 <Label text="Fecha *" style="-fx-font-weight: bold;"/>
-                <DatePicker fx:id="dpFecha" maxWidth="Infinity"/>
+                <DatePicker fx:id="campoFecha" maxWidth="Infinity"/>
             </VBox>
             
             <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="0">
@@ -42,11 +42,11 @@
             <TextArea fx:id="txtObservaciones" prefRowCount="3"/>
         </VBox>
 
-        <Label fx:id="labelMensaje" visible="false" wrapText="true" style="-fx-font-weight: bold;"/>
+        <Label fx:id="labelError" visible="false" managed="false" wrapText="true" style="-fx-font-weight: bold;"/>
     </VBox>
 
     <HBox spacing="12" alignment="CENTER_RIGHT" style="-fx-background-color: #f1f5f9; -fx-padding: 16 24;">
-        <Button text="Cancelar" onAction="#cancelarAgendamiento"/>
-        <Button text="✔ Confirmar" onAction="#guardarVisita" style="-fx-background-color: #1e293b; -fx-text-fill: white;"/>
+        <Button text="Cancelar" onAction="#cancelar"/>
+        <Button text="✔ Confirmar" onAction="#agendarVisita" style="-fx-background-color: #1e293b; -fx-text-fill: white;"/>
     </HBox>
 </VBox>

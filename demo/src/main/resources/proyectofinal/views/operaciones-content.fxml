@@ -71,6 +71,7 @@
     <HBox alignment="CENTER_LEFT" spacing="10" styleClass="barra-acciones">
         <Button fx:id="btnVerDetalles" disable="true" onAction="#verDetallesOperacion" styleClass="boton-secundario" text="📄  Ver detalles" />
         <Button fx:id="btnEditarEstado" disable="true" onAction="#editarEstadoOperacion" styleClass="boton-secundario" text="✏️  Editar estado" />
+        <Button fx:id="btnGenerarContrato" disable="true" text="📄 Generar Contrato" onAction="#abrirFormularioContrato" styleClass="boton-secundario"/>
     </HBox>
 
 </VBox>

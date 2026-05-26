@@ -70,6 +70,11 @@
                             styleClass="boton-advertencia"
                             onAction="#guardarFavoritoDesdeHistorial"
                             disable="true"/>
+                    <Button fx:id="btnIniciarTramite" 
+                            text="💼 Iniciar Trámite" 
+                            onAction="#manejarSolicitudTramite"
+                            styleClass="boton-advertencia"
+                            disable="true"/>
                 </HBox>
             </VBox>
         </Tab>

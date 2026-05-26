@@ -10,69 +10,81 @@ import proyectofinal.Personal.Client;
 
 public class AgendarVisitaCLIController {
 
-    @FXML private TextField txtInmueble;
-    @FXML private DatePicker campoFecha;
-    @FXML private Spinner<Integer> campoHora;
-    @FXML private Spinner<Integer> campoMinutos;
-    @FXML private Label labelError;
+    @FXML
+    private TextField txtInmueble;
+    @FXML
+    private DatePicker campoFecha; // Coincide con fx:id="campoFecha" del nuevo FXML
+    @FXML
+    private ComboBox<LocalTime> cmbHora; // ¡CAMBIADO de Spinner a ComboBox!
+    @FXML
+    private TextArea txtObservaciones; // Coincide con fx:id="txtObservaciones"
+    @FXML
+    private Label labelError; // Coincide con fx:id="labelError"
 
     private Property inmuebleSeleccionado;
     private Client clienteActual;
 
     @FXML
     public void initialize() {
-        configurarSpinners();
+        configurarComboBoxHora();
         campoFecha.setValue(LocalDate.now().plusDays(1));
     }
 
-    private void configurarSpinners() {
-        campoHora.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(8, 17, 9));
-        campoMinutos.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
+    private void configurarComboBoxHora() {
+        // Limpiamos por si acaso y llenamos con intervalos de 8:00 AM a 5:00 PM
+        cmbHora.getItems().clear();
+        for (int h = 8; h <= 17; h++) {
+            cmbHora.getItems().add(LocalTime.of(h, 0));
+            cmbHora.getItems().add(LocalTime.of(h, 30));
+        }
+        // Seleccionar el primer horario por defecto para evitar NullPointerException
+        cmbHora.getSelectionModel().selectFirst();
     }
 
     public void setDatosIniciales(Property p, Client c) {
         this.inmuebleSeleccionado = p;
         this.clienteActual = c;
-        
+
         // Actualizamos la UI
         txtInmueble.setText(p.getCode() + " — " + p.getAddress());
         txtInmueble.setEditable(false);
     }
+
     @FXML
-    public void agendarVisita() {
-        ocultarError();
+public void agendarVisita() {
+    ocultarError();
 
-        // 1. Usamos la variable que ya inyectamos en setDatosIniciales
-        // Esto garantiza que estamos agendando para el cliente que seleccionamos
-        if (clienteActual == null || inmuebleSeleccionado == null) {
-            mostrarError("Error: Datos de cliente o inmueble no cargados.");
-            return;
-        }
-
-        LocalDate fecha = campoFecha.getValue();
-        LocalTime hora = LocalTime.of(campoHora.getValue(), campoMinutos.getValue());
-
-        // 2. Validaciones
-        if (fecha == null) {
-            mostrarError("Selecciona una fecha válida.");
-            return;
-        }
-        if (java.time.LocalDateTime.of(fecha, hora).isBefore(java.time.LocalDateTime.now())) {
-            mostrarError("La fecha y hora no pueden ser pasadas.");
-            return;
-        }
-
-        // 3. Registrar visita usando las variables de la clase
-        AppContext.getInstance().getVisitManager().scheduleVisit(
-            this.clienteActual, 
-            this.inmuebleSeleccionado, 
-            fecha, 
-            hora
-        );
-
-        // 4. Cierre
-        cerrarVentana();
+    if (clienteActual == null || inmuebleSeleccionado == null) {
+        mostrarError("Error: Datos de cliente o inmueble no cargados.");
+        return;
     }
+
+    LocalDate fecha = campoFecha.getValue();
+    LocalTime hora = cmbHora.getValue(); // Extrae directamente el LocalTime seleccionado
+
+    if (fecha == null) {
+        mostrarError("Selecciona una fecha válida.");
+        return;
+    }
+    if (hora == null) {
+        mostrarError("Por favor, selecciona una hora para la visita.");
+        return;
+    }
+    if (java.time.LocalDateTime.of(fecha, hora).isBefore(java.time.LocalDateTime.now())) {
+        mostrarError("La fecha y hora no pueden ser pasadas.");
+        return;
+    }
+
+    // Registrar visita usando el manager
+    AppContext.getInstance().getVisitManager().scheduleVisit(
+        this.clienteActual, 
+        this.inmuebleSeleccionado, 
+        fecha, 
+        hora
+    );
+
+    cerrarVentana();
+}
     @FXML
     public void cancelar() {
         cerrarVentana();

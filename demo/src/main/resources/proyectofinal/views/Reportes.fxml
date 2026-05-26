@@ -24,14 +24,15 @@
       </HBox>
       <HBox spacing="10.0">
          <children>
-            <Button mnemonicParsing="false" onAction="#generarReporte" style="-fx-background-color: #0078D7; -fx-text-fill: white; -fx-font-weight: bold;" text="Actualizar Reporte" />
-            <Button mnemonicParsing="false" onAction="#limpiarReporte" text="Limpiar Consola" />
+            <Button mnemonicParsing="false" onAction="#generarReporte" style="-fx-background-color: #0078D7; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="📊 Actualizar Reporte" />
+            
+            <Button mnemonicParsing="false" onAction="#limpiarReporte" style="-fx-cursor: hand;" text="🧹 Limpiar Consola" />
          </children>
       </HBox>
-      <!-- Se usa Monospaced para que las tablas de texto mantengan el formato -->
+      
       <TextArea fx:id="areaReporte" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" VBox.vgrow="ALWAYS">
          <font>
-            <Font name="Monospaced" size="14.0" />
+            <Font name="Monospaced" size="13.0" />
          </font>
       </TextArea>
    </children>

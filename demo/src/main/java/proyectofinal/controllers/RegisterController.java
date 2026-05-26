@@ -7,8 +7,6 @@ import javafx.scene.control.TextField;
 import javafx.application.Platform;
 
 import proyectofinal.Main;
-// IMPORTANTE: Asegúrate de importar tu gestor de persistencia e hilos de contexto
-import proyectofinal.SistemaGestion.Persistencia.PersistenceManager;
 
 public class RegisterController {
 
@@ -43,22 +41,17 @@ public class RegisterController {
         try {
             AppContext context = AppContext.getInstance();
 
-            // 2. Registramos el cliente en la memoria (Estructura de Datos)
+            // 1. Registramos el cliente en la memoria (Operación O(1) rápida en Estructura de Datos)
             context.getClientManager().registerBasic(
                 id, nombre, correo, password, telefono
             );
 
-            PersistenceManager.saveAll(
-                context.getPropertyManager(),
-                context.getClientManager(),
-                context.getAdvisors(), 
-                context.getVisitManager(),
-                context.getContracts()
-            );
-
+            // 2. Modificaciones visuales rápidas en el hilo de la UI
             mostrarExito("¡Cuenta creada exitosamente! Redirigiendo...");
             bloquearFormulario(true);
-            navegarAlLoginConRetraso();
+            
+            // 3. Pasamos el contexto al hilo secundario para guardar datos de forma asíncrona
+            guardarYRedirigirAsincrono(context);
 
         } catch (RuntimeException e) {
             mostrarError(e.getMessage());
@@ -72,19 +65,25 @@ public class RegisterController {
         return false;
     }
 
-    private void navegarAlLoginConRetraso() {
-        new Thread(() -> {
-            try {
-                Thread.sleep(1500); 
-                Platform.runLater(() -> {
-                    try {
-                        Main.cargarLogin();
-                    } catch (Exception ignored) {}
-                });
-            } catch (InterruptedException ignored) {}
-        }).start();
-    }
+    /**
+     * Corre en un hilo separado para evitar que la escritura de archivos planos
+     * congele la interfaz gráfica de usuario.
+     */
+   private void guardarYRedirigirAsincrono(AppContext context) {
+    new Thread(() -> {
+        try {
+            // Ahora AppContext se encarga internamente de la traducción de estructuras
+            context.saveAll(); 
 
+            Thread.sleep(1500); 
+            Platform.runLater(() -> {
+                try { Main.cargarLogin(); } catch (Exception ignored) {}
+            });
+        } catch (InterruptedException ignored) {
+            Thread.currentThread().interrupt();
+        }
+    }).start();
+}
     private void bloquearFormulario(boolean bloquear) {
         campoNombre.setDisable(bloquear);
         campoId.setDisable(bloquear);

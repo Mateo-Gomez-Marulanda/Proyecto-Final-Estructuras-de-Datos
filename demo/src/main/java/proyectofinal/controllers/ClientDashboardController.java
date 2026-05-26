@@ -1,10 +1,17 @@
 package proyectofinal.controllers;
 
+import java.io.IOException;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import proyectofinal.Inmueble.Property;
 import proyectofinal.Personal.Client;
 
@@ -59,12 +66,19 @@ public class ClientDashboardController {
         numFavoritos.setText(String.valueOf(client.getFavoriteProperties().size()));
         numVisitadas.setText(String.valueOf(client.getVisitedPropertiesHistory().size()));
 
-        // Count active visits from history
         int visitas = 0;
-        for (var v : AppContext.getInstance().getVisitManager().getVisitHistory()) {
-            if (v.getClient().getId().equals(client.getId())
-                    && (v.getVisitStatus().equals("PENDING") || v.getVisitStatus().equals("CONFIRM"))) {
-                visitas++;
+        var visitasActivasYPendientes = AppContext.getInstance().getVisitManager().getAllPendingAndActiveVisits();
+        
+        for (int i = 0; i < visitasActivasYPendientes.size(); i++) {
+            var v = visitasActivasYPendientes.get(i);
+            
+            // Validamos que pertenezca al cliente logueado
+            if (v.getClient().getId().equals(client.getId())) {
+                // Comparamos usando el Enum directamente, o convirtiéndolo a String de forma segura
+                String estado = String.valueOf(v.getVisitStatus());
+                if (estado.equalsIgnoreCase("PENDING") || estado.equalsIgnoreCase("CONFIRM")) {
+                    visitas++;
+                }
             }
         }
         numVisitas.setText(String.valueOf(visitas));
@@ -96,7 +110,30 @@ public class ClientDashboardController {
 
     @FXML
     public void agendarVisitaDesdeRecomendacion() {
-        mostrarInfo("Para agendar una visita ve al módulo 'Mis visitas'.");
+        Property propSeleccionada = tablaRecomendaciones.getSelectionModel().getSelectedItem();
+        if (propSeleccionada == null) {
+            mostrarInfo("Por favor, selecciona un inmueble.");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/proyectofinal/views/agendar-visita-cliente.fxml"));
+            Parent root = loader.load();
+
+            AgendarVisitaCLIController controller = loader.getController();
+            controller.setDatosIniciales(propSeleccionada, AppContext.getInstance().getClientManager().getCurrent());
+
+            Stage dialog = new Stage();
+            dialog.setTitle("Agendar Visita");
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.setScene(new Scene(root));
+            dialog.showAndWait();
+
+            cargarDatos(); // Refrescar tabla al cerrar
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void mostrarInfo(String msg) {

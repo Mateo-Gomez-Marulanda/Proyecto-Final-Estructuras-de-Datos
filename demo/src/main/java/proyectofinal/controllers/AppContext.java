@@ -9,8 +9,9 @@ import proyectofinal.Personal.ClientManager;
 import proyectofinal.SistemaGestion.AgendamientoVisitas.VisitManager;
 import proyectofinal.SistemaGestion.Alertas.Alert;
 import proyectofinal.SistemaGestion.Alertas.AlertEngine;
-import proyectofinal.SistemaGestion.Contratos.Contract; // Importación necesaria
+import proyectofinal.SistemaGestion.Contratos.Contract;
 import proyectofinal.SistemaGestion.GestionInmuebles.PropertyManager;
+import proyectofinal.SistemaGestion.Grafos.GraphService;
 import proyectofinal.SistemaGestion.Observer.ContractGeneratorObserver;
 import proyectofinal.SistemaGestion.Observer.OperationPublisher;
 import proyectofinal.SistemaGestion.OperacionDeNegocio.BusinessOperation;
@@ -24,24 +25,35 @@ public class AppContext {
     private final ClientManager   clientManager;
     private final VisitManager    visitManager;
     private final SimpleLinkedList<Advisor>         advisors;
-    private final SimpleLinkedList<Contract>        contracts; // 1. Declarar la lista
+    private final SimpleLinkedList<Contract>        contracts; 
     private final ObservableList<BusinessOperation> operations;
     private final Queue<Alert>                      pendingAlerts;
     private final SimpleLinkedList<Alert>           alertHistory;
 
+    private final GraphService graphService;
+
     private AppContext() {
+        // 1. Inicialización de Managers
         propertyManager = new PropertyManager();
         clientManager   = new ClientManager();
         visitManager    = new VisitManager();
         advisors        = new SimpleLinkedList<>();
-        contracts       = new SimpleLinkedList<>(); // 2. Inicializar la lista
+        contracts       = new SimpleLinkedList<>(); 
         operations      = FXCollections.observableArrayList();
         pendingAlerts   = new Queue<>();
         alertHistory    = new SimpleLinkedList<>();
+        
+        // 2. Inicializar el servicio de grafos (sin sincronizar aún)
+        graphService = GraphService.getInstance();
 
-        OperationPublisher.getInstance().subscribe(new ContractGeneratorObserver());
+        // 3. Cargar datos desde persistencia
         loadPersistedData();
         crearAdminSiNoExiste();
+
+        // 4. Sincronizar el grafo DESPUÉS de tener los datos cargados
+        graphService.synchronizeData(visitManager.getVisitHistory(), propertyManager.getProperties());
+
+        OperationPublisher.getInstance().subscribe(new ContractGeneratorObserver());
     }
 
     public static AppContext getInstance() {
@@ -50,25 +62,36 @@ public class AppContext {
     }
 
     private void loadPersistedData() {
-        // Carga los contratos mediante la lógica que implementamos en PersistenceManager
-        PersistenceManager.loadAll(propertyManager, clientManager, advisors, visitManager,contracts);
+        SimpleLinkedList<BusinessOperation> tempOperationsList = new SimpleLinkedList<>();
+        PersistenceManager.loadAll(propertyManager, clientManager, advisors, visitManager, contracts, tempOperationsList);
+        
+        operations.clear();
+        for (BusinessOperation op : tempOperationsList) {
+            operations.add(op);
+        }
+        
         AlertEngine.checkAndGenerateAlerts(this);
     }
 
     public void saveAll() {
-        // 3. Pasar la lista de contratos al método de guardado
-        PersistenceManager.saveAll(propertyManager, clientManager, advisors, visitManager, contracts);
+        SimpleLinkedList<BusinessOperation> tempOperationsList = new SimpleLinkedList<>();
+        for (BusinessOperation op : operations) {
+            tempOperationsList.add(op);
+        }
+
+        PersistenceManager.saveAll(propertyManager, clientManager, advisors, visitManager, contracts, tempOperationsList);
     }
 
     // Getters
     public SimpleLinkedList<Contract> getContracts() { return contracts; }
-    public PropertyManager getPropertyManager()              { return propertyManager; }
-    public ClientManager   getClientManager()                { return clientManager; }
-    public VisitManager    getVisitManager()                 { return visitManager; }
-    public SimpleLinkedList<Advisor> getAdvisors()           { return advisors; }
+    public PropertyManager getPropertyManager()      { return propertyManager; }
+    public ClientManager   getClientManager()        { return clientManager; }
+    public VisitManager    getVisitManager()         { return visitManager; }
+    public SimpleLinkedList<Advisor> getAdvisors()   { return advisors; }
     public ObservableList<BusinessOperation> getOperations() { return operations; }
-    public Queue<Alert>    getPendingAlerts()                { return pendingAlerts; }
-    public SimpleLinkedList<Alert> getAlertHistory()         { return alertHistory; }
+    public Queue<Alert>    getPendingAlerts()        { return pendingAlerts; }
+    public SimpleLinkedList<Alert> getAlertHistory() { return alertHistory; }
+    public GraphService getGraphService()            { return graphService; }
 
     private void crearAdminSiNoExiste() {
         if (clientManager.getClientTable().get("admin") != null) return;

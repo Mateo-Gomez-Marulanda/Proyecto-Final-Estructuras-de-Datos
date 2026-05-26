@@ -3,9 +3,19 @@ package proyectofinal.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+
 import javafx.beans.property.SimpleStringProperty;
 
 import proyectofinal.SistemaGestion.GestionInmuebles.PropertyChange;
@@ -81,6 +91,29 @@ public class DashboardController {
                     (javafx.scene.layout.StackPane) numInmuebles.getScene().lookup("#contenidoCentral");
             if (parent != null) parent.getChildren().setAll(vista);
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Levanta la vista modal con el reporte analítico y estadístico general.
+     */
+    @FXML
+    public void abrirVentanaReportes() {
+        try {
+            // Se usa el prefijo /proyectofinal/views/ manteniendo consistencia con tus layouts
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/proyectofinal/views/Reportes.fxml"));
+            Parent root = loader.load();
+
+            Stage dialog = new Stage();
+            dialog.setTitle("Consola de Analítica y Reportes Gerenciales");
+            dialog.initModality(Modality.APPLICATION_MODAL); // Bloquea la ventana de atrás para mantener el foco
+            dialog.setScene(new Scene(root));
+            dialog.showAndWait();
+            
+        } catch (IOException e) {
+            new Alert(Alert.AlertType.ERROR, "Error al abrir el módulo de analítica: " + e.getMessage(), ButtonType.OK).showAndWait();
             e.printStackTrace();
         }
     }

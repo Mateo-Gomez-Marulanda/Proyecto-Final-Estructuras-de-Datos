@@ -50,6 +50,7 @@ public class VisitManager {
         visit.setVisitStatus(VisitStatus.CONFIRM);
         removeVisitFromQueues(visit);
         visit.getClient().removeVisita(visit);
+        visit.getClient().getVisitedPropertiesHistory().add(visit.getProperty());
         visitHistory.add(visit);
     }
 

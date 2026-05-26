@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefWidth="420.0" spacing="18.0" style="-fx-background-color: #ffffff; -fx-border-color: #e2e8f0; -fx-border-width: 1; -fx-border-radius: 8; -fx-background-radius: 8;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="proyectofinal.controllers.CrearContratoController">
+   
+   <children>
+      <VBox spacing="4.0">
+         <children>
+            <Label text="Formalización de Contrato" textFill="#1e293b">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label text="Complete los datos mandatorios para expedir el soporte legal de cierre." textFill="#64748b" wrapText="true">
+               <font>
+                  <Font size="12.0" />
+               </font>
+            </Label>
+         </children>
+      </VBox>
+      
+      <VBox prefHeight="1.0" style="-fx-background-color: #f1f5f9;" />
+      
+      <VBox spacing="6.0">
+         <children>
+            <Label text="Nombre o Título del Contrato *" textFill="#334155">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </Label>
+            <TextField fx:id="campoNombre" promptText="Ej. Contrato de Arrendamiento - Inmueble 102" style="-fx-background-radius: 5; -fx-border-color: #cbd5e1; -fx-border-radius: 5; -fx-padding: 8;" />
+         </children>
+      </VBox>
+      
+      <VBox spacing="6.0">
+         <children>
+            <Label text="Fecha de Vencimiento / Expiración *" textFill="#334155">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </Label>
+            <DatePicker fx:id="pickerExpiracion" maxWidth="1.1797693134862315E308" promptText="Seleccione la fecha de fin de vigencia" style="-fx-background-radius: 5; -fx-border-color: #cbd5e1; -fx-border-radius: 5; -fx-padding: 4;" />
+         </children>
+      </VBox>
+      
+      <Label fx:id="labelError" text="Mensaje de error" textFill="#dc2626" wrapText="true">
+         <font>
+            <Font name="System Semibold" size="12.0" />
+         </font>
+         <VBox.margin>
+            <Insets bottom="-5.0" top="2.0" />
+         </VBox.margin>
+      </Label>
+      
+      <HBox alignment="CENTER_RIGHT" spacing="12.0">
+         <children>
+            <Button fx:id="btnCancelar" onAction="#cancelar" style="-fx-background-color: #f1f5f9; -fx-text-fill: #475569; -fx-background-radius: 6; -fx-padding: 9 18; -fx-cursor: hand; -fx-font-weight: bold;" text="Cancelar" />
+            <Button fx:id="btnGuardar" onAction="#guardarContrato" style="-fx-background-color: #16a34a; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 9 18; -fx-cursor: hand;" text="✍ Firmar y Registrar" />
+         </children>
+         <VBox.margin>
+            <Insets top="8.0" />
+         </VBox.margin>
+      </HBox>
+   </children>
+   
+   <padding>
+      <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+   </padding>
+</VBox>
