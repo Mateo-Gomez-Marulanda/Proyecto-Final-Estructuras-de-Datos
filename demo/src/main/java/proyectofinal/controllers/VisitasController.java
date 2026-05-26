@@ -16,12 +16,7 @@ import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import proyectofinal.SistemaGestion.AgendamientoVisitas.VisitManager;
-import proyectofinal.SistemaGestion.Observer.OperationEvent;
-import proyectofinal.SistemaGestion.Observer.OperationPublisher;
-import proyectofinal.SistemaGestion.OperacionDeNegocio.BusinessOperation;
-import proyectofinal.SistemaGestion.OperacionDeNegocio.OperationType;
 import proyectofinal.SistemaGestion.AgendamientoVisitas.Visit;
-import proyectofinal.SistemaGestion.Observer.*;
 
 public class VisitasController {
 
@@ -115,7 +110,7 @@ public class VisitasController {
     }
 
     private void configurarFiltros() {
-        filtroEstadoVisita.getItems().setAll("PENDIENTE", "CONFIRMADA", "REALIZADA", "CANCELADA", "REPROGRAMADA");
+        filtroEstadoVisita.getItems().setAll("PENDING", "CONFIRM", "COMPLETED", "CANCELLED", "RESCHEDULED");
     }
 
     // ─────────────────────────────────────────────────────────
@@ -180,45 +175,7 @@ public class VisitasController {
         if (seleccionada == null) { mostrarInfo("No hay visitas para confirmar."); return; }
 
         AppContext.getInstance().getVisitManager().confirmVisit(seleccionada);
-    
-        try {
-            OperationType tipoOp = seleccionada.getProperty().getPurpose().equalsIgnoreCase("Venta") 
-                    ? OperationType.SALE 
-                    : OperationType.RENTAL;
-
-            int totalOps = AppContext.getInstance().getOperations().size();
-            String idOp = "OP-" + String.format("%03d", totalOps + 1);
-
-            double valorAcordado = seleccionada.getProperty().getPrice();
-        
-            double porcentajeComision = (tipoOp == OperationType.SALE) ? 0.03 : 0.10;
-            double comision = valorAcordado * porcentajeComision;
-
-            BusinessOperation nuevaOperacion = new BusinessOperation(
-                idOp,
-                seleccionada.getProperty(),                         // Property relatedProperty
-                seleccionada.getClient(),                           // Client client
-                seleccionada.getProperty().getResponsibleAdvisor(),  // Advisor advisor
-                LocalDate.now(),                                    // LocalDate date
-                tipoOp,                                             // OperationType operationType
-                valorAcordado,                                      // double agreedValue
-                comision,                                           // double commission
-                proyectofinal.SistemaGestion.OperacionDeNegocio.ProcessStatus.IN_PROGRESS // ProcessStatus exacto
-            );
-
-            OperationPublisher.getInstance().publish(nuevaOperacion, OperationEvent.EventType.OPERATION_CREATED);
-
-            AppContext.getInstance().saveAll();
-
-            mostrarInfo("¡Visita procesada!\nSe ha registrado automáticamente la Operación " + idOp + 
-                        " en estado IN_PROGRESS y el contrato asociado mediante el sistema de eventos.");
-
-        } catch (Exception e) {
-            System.err.println("[Error al automatizar operación]: " + e.getMessage());
-            e.printStackTrace();
-            mostrarError("Ocurrió un error al registrar la operación automática:\n" + e.getMessage());
-        }
-
+        mostrarInfo("¡Visita confirmada exitosamente! Se ha trasladado al historial.");
         refrescarTodo();
     }
 
@@ -234,40 +191,11 @@ public class VisitasController {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Cancelar visita");
         dialog.setHeaderText("Motivo de cancelación (Observaciones):");
-
+    
         final Visit finalSelected = seleccionada;
         dialog.showAndWait().ifPresent(reason -> {
             AppContext.getInstance().getVisitManager().cancelVisit(finalSelected, reason);
-        
-            try {
-                int totalOps = AppContext.getInstance().getOperations().size();
-                String idOp = "OP-" + String.format("%03d", totalOps + 1);
-                double valorAcordado = finalSelected.getProperty().getPrice();
-                double comision = 0.0; 
-
-                BusinessOperation operacionCancelacion = new BusinessOperation(
-                    idOp,
-                    finalSelected.getProperty(),
-                    finalSelected.getClient(),
-                    finalSelected.getProperty().getResponsibleAdvisor(),
-                    LocalDate.now(),
-                    OperationType.BUSINESS_CANCELLATION,
-                    valorAcordado,
-                    comision,
-                    proyectofinal.SistemaGestion.OperacionDeNegocio.ProcessStatus.CANCELLED
-            );
-
-                OperationPublisher.getInstance().publish(operacionCancelacion, OperationEvent.EventType.OPERATION_CANCELLED);
-
-                AppContext.getInstance().saveAll();
-        
-                mostrarInfo("Visita cancelada.\nSe ha registrado la Operación de Cancelación " + idOp + " y se ha revocado el contrato respectivo.");
-
-            } catch (Exception e) {
-                System.err.println("[Error al automatizar cancelación]: " + e.getMessage());
-                e.printStackTrace();
-            }
-
+            mostrarInfo("Visita cancelada y enviada al historial.");
             refrescarTodo();
         });
     }
