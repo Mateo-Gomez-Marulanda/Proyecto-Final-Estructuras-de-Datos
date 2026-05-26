@@ -63,7 +63,7 @@ public class ClientDashboardController {
         int visitas = 0;
         for (var v : AppContext.getInstance().getVisitManager().getVisitHistory()) {
             if (v.getClient().getId().equals(client.getId())
-                    && (v.getStatus().equals("PENDING") || v.getStatus().equals("CONFIRM"))) {
+                    && (v.getVisitStatus().equals("PENDING") || v.getVisitStatus().equals("CONFIRM"))) {
                 visitas++;
             }
         }

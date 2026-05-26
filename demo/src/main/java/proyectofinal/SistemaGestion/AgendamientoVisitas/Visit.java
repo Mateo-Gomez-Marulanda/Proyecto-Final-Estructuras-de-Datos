@@ -2,104 +2,75 @@ package proyectofinal.SistemaGestion.AgendamientoVisitas;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 import proyectofinal.Inmueble.Property;
 import proyectofinal.Personal.Advisor;
 import proyectofinal.Personal.Client;
 
-
 public class Visit {
-    private String code; // código único para identificar la visita
-    private Client client; // Cliente
-    private Property property; // Inmueble
+    private String code; 
+    private Client client; 
+    private Property property; 
     private LocalDate date;
     private LocalTime time;
-    private Advisor assignedAdvisor; // Asesor
-    private VisitStatus visitStatus; // pendiente, confirmada, realizada, cancelada, reprogramada
+    private Advisor assignedAdvisor; 
+    private VisitStatus visitStatus; // USAMOS EL ENUM PARA SEGURIDAD
     private String postObservations;
 
-    public Visit(String code, Client client, Property property, LocalDate date, LocalTime time,
-            Advisor assignedAdvisor,
-            VisitStatus visitStatus, String postObservations) {
-        this.code = code;
+    // Constructor optimizado para creaciones nuevas
+    public Visit(Client client, Property property, LocalDate date, LocalTime time, Advisor assignedAdvisor) {
+        this.code = generateUniqueCode(); // Autogenerado como en Visit
         this.client = client;
         this.property = property;
         this.date = date;
         this.time = time;
         this.assignedAdvisor = assignedAdvisor;
-        this.visitStatus = visitStatus;
-        this.postObservations = postObservations;
+        this.visitStatus = VisitStatus.PENDING; // Por defecto
+        this.postObservations = "";
     }
 
-    public String getCode() {
-        return code;
+    // Método traído de Visit
+    private String generateUniqueCode() {
+        return "VIS-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    // Método traído de Visit adaptado a LocalDate y LocalTime
+    public String getFormattedDate() {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        return date.format(dateFormatter) + " " + time.format(timeFormatter);
     }
 
-    public Client getClient() {
-        return client;
-    }
+    // Getters y Setters
+    public String getCode() { return code; }
+    public void setCode(String code) { this.code = code; }
 
-    public void setClient(Client client) {
-        this.client = client;
-    }
+    public Client getClient() { return client; }
+    public void setClient(Client client) { this.client = client; }
 
-    public Property getProperty() {
-        return property;
-    }
+    public Property getProperty() { return property; }
+    public void setProperty(Property property) { this.property = property; }
 
-    public void setProperty(Property property) {
-        this.property = property;
-    }
+    public LocalDate getDate() { return date; }
+    public void setDate(LocalDate date) { this.date = date; }
 
-    public LocalDate getDate() {
-        return date;
-    }
+    public LocalTime getTime() { return time; }
+    public void setTime(LocalTime time) { this.time = time; }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
+    public Advisor getAssignedAdvisor() { return assignedAdvisor; }
+    public void setAssignedAdvisor(Advisor assignedAdvisor) { this.assignedAdvisor = assignedAdvisor; }
 
-    public LocalTime getTime() {
-        return time;
-    }
+    public VisitStatus getVisitStatus() { return visitStatus; }
+    public void setVisitStatus(VisitStatus visitStatus) { this.visitStatus = visitStatus; }
 
-    public void setTime(LocalTime time) {
-        this.time = time;
-    }
-
-    public Advisor getAssignedAdvisor() {
-        return assignedAdvisor;
-    }
-
-    public void setAssignedAdvisor(Advisor assignedAdvisor) {
-        this.assignedAdvisor = assignedAdvisor;
-    }
-
-    public VisitStatus getVisitStatus() {
-        return visitStatus;
-    }
-
-    public void setVisitStatus(VisitStatus visitStatus) {
-        this.visitStatus = visitStatus;
-    }
-
-    public String getPostObservations() {
-        return postObservations;
-    }
-
-    public void setPostObservations(String postObservations) {
-        this.postObservations = postObservations;
-    }
+    public String getPostObservations() { return postObservations; }
+    public void setPostObservations(String postObservations) { this.postObservations = postObservations; }
 
     @Override
     public String toString() {
-        return "Code: " + code + " | Client: " + client + " | Property: " + property + " | Date: " + date
-                + " | Time: " + time
-                + " | Assigned Advisor: " + assignedAdvisor + " | Status: " + visitStatus + " | Observations: "
-                + postObservations;
+        return String.format("[%s] Cliente: %s - Inmueble: %s - Fecha: %s", 
+                visitStatus, client.getName(), property.getCode(), getFormattedDate());
     }
 }

@@ -199,7 +199,7 @@ public class AlertasController {
         int inicial = AppContext.getInstance().getPendingAlerts().size();
         
         // Delegamos TODAS las reglas de negocio (Contratos, Inmuebles, Clientes, Visitas) al motor centralizado
-        AlertEngine.checkAndGenerateAlerts();
+        AlertEngine.checkAndGenerateAlerts(AppContext.getInstance());
         
         int finalAlerts = AppContext.getInstance().getPendingAlerts().size();
         int creadas = finalAlerts - inicial;

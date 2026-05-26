@@ -7,27 +7,34 @@ import javafx.util.StringConverter;
 
 import proyectofinal.Inmueble.Property;
 import proyectofinal.Personal.Client;
-import proyectofinal.SistemaGestion.AgendamientoVisitas.VisitRequest;
+import proyectofinal.SistemaGestion.AgendamientoVisitas.Visit;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.function.Consumer;
 
 public class AgendarVisitaController {
 
-    @FXML private ComboBox<Client>   campoCliente;
-    @FXML private Label              labelTipoCliente;
-    @FXML private ComboBox<Property> campoInmueble;
-    @FXML private Label              labelAsesor;
-    @FXML private DatePicker         campoFecha;
-    @FXML private Spinner<Integer>   campoHora;
-    @FXML private Spinner<Integer>   campoMinutos;
-    @FXML private Label              labelError;
+    @FXML
+    private ComboBox<Client> campoCliente;
+    @FXML
+    private Label labelTipoCliente;
+    @FXML
+    private ComboBox<Property> campoInmueble;
+    @FXML
+    private Label labelAsesor;
+    @FXML
+    private DatePicker campoFecha;
+    @FXML
+    private Spinner<Integer> campoHora;
+    @FXML
+    private Spinner<Integer> campoMinutos;
+    @FXML
+    private Label labelError;
 
     private Client clientePreseleccionado;
     private Property inmueblePreseleccionado;
 
-    private Consumer<VisitRequest> onAgendadoExitoso;
+    private Consumer<Visit> onAgendadoExitoso;
 
     // ─────────────────────────────────────────────────────────
     // Init
@@ -39,14 +46,24 @@ public class AgendarVisitaController {
         configurarComboInmueble();
         configurarSpinners();
         campoFecha.setValue(LocalDate.now().plusDays(1));
+
+        if (campoCliente.getValue() != null)
+            onClienteSeleccionado();
+        if (campoInmueble.getValue() != null)
+            onInmuebleSeleccionado();
     }
 
     private void configurarComboCliente() {
         campoCliente.setConverter(new StringConverter<>() {
-            @Override public String toString(Client c) {
+            @Override
+            public String toString(Client c) {
                 return c == null ? "" : c.getName() + " (" + c.getId() + ")";
             }
-            @Override public Client fromString(String s) { return null; }
+
+            @Override
+            public Client fromString(String s) {
+                return null;
+            }
         });
         for (Client c : AppContext.getInstance().getClientManager().getAllClients()) {
             // Exclude ADMIN accounts
@@ -62,13 +79,19 @@ public class AgendarVisitaController {
 
     private void configurarComboInmueble() {
         campoInmueble.setConverter(new StringConverter<>() {
-            @Override public String toString(Property p) {
+            @Override
+            public String toString(Property p) {
                 return p == null ? "" : p.getCode() + " — " + p.getAddress();
             }
-            @Override public Property fromString(String s) { return null; }
+
+            @Override
+            public Property fromString(String s) {
+                return null;
+            }
         });
         for (Property p : AppContext.getInstance().getPropertyManager().getProperties()) {
-            if (p.isAvailable()) campoInmueble.getItems().add(p);
+            if (p.isAvailable())
+                campoInmueble.getItems().add(p);
         }
         if (inmueblePreseleccionado != null) {
             campoInmueble.setValue(inmueblePreseleccionado);
@@ -96,7 +119,7 @@ public class AgendarVisitaController {
         this.inmueblePreseleccionado = property;
     }
 
-    public void setOnAgendadoExitoso(Consumer<VisitRequest> callback) {
+    public void setOnAgendadoExitoso(Consumer<Visit> callback) {
         this.onAgendadoExitoso = callback;
     }
 
@@ -105,18 +128,17 @@ public class AgendarVisitaController {
     // ─────────────────────────────────────────────────────────
 
     @FXML
-    public void onClienteSeleccionado() {
+    private void onClienteSeleccionado() {
         Client c = campoCliente.getValue();
-        if (c != null) {
-            labelTipoCliente.setText(c.getClientType());
-        } else {
-            labelTipoCliente.setText("—");
-        }
+        labelTipoCliente.setText(c != null ? c.getClientType() : "—");
     }
 
     @FXML
-    public void onInmuebleSeleccionado() {
-        actualizarInfoAsesor(campoInmueble.getValue());
+    private void onInmuebleSeleccionado() {
+        Property p = campoInmueble.getValue();
+        labelAsesor.setText(p != null && p.getResponsibleAdvisor() != null
+                ? p.getResponsibleAdvisor().getName()
+                : "Sin asesor asignado");
     }
 
     private void actualizarInfoAsesor(Property p) {
@@ -138,26 +160,42 @@ public class AgendarVisitaController {
 
     @FXML
     public void agendarVisita() {
+        // 1. Ocultar errores previos en el FXML
         ocultarError();
 
-        Client   cliente  = campoCliente.getValue();
+        // 2. Extraer datos
+        Client cliente = campoCliente.getValue();
         Property inmueble = campoInmueble.getValue();
-        LocalDate fecha   = campoFecha.getValue();
+        LocalDate fecha = campoFecha.getValue();
 
-        if (cliente == null)  { mostrarError("Selecciona un cliente.");   return; }
-        if (inmueble == null) { mostrarError("Selecciona un inmueble.");  return; }
-        if (fecha == null)    { mostrarError("Selecciona una fecha.");    return; }
-        if (fecha.isBefore(LocalDate.now())) {
-            mostrarError("La fecha no puede ser en el pasado."); return;
+        if (cliente == null) {
+            mostrarError("Selecciona un cliente.");
+            return;
+        }
+        if (inmueble == null) {
+            mostrarError("Selecciona un inmueble.");
+            return;
+        }
+        if (fecha == null) {
+            mostrarError("Selecciona una fecha.");
+            return;
         }
 
-        LocalDateTime fechaHora = LocalDateTime.of(
-                fecha, java.time.LocalTime.of(campoHora.getValue(), campoMinutos.getValue()));
+        java.time.LocalTime hora = java.time.LocalTime.of(campoHora.getValue(), campoMinutos.getValue());
 
+        // 3. Validación de tiempo
+        if (java.time.LocalDateTime.of(fecha, hora).isBefore(java.time.LocalDateTime.now())) {
+            mostrarError("La fecha y hora no pueden ser en el pasado.");
+            return;
+        }
+
+        // 4. Llamada correcta al VisitManager con LocalDate y LocalTime separados
         AppContext.getInstance().getVisitManager()
-                .scheduleVisit(cliente, inmueble, fechaHora);
+                .scheduleVisit(cliente, inmueble, fecha, hora);
 
-        if (onAgendadoExitoso != null) onAgendadoExitoso.accept(null);
+        // 5. Flujo de éxito original (sin popups informativos)
+        if (onAgendadoExitoso != null)
+            onAgendadoExitoso.accept(null);
         cerrarVentana();
     }
 

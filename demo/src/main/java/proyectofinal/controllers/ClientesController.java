@@ -15,12 +15,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import proyectofinal.Inmueble.TypeProperty;
 import proyectofinal.Personal.Client;
-import java.io.IOException;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 public class ClientesController {
 

@@ -1,6 +1,7 @@
 package proyectofinal.SistemaGestion.AgendamientoVisitas;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import proyectofinal.EstructurasDeDatos.Colas.Queue;
 import proyectofinal.EstructurasDeDatos.ColasDePrioridad.PriorityQueue;
 import proyectofinal.EstructurasDeDatos.Listas.SimpleLinkedList;
@@ -9,9 +10,9 @@ import proyectofinal.Personal.Client;
 
 public class VisitManager {
 
-    private Queue<VisitRequest> pendingVisits;
-    private PriorityQueue<VisitRequest> priorityVisits;
-    private SimpleLinkedList<VisitRequest> visitHistory;
+    private Queue<Visit> pendingVisits;
+    private PriorityQueue<Visit> priorityVisits;
+    private SimpleLinkedList<Visit> visitHistory;
 
     public VisitManager() {
         this.pendingVisits = new Queue<>();
@@ -19,55 +20,85 @@ public class VisitManager {
         this.visitHistory = new SimpleLinkedList<>();
     }
 
-    public void scheduleVisit(Client client, Property property, LocalDateTime date) {
-        VisitRequest request = new VisitRequest(client, property, date);
-        if (client.getClientType().equalsIgnoreCase("Premium")) {
-            priorityVisits.enqueue(request, 1);
-        } else if (client.getClientType().equalsIgnoreCase("Frecuente")) {
-            priorityVisits.enqueue(request, 2);
+    // 1. Adaptado para usar LocalDate y LocalTime, y crear un objeto Visit
+    public void scheduleVisit(Client client, Property property, LocalDate date, LocalTime time) {
+        // Generamos un código único básico para la visita
+       
+        
+        Visit newVisit = new Visit(
+                client, 
+                property, 
+                date, 
+                time, 
+                property.getResponsibleAdvisor()
+        );
+
+       if (client.getClientType() != null && client.getClientType().equalsIgnoreCase("Premium")) {
+            priorityVisits.enqueue(newVisit, 1);
+        } else if (client.getClientType() != null && client.getClientType().equalsIgnoreCase("Frecuente")) {
+            priorityVisits.enqueue(newVisit, 2);
         } else {
-            pendingVisits.enqueue(request);
+            pendingVisits.enqueue(newVisit);
+        }
+
+        client.addVisita(newVisit);
+    }
+
+    // 2. Adaptado para usar VisitStatus.CONFIRMADA
+    public void confirmVisit(Visit visit) {
+        if (visit == null) return;
+        visit.setVisitStatus(VisitStatus.CONFIRM);
+        removeVisitFromQueues(visit);
+        visit.getClient().removeVisita(visit);
+        visitHistory.add(visit);
+    }
+
+    // 3. Adaptado para usar LocalDate/LocalTime y VisitStatus.REPROGRAMADA
+    public void rescheduleVisit(Visit visit, LocalDate newDate, LocalTime newTime) {
+        if (visit == null) return;
+        removeVisitFromQueues(visit);
+        visit.setDate(newDate); 
+        visit.setTime(newTime);
+        visit.setVisitStatus(VisitStatus.PENDING);
+        
+       enqueue(visit);
+    }
+
+    // 4. Adaptado para usar VisitStatus.CANCELADA y setPostObservations
+    public void cancelVisit(Visit visit, String reason) {
+        if (visit == null) return;
+        visit.setVisitStatus(VisitStatus.CANCELLED);
+        visit.setPostObservations("Motivo cancelación: " + reason);
+        removeVisitFromQueues(visit);
+        visit.getClient().removeVisita(visit);
+        visitHistory.add(visit);
+    }
+
+    private void enqueue(Visit v) {
+        String type = v.getClient().getClientType();
+        if (type != null && type.equalsIgnoreCase("Premium")) {
+            priorityVisits.enqueue(v, 1);
+        } else if (type != null && type.equalsIgnoreCase("Frecuente")) {
+            priorityVisits.enqueue(v, 2);
+        } else {
+            pendingVisits.enqueue(v);
         }
     }
 
-    public void confirmVisit(VisitRequest request) {
-        if (request == null) return;
-        request.markAsConfirm();
-        removeVisitFromQueues(request);
-        visitHistory.add(request);
-    }
-
-    public void rescheduleVisit(VisitRequest request, LocalDateTime newDate) {
-        if (request == null) return;
-        request.setDateTime(newDate); 
-        request.markAsRescheduled();
-        removeVisitFromQueues(request);
-        visitHistory.add(request);
-    }
-
-    public void cancelVisit(VisitRequest request, String reason) {
-        if (request == null) return;
-        request.markAsCancelled();
-        request.setNotes("Motivo cancelación: " + reason);
-        removeVisitFromQueues(request);
-        visitHistory.add(request);
-    }
-
-    public VisitRequest getNextVisitToAttend() {
+    public Visit getNextVisitToAttend() {
         if (!priorityVisits.isEmpty()) return priorityVisits.dequeue();
         if (!pendingVisits.isEmpty()) return pendingVisits.dequeue();
         return null;
     }
 
-    public void removeVisitFromQueues(VisitRequest target) {
+    public void removeVisitFromQueues(Visit target) {
         if (target == null) return;
 
         // Limpieza segura en Cola de Prioridad
-        PriorityQueue<VisitRequest> tempPriority = new PriorityQueue<>();
+        PriorityQueue<Visit> tempPriority = new PriorityQueue<>();
         while (!priorityVisits.isEmpty()) {
             int p = priorityVisits.peekPriority();
-            VisitRequest v = priorityVisits.dequeue();
-            // Comparamos los códigos únicos de visita
+            Visit v = priorityVisits.dequeue();
             if (!v.getCode().trim().equalsIgnoreCase(target.getCode().trim())) {
                 tempPriority.enqueue(v, p);
             }
@@ -75,9 +106,9 @@ public class VisitManager {
         this.priorityVisits = tempPriority;
 
         // Limpieza segura en Cola Normal
-        Queue<VisitRequest> tempPending = new Queue<>();
+        Queue<Visit> tempPending = new Queue<>();
         while (!pendingVisits.isEmpty()) {
-            VisitRequest v = pendingVisits.dequeue();
+            Visit v = pendingVisits.dequeue();
             if (!v.getCode().trim().equalsIgnoreCase(target.getCode().trim())) {
                 tempPending.enqueue(v);
             }
@@ -85,45 +116,50 @@ public class VisitManager {
         this.pendingVisits = tempPending;
     }
 
-    public void processVisitCompletion(VisitRequest request, String resultNotes, boolean interested) {
-        if (request == null) throw new IllegalArgumentException("La solicitud no puede ser nula.");
+    // 5. Adaptado para usar VisitStatus.REALIZADA
+    public void processVisitCompletion(Visit visit, String resultNotes, boolean interested) {
+        if (visit == null) throw new IllegalArgumentException("La visita no puede ser nula.");
 
-        request.markAsCompleted();
-        request.setNotes(resultNotes);
+        visit.setVisitStatus(VisitStatus.COMPLETED);
+        visit.setPostObservations(resultNotes);
 
-        Client client = request.getClient();
-        Property property = request.getProperty();
+        Client client = visit.getClient();
+        Property property = visit.getProperty();
         
-        client.getVisitedPropertiesHistory().add(property);
+        // Asumiendo que tu clase Client tiene este método
+        if(client.getVisitedPropertiesHistory() != null){
+             client.getVisitedPropertiesHistory().add(property);
+        }
 
         if (interested) {
             property.setPropertyStatus("EN NEGOCIACIÓN");
             property.setAvailable(false); 
-            client.setSearchStatus("Interesado en " + property.getCode());
+            // Asumiendo que Client tiene este método
+            client.setSearchStatus("Interesado en " + property.getCode()); 
         } else {
             property.setPropertyStatus("DISPONIBLE");
             property.setAvailable(true);
         }
 
-        visitHistory.add(request);
+        visitHistory.add(visit);
     }
 
-    public SimpleLinkedList<VisitRequest> getAllPendingAndActiveVisits() {
-        SimpleLinkedList<VisitRequest> list = new SimpleLinkedList<>();
+    public SimpleLinkedList<Visit> getAllPendingAndActiveVisits() {
+        SimpleLinkedList<Visit> list = new SimpleLinkedList<>();
         
-        PriorityQueue<VisitRequest> tempPriority = new PriorityQueue<>();
-        Queue<VisitRequest> tempPending = new Queue<>();
+        PriorityQueue<Visit> tempPriority = new PriorityQueue<>();
+        Queue<Visit> tempPending = new Queue<>();
 
         while (!priorityVisits.isEmpty()) {
             int p = priorityVisits.peekPriority();
-            VisitRequest v = priorityVisits.dequeue();
+            Visit v = priorityVisits.dequeue();
             list.add(v);
             tempPriority.enqueue(v, p);
         }
         this.priorityVisits = tempPriority;
 
         while (!pendingVisits.isEmpty()) {
-            VisitRequest v = pendingVisits.dequeue();
+            Visit v = pendingVisits.dequeue();
             list.add(v);
             tempPending.enqueue(v);
         }
@@ -136,7 +172,7 @@ public class VisitManager {
         return pendingVisits.size() + priorityVisits.size();
     }
 
-    public SimpleLinkedList<VisitRequest> getVisitHistory() {
+    public SimpleLinkedList<Visit> getVisitHistory() {
         return visitHistory;
     }
 }

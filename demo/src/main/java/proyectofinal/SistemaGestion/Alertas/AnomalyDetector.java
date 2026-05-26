@@ -2,7 +2,7 @@ package proyectofinal.SistemaGestion.Alertas;
 
 import proyectofinal.EstructurasDeDatos.Listas.SimpleLinkedList;
 import proyectofinal.SistemaGestion.AgendamientoVisitas.VisitManager;
-import proyectofinal.SistemaGestion.AgendamientoVisitas.VisitRequest;
+import proyectofinal.SistemaGestion.AgendamientoVisitas.Visit;
 import proyectofinal.Inmueble.Property;
 import proyectofinal.SistemaGestion.GestionInmuebles.PropertyManager;
 import proyectofinal.Personal.Client;
@@ -20,9 +20,9 @@ public class AnomalyDetector {
         // 1. Detección: Cliente con >= 3 cancelaciones consecutivas
         for (Client c : cm.getAllClients()) {
             int cancelCount = 0;
-            for (VisitRequest v : vm.getVisitHistory()) {
+            for (Visit v : vm.getVisitHistory()) {
                 if (v.getClient().getId().equals(c.getId()) && 
-                    v.getStatus().equalsIgnoreCase("CANCELLED")) {
+                    v.getVisitStatus().name().equalsIgnoreCase("CANCELLED")) {
                     cancelCount++;
                 }
             }
@@ -46,8 +46,8 @@ public class AnomalyDetector {
      */
     private static int countVisitsForProperty(String propertyCode, VisitManager vm) {
         int count = 0;
-        // SimpleLinkedList<VisitRequest> history = vm.getVisitHistory();
-        for (VisitRequest v : vm.getVisitHistory()) {
+        // SimpleLinkedList<Visit> history = vm.getVisitHistory();
+        for (Visit v : vm.getVisitHistory()) {
             if (v.getProperty().getCode().equals(propertyCode)) {
                 count++;
             }

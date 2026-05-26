@@ -5,7 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Scanner;
 
 import proyectofinal.EstructurasDeDatos.Listas.SimpleLinkedList;
@@ -15,8 +15,9 @@ import proyectofinal.Inmueble.ZoneProperty;
 import proyectofinal.Personal.Advisor;
 import proyectofinal.Personal.Client;
 import proyectofinal.Personal.ClientManager;
+import proyectofinal.SistemaGestion.AgendamientoVisitas.Visit;
 import proyectofinal.SistemaGestion.AgendamientoVisitas.VisitManager;
-import proyectofinal.SistemaGestion.AgendamientoVisitas.VisitRequest;
+import proyectofinal.SistemaGestion.AgendamientoVisitas.VisitStatus;
 import proyectofinal.SistemaGestion.Contratos.Contract;
 import proyectofinal.SistemaGestion.Contratos.ContractStatus;
 import proyectofinal.SistemaGestion.GestionInmuebles.PropertyManager;
@@ -26,6 +27,7 @@ public class PersistenceManager {
     private static final String PROP_FILE = "properties.txt";
     private static final String CLIENT_FILE = "clients.txt";
     private static final String VISIT_FILE = "visits.txt";
+    private static final String ACTIVE_VISITS_FILE = "active_visits.txt";
     private static final String ADVISOR_FILE = "advisors.txt";
     private static final String CONTRACT_FILE = "contracts.txt";
 
@@ -35,17 +37,19 @@ public class PersistenceManager {
         saveClients(cm.getAllClients());
         saveProperties(pm);
         saveVisitHistory(vm.getVisitHistory());
+        saveActiveVisits(vm); // Guarda las colas pendientes
         saveContracts(contracts);
         System.out.println(">>> [SISTEMA] Datos guardados exitosamente.");
     }
 
     public static void loadAll(PropertyManager pm, ClientManager cm, SimpleLinkedList<Advisor> advisors,
-            VisitManager vm, SimpleLinkedList<Contract> contracts) { // <- Agregamos la lista de contratos al cargador global
+            VisitManager vm, SimpleLinkedList<Contract> contracts) {
         loadAdvisors(advisors);
         loadClients(cm);
         loadProperties(pm, advisors);
         loadVisitHistory(vm, pm, cm.getAllClients());
-        loadContracts(pm, advisors, cm.getAllClients(), contracts); // <- Se le inyecta la lista de contratos destino
+        loadActiveVisits(vm, pm, cm.getAllClients()); // Carga las colas pendientes
+        loadContracts(pm, advisors, cm.getAllClients(), contracts);
         System.out.println(">>> [SISTEMA] Datos cargados exitosamente.");
     }
 
@@ -86,15 +90,28 @@ public class PersistenceManager {
         }
     }
 
-    private static void saveVisitHistory(SimpleLinkedList<VisitRequest> history) {
+    private static void saveVisitHistory(SimpleLinkedList<Visit> history) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(VISIT_FILE))) {
-            for (VisitRequest v : history) {
-                writer.println(String.format("%s;%s;%s;%s;%s",
-                        v.getClient().getId(), v.getProperty().getCode(), v.getDateTime().toString(),
-                        v.getStatus(), v.getNotes() != null ? v.getNotes().replace(";", ",") : ""));
+            for (Visit v : history) {
+                writer.println(String.format("%s;%s;%s;%s;%s;%s",
+                        v.getClient().getId(), v.getProperty().getCode(), v.getDate(),
+                        v.getTime(), v.getVisitStatus().name(),
+                        v.getPostObservations() != null ? v.getPostObservations().replace(";", ",") : ""));
             }
         } catch (IOException e) {
-            System.err.println("Error visitas: " + e.getMessage());
+            System.err.println("Error guardando historial: " + e.getMessage());
+        }
+    }
+
+    private static void saveActiveVisits(VisitManager vm) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(ACTIVE_VISITS_FILE))) {
+            for (Visit v : vm.getAllPendingAndActiveVisits()) {
+                writer.println(String.format("%s;%s;%s;%s;%s",
+                        v.getClient().getId(), v.getProperty().getCode(), v.getDate(),
+                        v.getTime(), v.getVisitStatus().name()));
+            }
+        } catch (IOException e) {
+            System.err.println("Error guardando visitas activas: " + e.getMessage());
         }
     }
 
@@ -217,29 +234,39 @@ public class PersistenceManager {
 
     private static void loadVisitHistory(VisitManager vm, PropertyManager pm, SimpleLinkedList<Client> clients) {
         File file = new File(VISIT_FILE);
-        if (!file.exists())
-            return;
+        if (!file.exists()) return;
         try (Scanner sc = new Scanner(file)) {
             while (sc.hasNextLine()) {
-                String line = sc.nextLine();
-                if (line.trim().isEmpty()) continue;
-                String[] d = line.split(";");
-                
+                String[] d = sc.nextLine().split(";");
+                if (d.length < 5) continue;
                 Client c = findClientById(clients, d[0]);
                 Property p = pm.findByCode(d[1]);
-                
                 if (c != null && p != null) {
-                    VisitRequest v = new VisitRequest(c, p, LocalDateTime.parse(d[2]));
-                    
-                    v.setStatus(d[3]); 
-                    
-                    v.setNotes(d.length > 4 ? d[4] : "");
+                    Visit v = new Visit(c, p, LocalDate.parse(d[2]), LocalTime.parse(d[3]), p.getResponsibleAdvisor());
+                    v.setVisitStatus(VisitStatus.valueOf(d[4]));
+                    if (d.length > 5) v.setPostObservations(d[5]);
                     vm.getVisitHistory().add(v);
                 }
             }
-        } catch (Exception e) {
-            System.err.println("Error carga visitas: " + e.getMessage());
-        }
+        } catch (Exception e) { System.err.println("Error carga historial: " + e.getMessage()); }
+    }
+
+    private static void loadActiveVisits(VisitManager vm, PropertyManager pm, SimpleLinkedList<Client> clients) {
+        File file = new File(ACTIVE_VISITS_FILE);
+        if (!file.exists()) return;
+        try (Scanner sc = new Scanner(file)) {
+            while (sc.hasNextLine()) {
+                String[] d = sc.nextLine().split(";");
+                if (d.length < 5) continue;
+                Client c = findClientById(clients, d[0]);
+                Property p = pm.findByCode(d[1]);
+                if (c != null && p != null) {
+                    // Re-agendamos usando scheduleVisit para que el VisitManager los ubique 
+                    // automáticamente en la cola correcta (Premium/Normal)
+                    vm.scheduleVisit(c, p, LocalDate.parse(d[2]), LocalTime.parse(d[3]));
+                }
+            }
+        } catch (Exception e) { System.err.println("Error carga activas: " + e.getMessage()); }
     }
 
     private static Advisor findAdvisorById(SimpleLinkedList<Advisor> advisors, String id) {

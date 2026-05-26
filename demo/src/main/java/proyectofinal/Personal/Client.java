@@ -3,6 +3,7 @@ package proyectofinal.Personal;
 import proyectofinal.EstructurasDeDatos.Listas.SimpleLinkedList;
 import proyectofinal.Inmueble.Property;
 import proyectofinal.Inmueble.TypeProperty;
+import proyectofinal.SistemaGestion.AgendamientoVisitas.Visit;
 
 public class Client {
     private String id;
@@ -19,6 +20,7 @@ public class Client {
     private String interestCity;
     private SimpleLinkedList<Property> favoriteProperties = new SimpleLinkedList<>();
     private SimpleLinkedList<Property> visitedPropertyHistory = new SimpleLinkedList<>();
+    private SimpleLinkedList<Visit> visitasProgramadas = new SimpleLinkedList<>();
 
     // Constructor para Registro Inicial (GUI de Registro)
     public Client(String id, String name, String email, String password, String phoneNumber) {
@@ -165,6 +167,18 @@ public class Client {
 
     public void setVisitedPropertiesHistory(SimpleLinkedList<Property> history) {
         this.visitedPropertyHistory = history;
+    }
+
+    public void addVisita(Visit v) {
+        this.visitasProgramadas.add(v);
+    }
+
+    public void removeVisita(Visit v) {
+        this.visitasProgramadas.remove(v);
+    }
+
+    public SimpleLinkedList<Visit> getVisitasProgramadas() {
+        return visitasProgramadas;
     }
 
     @Override

@@ -4,8 +4,9 @@ import proyectofinal.EstructurasDeDatos.Listas.SimpleLinkedList;
 import proyectofinal.Inmueble.Property;
 import proyectofinal.Inmueble.ZoneProperty;
 import proyectofinal.Personal.Advisor;
+import proyectofinal.SistemaGestion.AgendamientoVisitas.Visit;
 import proyectofinal.SistemaGestion.AgendamientoVisitas.VisitManager;
-import proyectofinal.SistemaGestion.AgendamientoVisitas.VisitRequest;
+
 import proyectofinal.SistemaGestion.OperacionDeNegocio.BusinessOperation;
 import proyectofinal.SistemaGestion.OperacionDeNegocio.OperationType;
 import proyectofinal.controllers.AppContext;
@@ -47,20 +48,19 @@ public class ReportEngine {
         return topAdvisor;
     }
 
-    /**
-     * Identifica el inmueble que ha recibido la mayor cantidad de visitas en el historial.
-     */
     public static Property getMostVisitedProperty(SimpleLinkedList<Property> properties, VisitManager vm) {
         Property topProperty = null;
         int maxVisits = -1;
 
         for (Property p : properties) {
             int visits = 0;
-            for (VisitRequest v : vm.getVisitHistory()) {
+            // Ahora iteramos sobre Visit, no Visit
+            for (Visit v : vm.getVisitHistory()) {
                 if (v.getProperty().getCode().equals(p.getCode())) {
                     visits++;
                 }
             }
+            
             if (visits > maxVisits) {
                 maxVisits = visits;
                 topProperty = p;

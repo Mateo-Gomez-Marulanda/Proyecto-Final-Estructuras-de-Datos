@@ -16,7 +16,7 @@ import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import proyectofinal.SistemaGestion.AgendamientoVisitas.VisitManager;
-import proyectofinal.SistemaGestion.AgendamientoVisitas.VisitRequest;
+import proyectofinal.SistemaGestion.AgendamientoVisitas.Visit;
 
 public class VisitasController {
 
@@ -25,35 +25,35 @@ public class VisitasController {
     @FXML private Label lblProximaVisita;
 
     // ─── Queue tab ───────────────────────────────────────────
-    @FXML private TableView<VisitRequest>             tablaCola;
-    @FXML private TableColumn<VisitRequest, String>   colColaPosicion;
-    @FXML private TableColumn<VisitRequest, String>   colColaCodigo;
-    @FXML private TableColumn<VisitRequest, String>   colColaCliente;
-    @FXML private TableColumn<VisitRequest, String>   colColaInmueble;
-    @FXML private TableColumn<VisitRequest, String>   colColaFecha;
-    @FXML private TableColumn<VisitRequest, String>   colColaHora;
-    @FXML private TableColumn<VisitRequest, String>   colColaAsesor;
+    @FXML private TableView<Visit>             tablaCola;
+    @FXML private TableColumn<Visit, String>   colColaPosicion;
+    @FXML private TableColumn<Visit, String>   colColaCodigo;
+    @FXML private TableColumn<Visit, String>   colColaCliente;
+    @FXML private TableColumn<Visit, String>   colColaInmueble;
+    @FXML private TableColumn<Visit, String>   colColaFecha;
+    @FXML private TableColumn<Visit, String>   colColaHora;
+    @FXML private TableColumn<Visit, String>   colColaAsesor;
 
     @FXML private Button btnConfirmar;
     @FXML private Button btnCancelar;
     @FXML private Button btnReprogramar;
 
     // ─── All visits tab ──────────────────────────────────────
-    @FXML private TableView<VisitRequest>             tablaTodasVisitas;
-    @FXML private TableColumn<VisitRequest, String>   colTCodigo;
-    @FXML private TableColumn<VisitRequest, String>   colTCliente;
-    @FXML private TableColumn<VisitRequest, String>   colTInmueble;
-    @FXML private TableColumn<VisitRequest, String>   colTFecha;
-    @FXML private TableColumn<VisitRequest, String>   colTHora;
-    @FXML private TableColumn<VisitRequest, String>   colTAsesor;
-    @FXML private TableColumn<VisitRequest, String>   colTEstado;
+    @FXML private TableView<Visit>             tablaTodasVisitas;
+    @FXML private TableColumn<Visit, String>   colTCodigo;
+    @FXML private TableColumn<Visit, String>   colTCliente;
+    @FXML private TableColumn<Visit, String>   colTInmueble;
+    @FXML private TableColumn<Visit, String>   colTFecha;
+    @FXML private TableColumn<Visit, String>   colTHora;
+    @FXML private TableColumn<Visit, String>   colTAsesor;
+    @FXML private TableColumn<Visit, String>   colTEstado;
 
     @FXML private TextField      campoBusquedaTodas;
     @FXML private ComboBox<String> filtroEstadoVisita;
 
-    private ObservableList<VisitRequest> historyList = FXCollections.observableArrayList();
-    private FilteredList<VisitRequest>   filteredHistory;
-    private ObservableList<VisitRequest> colaSnapshot = FXCollections.observableArrayList();
+    private ObservableList<Visit> historyList = FXCollections.observableArrayList();
+    private FilteredList<Visit>   filteredHistory;
+    private ObservableList<Visit> colaSnapshot = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
@@ -77,7 +77,7 @@ public class VisitasController {
 
     private void configurarColumnasCola() {
         // Cambiado para evitar buscar dinámicamente en una lista que cambia en caliente
-        colColaPosicion.setCellFactory(col -> new TableCell<VisitRequest, String>() {
+        colColaPosicion.setCellFactory(col -> new TableCell<Visit, String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -92,8 +92,8 @@ public class VisitasController {
         colColaCodigo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCode())); 
         colColaCliente.setCellValueFactory(d ->  new SimpleStringProperty(d.getValue().getClient().getName()));
         colColaInmueble.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getProperty().getCode()));
-        colColaFecha.setCellValueFactory(d ->    new SimpleStringProperty(d.getValue().getDateTime().toLocalDate().toString()));
-        colColaHora.setCellValueFactory(d ->     new SimpleStringProperty(d.getValue().getDateTime().toLocalTime().toString().substring(0, 5)));
+        colColaFecha.setCellValueFactory(d ->    new SimpleStringProperty(d.getValue().getDate().toString()));
+        colColaHora.setCellValueFactory(d ->     new SimpleStringProperty(d.getValue().getTime().toString().substring(0, 5)));
         colColaAsesor.setCellValueFactory(d -> new SimpleStringProperty(
                 d.getValue().getProperty().getResponsibleAdvisor() != null ? d.getValue().getProperty().getResponsibleAdvisor().getName() : "Sin asignar"));
     }
@@ -102,11 +102,11 @@ public class VisitasController {
         colTCodigo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCode()));
         colTCliente.setCellValueFactory(d ->  new SimpleStringProperty(d.getValue().getClient().getName()));
         colTInmueble.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getProperty().getCode()));
-        colTFecha.setCellValueFactory(d ->    new SimpleStringProperty(d.getValue().getDateTime().toLocalDate().toString()));
-        colTHora.setCellValueFactory(d ->     new SimpleStringProperty(d.getValue().getDateTime().toLocalTime().toString().substring(0, 5)));
+        colTFecha.setCellValueFactory(d ->    new SimpleStringProperty(d.getValue().getDate().toString()));
+        colTHora.setCellValueFactory(d ->     new SimpleStringProperty(d.getValue().getTime().toString().substring(0, 5)));
         colTAsesor.setCellValueFactory(d -> new SimpleStringProperty(
                 d.getValue().getProperty().getResponsibleAdvisor() != null ? d.getValue().getProperty().getResponsibleAdvisor().getName() : "Sin asignar"));
-        colTEstado.setCellValueFactory(d ->   new SimpleStringProperty(d.getValue().getStatus()));
+        colTEstado.setCellValueFactory(d ->   new SimpleStringProperty(d.getValue().getVisitStatus().name()));
     }
 
     private void configurarFiltros() {
@@ -127,7 +127,7 @@ public class VisitasController {
         colaSnapshot.clear(); // Limpiar la lista existente, no instanciar una nueva
         VisitManager vm = AppContext.getInstance().getVisitManager();
 
-        for (VisitRequest v : vm.getAllPendingAndActiveVisits()) {
+        for (Visit v : vm.getAllPendingAndActiveVisits()) {
             colaSnapshot.add(v);
         }
     }
@@ -137,11 +137,11 @@ public class VisitasController {
         VisitManager vm = AppContext.getInstance().getVisitManager();
 
         // 1. Mostrar las procesadas (Confirmadas, Canceladas, Reprogramadas, Realizadas)
-        for (VisitRequest v : vm.getVisitHistory()) {
+        for (Visit v : vm.getVisitHistory()) {
             historyList.add(v);
         }
         // 2. Mostrar las que sigan pendientes de procesamiento
-        for (VisitRequest v : vm.getAllPendingAndActiveVisits()) {
+        for (Visit v : vm.getAllPendingAndActiveVisits()) {
             historyList.add(v);
         }
         
@@ -154,7 +154,7 @@ public class VisitasController {
         lblTotalCola.setText(String.valueOf(total));
 
         if (!colaSnapshot.isEmpty()) {
-            VisitRequest next = colaSnapshot.get(0);
+            Visit next = colaSnapshot.get(0);
             lblProximaVisita.setText(next.getClient().getName() + " — " + next.getProperty().getCode());
         } else {
             lblProximaVisita.setText("Sin visitas pendientes");
@@ -167,7 +167,7 @@ public class VisitasController {
 
     @FXML
     public void confirmarSiguienteVisita() {
-        VisitRequest seleccionada = tablaCola.getSelectionModel().getSelectedItem();
+        Visit seleccionada = tablaCola.getSelectionModel().getSelectedItem();
         if (seleccionada == null && !colaSnapshot.isEmpty()) {
             seleccionada = colaSnapshot.get(0);
         }
@@ -181,7 +181,7 @@ public class VisitasController {
 
     @FXML
     public void cancelarSiguienteVisita() {
-        VisitRequest seleccionada = tablaCola.getSelectionModel().getSelectedItem();
+        Visit seleccionada = tablaCola.getSelectionModel().getSelectedItem();
         if (seleccionada == null && !colaSnapshot.isEmpty()) {
             seleccionada = colaSnapshot.get(0);
         }
@@ -192,7 +192,7 @@ public class VisitasController {
         dialog.setTitle("Cancelar visita");
         dialog.setHeaderText("Motivo de cancelación (Observaciones):");
     
-        final VisitRequest finalSelected = seleccionada;
+        final Visit finalSelected = seleccionada;
         dialog.showAndWait().ifPresent(reason -> {
             AppContext.getInstance().getVisitManager().cancelVisit(finalSelected, reason);
             mostrarInfo("Visita cancelada y enviada al historial.");
@@ -200,54 +200,55 @@ public class VisitasController {
         });
     }
 
-    @FXML
-    public void reprogramarSiguienteVisita() {
-        VisitRequest seleccionada = tablaCola.getSelectionModel().getSelectedItem();
-        if (seleccionada == null && !colaSnapshot.isEmpty()) {
-            seleccionada = colaSnapshot.get(0);
+   @FXML
+public void reprogramarSiguienteVisita() {
+    Visit seleccionada = tablaCola.getSelectionModel().getSelectedItem();
+    if (seleccionada == null && !colaSnapshot.isEmpty()) {
+        seleccionada = colaSnapshot.get(0);
+    }
+
+    if (seleccionada == null) { mostrarInfo("No hay visitas en cola para reprogramar."); return; }
+
+    Dialog<LocalDate> dialog = new Dialog<>(); // Cambiamos el tipo de retorno del Dialog
+    dialog.setTitle("Reprogramar visita");
+    dialog.setHeaderText("Nueva fecha para: " + seleccionada.getClient().getName()
+            + " — " + seleccionada.getProperty().getCode());
+
+    ButtonType confirmarBtn = new ButtonType("Reprogramar", ButtonBar.ButtonData.OK_DONE);
+    dialog.getDialogPane().getButtonTypes().addAll(confirmarBtn, ButtonType.CANCEL);
+
+    DatePicker picker = new DatePicker(LocalDate.now().plusDays(1));
+    Spinner<Integer> hora = new Spinner<>(0, 23, seleccionada.getTime().getHour());
+    Spinner<Integer> min = new Spinner<>(0, 59, seleccionada.getTime().getMinute());
+
+    javafx.scene.layout.HBox content = new javafx.scene.layout.HBox(12,
+            new Label("Fecha:"), picker,
+            new Label("Hora:"), hora,
+            new Label("Min:"), min);
+    content.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+    content.setPadding(new javafx.geometry.Insets(16));
+    dialog.getDialogPane().setContent(content);
+
+    // En lugar de devolver un objeto complejo, validaremos al pulsar el botón
+    dialog.setResultConverter(bt -> (bt == confirmarBtn) ? picker.getValue() : null);
+
+    final Visit finalSelected = seleccionada;
+    dialog.showAndWait().ifPresent(nuevaFecha -> {
+        java.time.LocalTime nuevaHora = java.time.LocalTime.of(hora.getValue(), min.getValue());
+        
+        // Validación: Fecha y hora en el pasado
+        if (java.time.LocalDateTime.of(nuevaFecha, nuevaHora).isBefore(java.time.LocalDateTime.now())) {
+            mostrarError("La nueva fecha no puede ser en el pasado.");
+            return;
         }
 
-        if (seleccionada == null) { mostrarInfo("No hay visitas en cola para reprogramar."); return; }
- 
-        Dialog<LocalDateTime> dialog = new Dialog<>();
-        dialog.setTitle("Reprogramar visita");
-        dialog.setHeaderText("Nueva fecha para: " + seleccionada.getClient().getName()
-                + " — " + seleccionada.getProperty().getCode());
- 
-        ButtonType confirmarBtn = new ButtonType("Reprogramar", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(confirmarBtn, ButtonType.CANCEL);
- 
-        DatePicker picker = new DatePicker(LocalDate.now().plusDays(1));
-        Spinner<Integer> hora = new Spinner<>(0, 23, seleccionada.getDateTime().getHour());
-        Spinner<Integer> min = new Spinner<>(0, 59, seleccionada.getDateTime().getMinute());
- 
-        javafx.scene.layout.HBox content = new javafx.scene.layout.HBox(12,
-                new Label("Fecha:"), picker,
-                new Label("Hora:"), hora,
-                new Label("Min:"), min);
-        content.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        content.setPadding(new javafx.geometry.Insets(16));
-        dialog.getDialogPane().setContent(content);
- 
-        dialog.setResultConverter(bt -> {
-            if (bt == confirmarBtn && picker.getValue() != null) {
-                return LocalDateTime.of(picker.getValue(),
-                        java.time.LocalTime.of(hora.getValue(), min.getValue()));
-            }
-            return null;
-        });
- 
-        final VisitRequest finalSelected = seleccionada;
-        dialog.showAndWait().ifPresent(nuevaFecha -> {
-            if (nuevaFecha.isBefore(LocalDateTime.now())) {
-                mostrarError("La nueva fecha no puede ser en el pasado.");
-                return;
-            }
-            AppContext.getInstance().getVisitManager().rescheduleVisit(finalSelected, nuevaFecha);
-            mostrarInfo("Visita reprogramada correctamente y registrada en el historial.");
-            refrescarTodo();
-        });
-    }
+        // Llamada al VisitManager usando los parámetros separados
+        AppContext.getInstance().getVisitManager().rescheduleVisit(finalSelected, nuevaFecha, nuevaHora);
+        
+        mostrarInfo("Visita reprogramada correctamente.");
+        refrescarTodo();
+    });
+}
 
     @FXML
     public void abrirFormularioAgendar() {
@@ -289,7 +290,7 @@ public class VisitasController {
             boolean matchTexto = texto.isEmpty()
                     || v.getClient().getName().toLowerCase().contains(texto)
                     || v.getProperty().getCode().toLowerCase().contains(texto);
-            boolean matchEstado = estado == null || v.getStatus().equalsIgnoreCase(estado);
+            boolean matchEstado = estado == null || v.getVisitStatus().name().equalsIgnoreCase(estado);
             return matchTexto && matchEstado;
         });
     }

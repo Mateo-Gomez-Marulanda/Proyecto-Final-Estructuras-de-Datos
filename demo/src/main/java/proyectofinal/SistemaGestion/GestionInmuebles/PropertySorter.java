@@ -2,8 +2,9 @@ package proyectofinal.SistemaGestion.GestionInmuebles;
 
 import proyectofinal.EstructurasDeDatos.Listas.SimpleLinkedList;
 import proyectofinal.Inmueble.Property;
+import proyectofinal.SistemaGestion.AgendamientoVisitas.Visit;
 import proyectofinal.SistemaGestion.AgendamientoVisitas.VisitManager;
-import proyectofinal.SistemaGestion.AgendamientoVisitas.VisitRequest;
+
 
 public class PropertySorter {
 
@@ -103,16 +104,18 @@ public class PropertySorter {
         }
     }
 
-    private static int getDemandScore(Property p, VisitManager vm) {
-        int count = 0;
-        if (vm == null) return 0;
-        for (VisitRequest v : vm.getVisitHistory()) {
-            if (v.getProperty().getCode().equals(p.getCode())) {
-                count++;
-            }
+   private static int getDemandScore(Property p, VisitManager vm) {
+    if (vm == null || p == null) return 0;
+    
+    int count = 0;
+    // Iteramos sobre el historial del VisitManager
+    for (Visit v : vm.getVisitHistory()) {
+        if (v.getProperty() != null && v.getProperty().getCode().equals(p.getCode())) {
+            count++;
         }
-        return count;
     }
+    return count;
+}
 
     private static int getListSize(SimpleLinkedList<Property> list) {
         int count = 0;
