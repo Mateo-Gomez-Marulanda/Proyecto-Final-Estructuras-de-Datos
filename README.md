@@ -282,7 +282,7 @@ javac -d target/classes src/main/java/proyectofinal/Personal/*.java
 - Mateo Gómez Marulanda
 
 **Proyecto:** Proyecto Final - Estructuras de Datos (Curso 2026-1)  
-**Institución:** Universidad [A completar]  
+**Institución:** Universidad del Quindio
 **Fecha de creación:** 2026  
 
 ---
