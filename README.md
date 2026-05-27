@@ -276,7 +276,11 @@ javac -d target/classes src/main/java/proyectofinal/Personal/*.java
 
 ## 👥 Autoría y Referencias
 
-**Autores:** Mateo Gómez Marulanda  
+**Autores:**
+- Tomas Castaño Ortiz
+- Andrés Felipe Valencia Arias
+- Mateo Gómez Marulanda
+
 **Proyecto:** Proyecto Final - Estructuras de Datos (Curso 2026-1)  
 **Institución:** Universidad [A completar]  
 **Fecha de creación:** 2026  
