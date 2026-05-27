@@ -14,32 +14,47 @@ import proyectofinal.Personal.Advisor;
 public class GestionInmueblesAsesorController {
 
     // ── Header ───────────────────────────────────────────────
-    @FXML private Label labelTitulo;
-    @FXML private Label labelResumen;
+    @FXML
+    private Label labelTitulo;
+    @FXML
+    private Label labelResumen;
 
     // ── Tabla asignados ──────────────────────────────────────
-    @FXML private TableView<Property>             tablaAsignados;
-    @FXML private TableColumn<Property, String>   colAsigCodigo;
-    @FXML private TableColumn<Property, String>   colAsigDireccion;
-    @FXML private TableColumn<Property, String>   colAsigTipo;
-    @FXML private TableColumn<Property, String>   colAsigPrecio;
-    @FXML private Button                          btnQuitar;
+    @FXML
+    private TableView<Property> tablaAsignados;
+    @FXML
+    private TableColumn<Property, String> colAsigCodigo;
+    @FXML
+    private TableColumn<Property, String> colAsigDireccion;
+    @FXML
+    private TableColumn<Property, String> colAsigTipo;
+    @FXML
+    private TableColumn<Property, String> colAsigPrecio;
+    @FXML
+    private Button btnQuitar;
 
     // ── Tabla disponibles ────────────────────────────────────
-    @FXML private TableView<Property>             tablaDisponibles;
-    @FXML private TableColumn<Property, String>   colDispCodigo;
-    @FXML private TableColumn<Property, String>   colDispDireccion;
-    @FXML private TableColumn<Property, String>   colDispTipo;
-    @FXML private TableColumn<Property, String>   colDispPrecio;
-    @FXML private Button                          btnAsignar;
-    @FXML private TextField                       campoBusqueda;
+    @FXML
+    private TableView<Property> tablaDisponibles;
+    @FXML
+    private TableColumn<Property, String> colDispCodigo;
+    @FXML
+    private TableColumn<Property, String> colDispDireccion;
+    @FXML
+    private TableColumn<Property, String> colDispTipo;
+    @FXML
+    private TableColumn<Property, String> colDispPrecio;
+    @FXML
+    private Button btnAsignar;
+    @FXML
+    private TextField campoBusqueda;
 
     private Advisor advisor;
     private Runnable onCambios;
 
     private ObservableList<Property> asignadosList;
     private ObservableList<Property> disponiblesMaster;
-    private FilteredList<Property>   disponiblesFiltrados;
+    private FilteredList<Property> disponiblesFiltrados;
 
     // ─────────────────────────────────────────────────────────
     // API pública
@@ -67,17 +82,17 @@ public class GestionInmueblesAsesorController {
 
     private void configurarColumnas() {
         // Asignados
-        colAsigCodigo.setCellValueFactory(d ->    new SimpleStringProperty(d.getValue().getCode()));
+        colAsigCodigo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCode()));
         colAsigDireccion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getAddress()));
-        colAsigTipo.setCellValueFactory(d ->      new SimpleStringProperty(d.getValue().getType().toString()));
-        colAsigPrecio.setCellValueFactory(d ->    new SimpleStringProperty(
+        colAsigTipo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getType().toString()));
+        colAsigPrecio.setCellValueFactory(d -> new SimpleStringProperty(
                 String.format("$%,.0f", d.getValue().getPrice())));
 
         // Disponibles
-        colDispCodigo.setCellValueFactory(d ->    new SimpleStringProperty(d.getValue().getCode()));
+        colDispCodigo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCode()));
         colDispDireccion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getAddress()));
-        colDispTipo.setCellValueFactory(d ->      new SimpleStringProperty(d.getValue().getType().toString()));
-        colDispPrecio.setCellValueFactory(d ->    new SimpleStringProperty(
+        colDispTipo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getType().toString()));
+        colDispPrecio.setCellValueFactory(d -> new SimpleStringProperty(
                 String.format("$%,.0f", d.getValue().getPrice())));
     }
 
@@ -116,7 +131,8 @@ public class GestionInmueblesAsesorController {
     @FXML
     public void asignarInmueble() {
         Property selected = tablaDisponibles.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
 
         // Quitar del asesor anterior si tenía uno
         if (selected.getResponsibleAdvisor() != null) {
@@ -139,7 +155,8 @@ public class GestionInmueblesAsesorController {
     @FXML
     public void quitarInmueble() {
         Property selected = tablaAsignados.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
 
         advisor.removeProperty(selected);
         selected.setResponsibleAdvisor(null);
@@ -156,8 +173,7 @@ public class GestionInmueblesAsesorController {
     @FXML
     public void filtrar() {
         String texto = campoBusqueda.getText().toLowerCase();
-        disponiblesFiltrados.setPredicate(p ->
-                texto.isEmpty()
+        disponiblesFiltrados.setPredicate(p -> texto.isEmpty()
                 || p.getCode().toLowerCase().contains(texto)
                 || p.getAddress().toLowerCase().contains(texto)
                 || p.getCity().toLowerCase().contains(texto));
@@ -174,7 +190,8 @@ public class GestionInmueblesAsesorController {
 
     private boolean estaAsignado(Property p) {
         for (Property asig : advisor.getAssignedPropertiesList()) {
-            if (asig.getCode().equals(p.getCode())) return true;
+            if (asig.getCode().equals(p.getCode()))
+                return true;
         }
         return false;
     }
@@ -185,6 +202,7 @@ public class GestionInmueblesAsesorController {
     }
 
     private void notificarCambios() {
-        if (onCambios != null) onCambios.run();
+        if (onCambios != null)
+            onCambios.run();
     }
 }

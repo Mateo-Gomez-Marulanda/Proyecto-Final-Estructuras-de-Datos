@@ -8,12 +8,18 @@ import proyectofinal.Personal.Advisor;
 
 public class EdicionAsesorController {
 
-    @FXML private TextField      campoId;
-    @FXML private TextField      campoNombre;
-    @FXML private TextField      campoContacto;
-    @FXML private TextField      campoZona;
-    @FXML private Spinner<Integer> campoCierres;
-    @FXML private Label          labelError;
+    @FXML
+    private TextField campoId;
+    @FXML
+    private TextField campoNombre;
+    @FXML
+    private TextField campoContacto;
+    @FXML
+    private TextField campoZona;
+    @FXML
+    private Spinner<Integer> campoCierres;
+    @FXML
+    private Label labelError;
 
     private Advisor advisorToEdit;
     private Runnable onEdicionExitosa;
@@ -45,9 +51,11 @@ public class EdicionAsesorController {
         campoId.setText(advisorToEdit.getId());
         campoNombre.setText(advisorToEdit.getName());
         campoContacto.setText(advisorToEdit.getContactInfo() != null
-                ? advisorToEdit.getContactInfo() : "");
+                ? advisorToEdit.getContactInfo()
+                : "");
         campoZona.setText(advisorToEdit.getZoneSpecialty() != null
-                ? advisorToEdit.getZoneSpecialty() : "");
+                ? advisorToEdit.getZoneSpecialty()
+                : "");
         campoCierres.getValueFactory().setValue(advisorToEdit.getCompletedClosings());
     }
 
@@ -59,20 +67,30 @@ public class EdicionAsesorController {
     public void guardarCambios() {
         ocultarError();
 
-        String nombre   = campoNombre.getText().trim();
+        String nombre = campoNombre.getText().trim();
         String contacto = campoContacto.getText().trim();
-        String zona     = campoZona.getText().trim();
+        String zona = campoZona.getText().trim();
 
-        if (nombre.isEmpty())   { mostrarError("El nombre es obligatorio.");   return; }
-        if (contacto.isEmpty()) { mostrarError("El contacto es obligatorio."); return; }
-        if (zona.isEmpty())     { mostrarError("La zona es obligatoria.");     return; }
+        if (nombre.isEmpty()) {
+            mostrarError("El nombre es obligatorio.");
+            return;
+        }
+        if (contacto.isEmpty()) {
+            mostrarError("El contacto es obligatorio.");
+            return;
+        }
+        if (zona.isEmpty()) {
+            mostrarError("La zona es obligatoria.");
+            return;
+        }
 
         advisorToEdit.setName(nombre);
         advisorToEdit.setContactInfo(contacto);
         advisorToEdit.setZoneSpecialty(zona);
         advisorToEdit.setCompletedClosings(campoCierres.getValue());
 
-        if (onEdicionExitosa != null) onEdicionExitosa.run();
+        if (onEdicionExitosa != null)
+            onEdicionExitosa.run();
         cerrarVentana();
     }
 

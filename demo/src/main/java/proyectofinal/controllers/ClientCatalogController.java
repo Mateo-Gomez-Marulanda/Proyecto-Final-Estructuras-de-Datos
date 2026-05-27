@@ -228,36 +228,36 @@ public class ClientCatalogController {
         if (selected == null)
             return;
         AppContext.getInstance().getClientManager().markAsFavorite(selected);
-        mostrarInfo("⭐ Guardado en favoritos: " + selected.getCode());
+        mostrarInfo("Guardado en favoritos: " + selected.getCode());
     }
 
-   @FXML
-public void agendarVisita() {
-    Property propSeleccionada = tablaInmuebles.getSelectionModel().getSelectedItem();
-    if (propSeleccionada == null) {
-        mostrarInfo("Por favor, selecciona un inmueble.");
-        return;
+    @FXML
+    public void agendarVisita() {
+        Property propSeleccionada = tablaInmuebles.getSelectionModel().getSelectedItem();
+        if (propSeleccionada == null) {
+            mostrarInfo("Por favor, selecciona un inmueble.");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/proyectofinal/views/agendar-visita-cliente.fxml"));
+            Parent root = loader.load();
+
+            AgendarVisitaCLIController controller = loader.getController();
+            controller.setDatosIniciales(propSeleccionada, AppContext.getInstance().getClientManager().getCurrent());
+
+            Stage dialog = new Stage();
+            dialog.setTitle("Agendar Visita");
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.setScene(new Scene(root));
+            dialog.showAndWait();
+
+            cargarDatos(); // Refrescar tabla al cerrar
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-
-    try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/proyectofinal/views/agendar-visita-cliente.fxml"));
-        Parent root = loader.load();
-
-        AgendarVisitaCLIController controller = loader.getController();
-        controller.setDatosIniciales(propSeleccionada, AppContext.getInstance().getClientManager().getCurrent());
-
-        Stage dialog = new Stage();
-        dialog.setTitle("Agendar Visita");
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.setScene(new Scene(root));
-        dialog.showAndWait();
-        
-        cargarDatos(); // Refrescar tabla al cerrar
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-}
-
 
     @FXML
     public void verDetalles() {
@@ -275,7 +275,7 @@ public void agendarVisita() {
         VBox root = new VBox(16);
         root.setPadding(new javafx.geometry.Insets(24));
         root.setPrefWidth(450);
-        root.setStyle("-fx-background-color: #f8fafc;"); // Fondo claro moderno
+        root.setStyle("-fx-background-color: #f8fafc;");
 
         VBox header = new VBox(4);
         Label lblTitulo = new Label(p.getType().toString() + " en " + p.getPurpose());
@@ -297,12 +297,12 @@ public void agendarVisita() {
         grid.setStyle("-fx-padding: 8 0 8 0;");
 
         String[][] datos = {
-                { "📍 Ubicación:", p.getAddress() },
-                { "🏙️ Ciudad:", p.getCity() + " (" + p.getZone().name() + ")" },
-                { "📐 Área Privada:", p.getArea() + " m²" },
-                { "🛏️ Habitaciones:", String.valueOf(p.getRooms()) },
-                { "🚽 Baños:", String.valueOf(p.getBathrooms()) },
-                { "💼 Asesor a cargo:",
+                { "Ubicación:", p.getAddress() },
+                { "Ciudad:", p.getCity() + " (" + p.getZone().name() + ")" },
+                { "Área Privada:", p.getArea() + " m²" },
+                { "Habitaciones:", String.valueOf(p.getRooms()) },
+                { "Baños:", String.valueOf(p.getBathrooms()) },
+                { "Asesor a cargo:",
                         p.getResponsibleAdvisor() != null ? p.getResponsibleAdvisor().getName() : "Por asignar" }
         };
 

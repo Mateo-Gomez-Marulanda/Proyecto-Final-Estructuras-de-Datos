@@ -16,18 +16,26 @@ import java.util.List;
 
 public class HistorialInmueblesController {
 
-    @FXML private TableView<PropertyChange>               tablaHistorial;
-    @FXML private TableColumn<PropertyChange, String>     colFecha;
-    @FXML private TableColumn<PropertyChange, String>     colTipo;
-    @FXML private TableColumn<PropertyChange, String>     colPropiedad;
-    @FXML private TableColumn<PropertyChange, String>     colCampo;
-    @FXML private TableColumn<PropertyChange, String>     colAnterior;
-    @FXML private TableColumn<PropertyChange, String>     colNuevo;
-    @FXML private TableColumn<PropertyChange, String>     colResponsable;
-    @FXML private Label                                   labelTotal;
+    @FXML
+    private TableView<PropertyChange> tablaHistorial;
+    @FXML
+    private TableColumn<PropertyChange, String> colFecha;
+    @FXML
+    private TableColumn<PropertyChange, String> colTipo;
+    @FXML
+    private TableColumn<PropertyChange, String> colPropiedad;
+    @FXML
+    private TableColumn<PropertyChange, String> colCampo;
+    @FXML
+    private TableColumn<PropertyChange, String> colAnterior;
+    @FXML
+    private TableColumn<PropertyChange, String> colNuevo;
+    @FXML
+    private TableColumn<PropertyChange, String> colResponsable;
+    @FXML
+    private Label labelTotal;
 
-    private static final DateTimeFormatter FMT =
-            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+    private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
     // ─────────────────────────────────────────────────────────
     // Init
@@ -40,14 +48,11 @@ public class HistorialInmueblesController {
     }
 
     private void configurarColumnas() {
-        colFecha.setCellValueFactory(d ->
-                new SimpleStringProperty(d.getValue().getDateTime().format(FMT)));
+        colFecha.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getDateTime().format(FMT)));
 
-        colTipo.setCellValueFactory(d ->
-                new SimpleStringProperty(tipoLegible(d.getValue())));
+        colTipo.setCellValueFactory(d -> new SimpleStringProperty(tipoLegible(d.getValue())));
 
-        colPropiedad.setCellValueFactory(d ->
-                new SimpleStringProperty(d.getValue().getPropertyCode()));
+        colPropiedad.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getPropertyCode()));
 
         colCampo.setCellValueFactory(d -> {
             PropertyChange c = d.getValue();
@@ -68,8 +73,7 @@ public class HistorialInmueblesController {
             return new SimpleStringProperty(v != null ? formatearValor(v) : "—");
         });
 
-        colResponsable.setCellValueFactory(d ->
-                new SimpleStringProperty(d.getValue().getResponsiblePerson()));
+        colResponsable.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getResponsiblePerson()));
     }
 
     private void cargarHistorial() {
@@ -77,9 +81,12 @@ public class HistorialInmueblesController {
         List<PropertyChange> todos = new ArrayList<>();
 
         // Recorrer los tres stacks (todos implementan Iterable via Stack)
-        for (PropertyChange c : pm.getModificationHistory())  todos.add(c);
-        for (PropertyChange c : pm.getStatusHistory())        todos.add(c);
-        for (PropertyChange c : pm.getAdminActionsHistory())  todos.add(c);
+        for (PropertyChange c : pm.getModificationHistory())
+            todos.add(c);
+        for (PropertyChange c : pm.getStatusHistory())
+            todos.add(c);
+        for (PropertyChange c : pm.getAdminActionsHistory())
+            todos.add(c);
 
         // Ordenar de más reciente a más antiguo
         todos.sort(Comparator.comparing(PropertyChange::getDateTime).reversed());
@@ -105,26 +112,28 @@ public class HistorialInmueblesController {
 
     private String tipoLegible(PropertyChange c) {
         return switch (c.getChangeType()) {
-            case FIELD_MODIFICATION    -> "📝 Modificación";
-            case STATUS_CHANGE         -> "🔄 Estado";
-            case ADMINISTRATIVE_ACTION -> "🛠  Acción admin";
+            case FIELD_MODIFICATION -> "Modificación";
+            case STATUS_CHANGE -> "Estado";
+            case ADMINISTRATIVE_ACTION -> "Acción admin";
         };
     }
 
     private String campoLegible(String field) {
-        if (field == null) return "—";
+        if (field == null)
+            return "—";
         return switch (field) {
-            case "price"          -> "Precio";
-            case "area"           -> "Área (m²)";
-            case "rooms"          -> "Habitaciones";
+            case "price" -> "Precio";
+            case "area" -> "Área (m²)";
+            case "rooms" -> "Habitaciones";
             case "propertyStatus" -> "Estado";
-            case "isAvailable"    -> "Disponibilidad";
-            default               -> field;
+            case "isAvailable" -> "Disponibilidad";
+            default -> field;
         };
     }
 
     private String formatearValor(Object v) {
-        if (v instanceof Double d) return String.format("%,.2f", d);
+        if (v instanceof Double d)
+            return String.format("%,.2f", d);
         return v.toString();
     }
 }

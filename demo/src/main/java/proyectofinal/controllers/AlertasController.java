@@ -149,7 +149,6 @@ public class AlertasController {
         dialog.setHeaderText("Observaciones (opcional):");
         dialog.showAndWait().ifPresent(obs -> {
             selected.markAsReviewed(obs.isEmpty() ? "Sin observaciones" : obs);
-            // EFECTO COLATERAL SOLUCIONADO: Eliminar de la cola de pendientes primero
             removerDeColaPendientes(selected);
             moverAlHistorial(selected);
         });
@@ -165,7 +164,6 @@ public class AlertasController {
         dialog.setHeaderText("Motivo del descarte:");
         dialog.showAndWait().ifPresent(motivo -> {
             selected.markAsDismissed(motivo.isEmpty() ? "Sin motivo" : motivo);
-            // EFECTO COLATERAL SOLUCIONADO: Eliminar de la cola de pendientes primero
             removerDeColaPendientes(selected);
             moverAlHistorial(selected);
         });
@@ -178,7 +176,7 @@ public class AlertasController {
             mostrarInfo("No hay alertas pendientes."); 
             return; 
         }
-        // Atendemos de forma nativa el frente de la estructura FIFO
+        // se atiende el primer elemento de la cola
         Alert next = queue.dequeue();
         
         mostrarInfo("Procesando la alerta más antigua en cola:\n" 

@@ -1,3 +1,0 @@
-aun falta ver como se van a hacer los historiales de descartados, guardados y negociados.
-puesto que aun falta ver como se van a relacionar con el resto del proyecto.
-de todos modos su logica es la misma que la clase HistorialInmueblesConsultados.

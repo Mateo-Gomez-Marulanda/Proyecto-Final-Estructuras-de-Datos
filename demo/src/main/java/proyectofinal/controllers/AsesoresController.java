@@ -20,33 +20,51 @@ import proyectofinal.Personal.Advisor;
 public class AsesoresController {
 
     // ─── Table ───────────────────────────────────────────────
-    @FXML private TableView<Advisor>             tablaAsesores;
-    @FXML private TableColumn<Advisor, String>   colIdentificacion;
-    @FXML private TableColumn<Advisor, String>   colNombre;
-    @FXML private TableColumn<Advisor, String>   colContacto;
-    @FXML private TableColumn<Advisor, String>   colZona;
-    @FXML private TableColumn<Advisor, String>   colCierres;
-    @FXML private TableColumn<Advisor, String>   colInmuebles;
+    @FXML
+    private TableView<Advisor> tablaAsesores;
+    @FXML
+    private TableColumn<Advisor, String> colIdentificacion;
+    @FXML
+    private TableColumn<Advisor, String> colNombre;
+    @FXML
+    private TableColumn<Advisor, String> colContacto;
+    @FXML
+    private TableColumn<Advisor, String> colZona;
+    @FXML
+    private TableColumn<Advisor, String> colCierres;
+    @FXML
+    private TableColumn<Advisor, String> colInmuebles;
 
     // ─── Filters ─────────────────────────────────────────────
-    @FXML private TextField        campoBusqueda;
-    @FXML private ComboBox<String> filtroZona;
+    @FXML
+    private TextField campoBusqueda;
+    @FXML
+    private ComboBox<String> filtroZona;
 
     // ─── Detail panel ─────────────────────────────────────────
-    @FXML private VBox   panelDetalle;
-    @FXML private Label  detalleNombre;
-    @FXML private Label  detalleContacto;
-    @FXML private Label  detalleZona;
-    @FXML private Label  detalleCierres;
-    @FXML private ListView<String> listaInmueblesAsesor;
+    @FXML
+    private VBox panelDetalle;
+    @FXML
+    private Label detalleNombre;
+    @FXML
+    private Label detalleContacto;
+    @FXML
+    private Label detalleZona;
+    @FXML
+    private Label detalleCierres;
+    @FXML
+    private ListView<String> listaInmueblesAsesor;
 
     // ─── Buttons ─────────────────────────────────────────────
-    @FXML private Button btnEditar;
-    @FXML private Button btnEliminar;
-    @FXML private Button btnGestionarInmuebles;
+    @FXML
+    private Button btnEditar;
+    @FXML
+    private Button btnEliminar;
+    @FXML
+    private Button btnGestionarInmuebles;
 
     private ObservableList<Advisor> masterList;
-    private FilteredList<Advisor>   filteredList;
+    private FilteredList<Advisor> filteredList;
 
     @FXML
     public void initialize() {
@@ -61,25 +79,25 @@ public class AsesoresController {
 
     private void configurarColumnas() {
         colIdentificacion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getId()));
-        colNombre.setCellValueFactory(d ->         new SimpleStringProperty(d.getValue().getName()));
-        colContacto.setCellValueFactory(d ->       new SimpleStringProperty(d.getValue().getContactInfo()));
-        colZona.setCellValueFactory(d ->           new SimpleStringProperty(d.getValue().getZoneSpecialty()));
-        colCierres.setCellValueFactory(d ->        new SimpleStringProperty(
+        colNombre.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getName()));
+        colContacto.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getContactInfo()));
+        colZona.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getZoneSpecialty()));
+        colCierres.setCellValueFactory(d -> new SimpleStringProperty(
                 String.valueOf(d.getValue().getCompletedClosings())));
         colInmuebles.setCellValueFactory(d -> {
-            // Count assigned properties
             int count = 0;
             Advisor a = d.getValue();
-            for (Property ignored : a.getAssignedPropertiesList()) count++;
+            for (Property ignored : a.getAssignedPropertiesList())
+                count++;
             return new SimpleStringProperty(String.valueOf(count));
         });
     }
 
     private void cargarDatos() {
-        masterList   = FXCollections.observableArrayList();
+        masterList = FXCollections.observableArrayList();
         filteredList = new FilteredList<>(masterList, a -> true);
 
-        // Populate zone filter from loaded advisors
+        // filtro de zonas populares
         for (Advisor a : AppContext.getInstance().getAdvisors()) {
             masterList.add(a);
             if (a.getZoneSpecialty() != null && !filtroZona.getItems().contains(a.getZoneSpecialty())) {
@@ -97,7 +115,8 @@ public class AsesoresController {
                     btnEliminar.setDisable(!hay);
                     btnGestionarInmuebles.setDisable(!hay);
                     panelDetalle.setVisible(hay);
-                    if (hay) mostrarDetalle(selected);
+                    if (hay)
+                        mostrarDetalle(selected);
                 });
     }
 
@@ -125,7 +144,7 @@ public class AsesoresController {
     @FXML
     public void filtrarTabla() {
         String texto = campoBusqueda.getText().toLowerCase();
-        String zona  = filtroZona.getValue();
+        String zona = filtroZona.getValue();
 
         filteredList.setPredicate(a -> {
             boolean matchTexto = texto.isEmpty()
@@ -157,11 +176,11 @@ public class AsesoresController {
 
             RegistroAsesorController ctrl = loader.getController();
             ctrl.setOnRegistroExitoso(nuevoAsesor -> {
-            masterList.add(nuevoAsesor);
-            if (!filtroZona.getItems().contains(nuevoAsesor.getZoneSpecialty())) {
-                filtroZona.getItems().add(nuevoAsesor.getZoneSpecialty());
-            }
-        });
+                masterList.add(nuevoAsesor);
+                if (!filtroZona.getItems().contains(nuevoAsesor.getZoneSpecialty())) {
+                    filtroZona.getItems().add(nuevoAsesor.getZoneSpecialty());
+                }
+            });
 
             Stage dialog = new Stage();
             dialog.setTitle("Registrar asesor");
@@ -180,14 +199,15 @@ public class AsesoresController {
             mostrarInfo("No se pudo abrir el formulario:\n" + e.getMessage());
         }
     }
-    
+
     @FXML
     public void editarAsesorSeleccionado() {
         Advisor selected = tablaAsesores.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
         try {
             FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/proyectofinal/views/editar-asesor.fxml"));
+                    getClass().getResource("/proyectofinal/views/editar-asesor.fxml"));
             Parent root = loader.load();
 
             EdicionAsesorController ctrl = loader.getController();
@@ -218,7 +238,8 @@ public class AsesoresController {
     @FXML
     public void gestionarInmueblesAsesor() {
         Advisor selected = tablaAsesores.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/proyectofinal/views/gestionar-inmuebles-asesor.fxml"));
@@ -228,7 +249,7 @@ public class AsesoresController {
             ctrl.setAdvisor(selected);
             ctrl.setOnCambios(() -> {
                 tablaAsesores.refresh();
-                mostrarDetalle(selected);  // actualiza panel lateral
+                mostrarDetalle(selected); // actualiza panel lateral
             });
 
             Stage dialog = new Stage();
@@ -251,11 +272,12 @@ public class AsesoresController {
     @FXML
     public void eliminarAsesorSeleccionado() {
         Advisor selected = tablaAsesores.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
                 "¿Eliminar al asesor " + selected.getName() + "?"
-                + "\nSus inmuebles asignados quedarán sin asesor responsable.",
+                        + "\nSus inmuebles asignados quedarán sin asesor responsable.",
                 ButtonType.YES, ButtonType.NO);
         confirm.showAndWait().ifPresent(bt -> {
             if (bt == ButtonType.YES) {
@@ -273,5 +295,7 @@ public class AsesoresController {
     }
 
     // ─────────────────────────────────────────────────────────
-    private void mostrarInfo(String msg) { new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).showAndWait(); }
+    private void mostrarInfo(String msg) {
+        new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).showAndWait();
+    }
 }

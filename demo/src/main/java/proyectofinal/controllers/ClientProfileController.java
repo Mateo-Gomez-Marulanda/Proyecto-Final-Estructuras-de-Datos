@@ -7,16 +7,26 @@ import proyectofinal.Personal.Client;
 
 public class ClientProfileController {
 
-    @FXML private TextField  campoNombre;
-    @FXML private TextField  campoCorreo;
-    @FXML private TextField  campoTelefono;
-    @FXML private PasswordField campoContrasena;
-    @FXML private TextField  campoPresupuesto;
-    @FXML private ComboBox<String> campoZona;
-    @FXML private TextField      campoCiudadInteres;
-    @FXML private ComboBox<TypeProperty> comboTipoInmueble;
-    @FXML private Spinner<Integer>       spinnerHab;
-    @FXML private Label      mensajeFeedback;
+    @FXML
+    private TextField campoNombre;
+    @FXML
+    private TextField campoCorreo;
+    @FXML
+    private TextField campoTelefono;
+    @FXML
+    private PasswordField campoContrasena;
+    @FXML
+    private TextField campoPresupuesto;
+    @FXML
+    private ComboBox<String> campoZona;
+    @FXML
+    private TextField campoCiudadInteres;
+    @FXML
+    private ComboBox<TypeProperty> comboTipoInmueble;
+    @FXML
+    private Spinner<Integer> spinnerHab;
+    @FXML
+    private Label mensajeFeedback;
 
     @FXML
     public void initialize() {
@@ -27,7 +37,8 @@ public class ClientProfileController {
 
     private void cargarDatosActuales() {
         Client client = AppContext.getInstance().getClientManager().getCurrent();
-        if (client == null) return;
+        if (client == null)
+            return;
 
         campoNombre.setText(client.getName());
         campoCorreo.setText(client.getEmail());
@@ -42,9 +53,9 @@ public class ClientProfileController {
 
         String zonaGuardada = client.getInterestZones();
         if (zonaGuardada != null && !zonaGuardada.trim().isEmpty()) {
-            String zonaNormalizada = zonaGuardada.trim().substring(0, 1).toUpperCase() 
-                                   + zonaGuardada.trim().substring(1).toLowerCase();
-            
+            String zonaNormalizada = zonaGuardada.trim().substring(0, 1).toUpperCase()
+                    + zonaGuardada.trim().substring(1).toLowerCase();
+
             if (campoZona.getItems().contains(zonaNormalizada)) {
                 campoZona.setValue(zonaNormalizada);
             } else {
@@ -61,17 +72,20 @@ public class ClientProfileController {
     @FXML
     public void guardarCambios() {
         Client client = AppContext.getInstance().getClientManager().getCurrent();
-        if (client == null) return;
+        if (client == null)
+            return;
 
-        String nombre      = campoNombre.getText().trim();
-        String correo      = campoCorreo.getText().trim();
-        String telefono    = campoTelefono.getText().trim();
+        String nombre = campoNombre.getText().trim();
+        String correo = campoCorreo.getText().trim();
+        String telefono = campoTelefono.getText().trim();
         String presupuesto = campoPresupuesto.getText().trim();
-        String zona = (campoZona.getValue() == null || campoZona.getValue().isEmpty()) 
-                      ? "Sin definir" : campoZona.getValue();
-        String password    = campoContrasena.getText();
-        String ciudad = campoCiudadInteres.getText().trim().isEmpty() 
-                    ? "Sin definir" : campoCiudadInteres.getText().trim();
+        String zona = (campoZona.getValue() == null || campoZona.getValue().isEmpty())
+                ? "Sin definir"
+                : campoZona.getValue();
+        String password = campoContrasena.getText();
+        String ciudad = campoCiudadInteres.getText().trim().isEmpty()
+                ? "Sin definir"
+                : campoCiudadInteres.getText().trim();
 
         if (nombre.isEmpty() || correo.isEmpty()) {
             mostrarError("Nombre y correo son obligatorios.");
@@ -90,16 +104,15 @@ public class ClientProfileController {
             AppContext.getInstance().getClientManager().updateClient(
                     correo, telefono, budget, zona, ciudad,
                     comboTipoInmueble.getValue(),
-                    spinnerHab.getValue()
-            );
+                    spinnerHab.getValue());
             client.setName(nombre);
 
-            // Update password only if a new one was typed
+            // Actualizar contraseña sólo si se escribió una nueva
             if (!password.isEmpty()) {
                 client.setPassword(password);
             }
 
-            mostrarExito("✅ Perfil actualizado correctamente.");
+            mostrarExito("Perfil actualizado correctamente.");
         } catch (RuntimeException e) {
             mostrarError(e.getMessage());
         }

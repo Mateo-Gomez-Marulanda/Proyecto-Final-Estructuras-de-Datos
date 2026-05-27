@@ -9,13 +9,16 @@ import proyectofinal.Personal.Client;
 
 public class LoginController {
 
-    @FXML private TextField     campoUsuario;
-    @FXML private PasswordField campoContrasena;
-    @FXML private Label         mensajeError;
+    @FXML
+    private TextField campoUsuario;
+    @FXML
+    private PasswordField campoContrasena;
+    @FXML
+    private Label mensajeError;
 
     @FXML
     public void manejarLogin() {
-        String id       = campoUsuario.getText().trim();
+        String id = campoUsuario.getText().trim();
         String password = campoContrasena.getText();
 
         if (id.isEmpty() || password.isEmpty()) {
@@ -27,11 +30,11 @@ public class LoginController {
             AppContext.getInstance().getClientManager().login(id, password);
             Client current = AppContext.getInstance().getClientManager().getCurrent();
 
-            // Redirect based on client type
+            // Redirección según el tipo de usuario
             if ("ADMIN".equalsIgnoreCase(current.getClientType())) {
-                Main.cargarShellPrincipal();   // Admin view
+                Main.cargarShellPrincipal(); // vista del admin
             } else {
-                Main.cargarShellCliente();     // Client view
+                Main.cargarShellCliente(); // vista del cliente
             }
 
         } catch (RuntimeException e) {

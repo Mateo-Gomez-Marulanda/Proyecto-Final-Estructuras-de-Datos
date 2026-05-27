@@ -60,7 +60,7 @@ public class ClientFavoritesController {
         colHab.setCellValueFactory(d -> new SimpleStringProperty(
                 String.valueOf(d.getValue().getRooms())));
         colDisponible.setCellValueFactory(d -> new SimpleStringProperty(
-                d.getValue().isAvailable() ? "✅ Sí" : "❌ No"));
+                d.getValue().isAvailable() ? "Sí" : "No"));
     }
 
     private void cargarDatos() {

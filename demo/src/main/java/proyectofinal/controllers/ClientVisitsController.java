@@ -103,7 +103,7 @@ public class ClientVisitsController {
             if (sel == null) {
                 btnFavoritoDesdeHistorial.setDisable(true);
                 btnIniciarTramite.setDisable(true);
-                btnIniciarTramite.setText("💼 Iniciar Trámite");
+                btnIniciarTramite.setText("Iniciar Trámite");
                 btnIniciarTramite.setStyle(
                         "-fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;");
             } else {
@@ -112,11 +112,11 @@ public class ClientVisitsController {
 
                 String proposito = sel.getPurpose().toUpperCase().trim();
                 if (proposito.equals("VENTA")) {
-                    btnIniciarTramite.setText("🤝 Solicitar Compra de Inmueble");
+                    btnIniciarTramite.setText("Solicitar Compra de Inmueble");
                     btnIniciarTramite.setStyle(
                             "-fx-background-color: #16a34a; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;");
                 } else {
-                    btnIniciarTramite.setText("🔑 Solicitar Arriendo de Inmueble");
+                    btnIniciarTramite.setText("Solicitar Arriendo de Inmueble");
                     btnIniciarTramite.setStyle(
                             "-fx-background-color: #7c3aed; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;");
                 }
@@ -152,89 +152,88 @@ public class ClientVisitsController {
         mostrarNotificacionUI("Favoritos", "El inmueble se agregó a su lista de favoritos.");
     }
 
-   @FXML
-private void manejarSolicitudTramite() {
-    Property propiedadSeleccionada = tablaHistorial.getSelectionModel().getSelectedItem();
-    Client clienteActual = AppContext.getInstance().getClientManager().getCurrent(); 
+    @FXML
+    private void manejarSolicitudTramite() {
+        Property propiedadSeleccionada = tablaHistorial.getSelectionModel().getSelectedItem();
+        Client clienteActual = AppContext.getInstance().getClientManager().getCurrent();
 
-    System.out.println("[DEBUG] Botón presionado.");
-    if (propiedadSeleccionada == null) {
-        System.out.println("[DEBUG] ERROR: No hay propiedad seleccionada en la tabla.");
-        mostrarNotificacionUI("Selección Requerida", "Por favor, seleccione un inmueble.");
-        return;
-    }
-    if (clienteActual == null) {
-        System.out.println("[DEBUG] ERROR: El cliente actual en AppContext es NULL.");
-        mostrarNotificacionUI("Error de Sesión", "No se encontró un cliente activo.");
-        return;
-    }
-
-    try {
-        double valorAcordado = propiedadSeleccionada.getPrice();
-        double comisionInmobiliaria = 0.0;
-        OperationType tipoOperacion;
-
-        // 🚨 SOSPECHOSO 1: ¿El propósito viene vacío, nulo o en minúsculas diferentes?
-        if (propiedadSeleccionada.getPurpose() == null) {
-            System.out.println("[DEBUG] ERROR: El propósito del inmueble es NULL.");
+        System.out.println("[DEBUG] Botón presionado.");
+        if (propiedadSeleccionada == null) {
+            System.out.println("[DEBUG] ERROR: No hay propiedad seleccionada en la tabla.");
+            mostrarNotificacionUI("Selección Requerida", "Por favor, seleccione un inmueble.");
             return;
         }
-        
-        String proposito = propiedadSeleccionada.getPurpose().toUpperCase().trim();
-        System.out.println("[DEBUG] Propósito del inmueble detectado: " + proposito);
-
-        if (proposito.equals("VENTA")) {
-            tipoOperacion = OperationType.SALE;
-            comisionInmobiliaria = valorAcordado * 0.03; 
-        } else if (proposito.equals("ARRIENDO") || proposito.equals("ALQUILER")) {
-            tipoOperacion = OperationType.RENTAL; // 🚨 SOSPECHOSO 2: Verifica si en tu enum es RENT o RENTAL
-            comisionInmobiliaria = valorAcordado * 0.10; 
-        } else {
-            System.out.println("[DEBUG] ERROR: El propósito '" + proposito + "' no coincide con VENTA o ARRIENDO.");
-            mostrarNotificacionUI("Error", "El propósito debe ser VENTA o ARRIENDO.");
+        if (clienteActual == null) {
+            System.out.println("[DEBUG] ERROR: El cliente actual en AppContext es NULL.");
+            mostrarNotificacionUI("Error de Sesión", "No se encontró un cliente activo.");
             return;
         }
 
-        System.out.println("[DEBUG] Intentando instanciar BusinessOperation...");
-        
-        // 🚨 SOSPECHOSO 3: El estado inicial. 
-        // Verifica si tu enum 'ProcessStatus' tiene 'IN_PROGRESS' o 'PENDING_SIGNATURE'.
-        // Si usas uno que no es, compila pero puede fallar en lógica interna.
-        BusinessOperation nuevaOperacion = new BusinessOperation(
-            "OP-" + System.currentTimeMillis(),
-            propiedadSeleccionada,
-            clienteActual,
-            propiedadSeleccionada.getResponsibleAdvisor(), // ¿Esto es null?
-            LocalDate.now(),
-            tipoOperacion,
-            valorAcordado,
-            comisionInmobiliaria,
-            proyectofinal.SistemaGestion.OperacionDeNegocio.ProcessStatus.IN_PROGRESS 
-        );
+        try {
+            double valorAcordado = propiedadSeleccionada.getPrice();
+            double comisionInmobiliaria = 0.0;
+            OperationType tipoOperacion;
 
-        System.out.println("[DEBUG] Operación instanciada con éxito: " + nuevaOperacion.getIdentifier());
+            // ¿El propósito viene vacío, nulo o en minúsculas diferentes?
+            if (propiedadSeleccionada.getPurpose() == null) {
+                System.out.println("[DEBUG] ERROR: El propósito del inmueble es NULL.");
+                return;
+            }
 
-        // 🚨 SOSPECHOSO 4: Agregar a la estructura
-        System.out.println("[DEBUG] Agregando a la lista de AppContext...");
-        AppContext.getInstance().getOperations().add(nuevaOperacion);
+            String proposito = propiedadSeleccionada.getPurpose().toUpperCase().trim();
+            System.out.println("[DEBUG] Propósito del inmueble detectado: " + proposito);
 
-        // Notificar al Admin
-        System.out.println("[DEBUG] Publicando evento OPERATION_CREATED...");
-        OperationPublisher.getInstance().publish(nuevaOperacion, OperationEvent.EventType.OPERATION_CREATED);
+            if (proposito.equals("VENTA")) {
+                tipoOperacion = OperationType.SALE;
+                comisionInmobiliaria = valorAcordado * 0.03;
+            } else if (proposito.equals("ARRIENDO") || proposito.equals("ALQUILER")) {
+                tipoOperacion = OperationType.RENTAL; // Verifica si en tu enum es RENT o RENTAL
+                comisionInmobiliaria = valorAcordado * 0.10;
+            } else {
+                System.out.println("[DEBUG] ERROR: El propósito '" + proposito + "' no coincide con VENTA o ARRIENDO.");
+                mostrarNotificacionUI("Error", "El propósito debe ser VENTA o ARRIENDO.");
+                return;
+            }
 
-        // Guardar en disco
-        System.out.println("[DEBUG] Guardando en archivos planos...");
-        AppContext.getInstance().saveAll();
+            System.out.println("[DEBUG] Intentando instanciar BusinessOperation...");
 
-        System.out.println("[DEBUG] ¡Todo el proceso del cliente terminó con ÉXITO!");
-        mostrarNotificacionUI("Trámite Iniciado", "Su solicitud ha sido enviada con éxito.");
-        
-    } catch (Exception e) {
-        System.out.println("[DEBUG] 🔥 CRASH CRÍTICO EN EL PROCESO:");
-        e.printStackTrace(); // Esto te dirá exactamente en qué línea se rompe
-        mostrarNotificacionUI("Error", "No se pudo procesar: " + e.getMessage());
+            // El estado inicial.
+            // Verifica si tu enum 'ProcessStatus' tiene 'IN_PROGRESS' o
+            // 'PENDING_SIGNATURE'.
+            BusinessOperation nuevaOperacion = new BusinessOperation(
+                    "OP-" + System.currentTimeMillis(),
+                    propiedadSeleccionada,
+                    clienteActual,
+                    propiedadSeleccionada.getResponsibleAdvisor(), // verifica si es null
+                    LocalDate.now(),
+                    tipoOperacion,
+                    valorAcordado,
+                    comisionInmobiliaria,
+                    proyectofinal.SistemaGestion.OperacionDeNegocio.ProcessStatus.IN_PROGRESS);
+
+            System.out.println("[DEBUG] Operación instanciada con éxito: " + nuevaOperacion.getIdentifier());
+
+            // Agregar a la estructura
+            System.out.println("[DEBUG] Agregando a la lista de AppContext...");
+            AppContext.getInstance().getOperations().add(nuevaOperacion);
+
+            // Notificar al Admin
+            System.out.println("[DEBUG] Publicando evento OPERATION_CREATED...");
+            OperationPublisher.getInstance().publish(nuevaOperacion, OperationEvent.EventType.OPERATION_CREATED);
+
+            // Guardar en disco
+            System.out.println("[DEBUG] Guardando en archivos planos...");
+            AppContext.getInstance().saveAll();
+
+            System.out.println("[DEBUG] ¡Todo el proceso del cliente terminó con ÉXITO!");
+            mostrarNotificacionUI("Trámite Iniciado", "Su solicitud ha sido enviada con éxito.");
+
+        } catch (Exception e) {
+            System.out.println("[DEBUG] CRASH CRÍTICO EN EL PROCESO:");
+            e.printStackTrace(); // Esto te dirá exactamente en qué línea se rompe
+            mostrarNotificacionUI("Error", "No se pudo procesar: " + e.getMessage());
+        }
     }
-}
 
     /**
      * Lanza ventanas emergentes informativas en la interfaz gráfica de usuario

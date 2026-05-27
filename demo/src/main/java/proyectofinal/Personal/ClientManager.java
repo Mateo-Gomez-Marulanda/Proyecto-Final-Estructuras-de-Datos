@@ -43,7 +43,7 @@ public class ClientManager {
             String searchStatus, String password) {
 
         Client newClient = new Client(id, name, email, phoneNumber, clientType, budget,
-                interestZones,interestCity,desiredPropertyType, minRooms, searchStatus, password);
+                interestZones, interestCity, desiredPropertyType, minRooms, searchStatus, password);
         clients.add(newClient);
         clientTable.put(id, newClient);
     }
@@ -80,7 +80,7 @@ public class ClientManager {
     }
 
     public void updateClient(String email, String phoneNumber, double budget,
-        String interestZones, String interestCity, TypeProperty desiredPropertyType, int minRooms) {
+            String interestZones, String interestCity, TypeProperty desiredPropertyType, int minRooms) {
         if (current == null)
             throw new RuntimeException("No hay sesión activa para actualizar.");
 
@@ -102,14 +102,15 @@ public class ClientManager {
         double maxBudget = current.getBudget() * 1.10; // Margen del 10%
 
         for (Property p : inventory) {
-            // FILTRO DURO: Si no está disponible o supera el presupuesto máximo, se ignora
-            if (!p.isAvailable() || p.getPrice() > maxBudget || !p.getCity().equalsIgnoreCase(current.getInterestCity())) {
+            // Si no está disponible o supera el presupuesto máximo, se ignora
+            if (!p.isAvailable() || p.getPrice() > maxBudget
+                    || !p.getCity().equalsIgnoreCase(current.getInterestCity())) {
                 continue;
             }
 
             int score = 0;
 
-            // FILTROS BLANDOS: Sumamos puntos por cada coincidencia
+            // Sumamos puntos por cada coincidencia
             if (p.getZone().name().equalsIgnoreCase(current.getInterestZones())) {
                 score += 5;
             }

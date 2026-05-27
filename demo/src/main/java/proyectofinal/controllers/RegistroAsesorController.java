@@ -10,12 +10,18 @@ import java.util.function.Consumer;
 
 public class RegistroAsesorController {
 
-    @FXML private TextField      campoId;
-    @FXML private TextField      campoNombre;
-    @FXML private TextField      campoContacto;
-    @FXML private TextField      campoZona;
-    @FXML private Spinner<Integer> campoCierres;
-    @FXML private Label          labelError;
+    @FXML
+    private TextField campoId;
+    @FXML
+    private TextField campoNombre;
+    @FXML
+    private TextField campoContacto;
+    @FXML
+    private TextField campoZona;
+    @FXML
+    private Spinner<Integer> campoCierres;
+    @FXML
+    private Label labelError;
 
     private Consumer<Advisor> onRegistroExitoso;
 
@@ -45,15 +51,27 @@ public class RegistroAsesorController {
     public void registrarAsesor() {
         ocultarError();
 
-        String id       = campoId.getText().trim();
-        String nombre   = campoNombre.getText().trim();
+        String id = campoId.getText().trim();
+        String nombre = campoNombre.getText().trim();
         String contacto = campoContacto.getText().trim();
-        String zona     = campoZona.getText().trim();
+        String zona = campoZona.getText().trim();
 
-        if (id.isEmpty())       { mostrarError("La identificación es obligatoria."); return; }
-        if (nombre.isEmpty())   { mostrarError("El nombre es obligatorio.");         return; }
-        if (contacto.isEmpty()) { mostrarError("El contacto es obligatorio.");       return; }
-        if (zona.isEmpty())     { mostrarError("La zona es obligatoria.");           return; }
+        if (id.isEmpty()) {
+            mostrarError("La identificación es obligatoria.");
+            return;
+        }
+        if (nombre.isEmpty()) {
+            mostrarError("El nombre es obligatorio.");
+            return;
+        }
+        if (contacto.isEmpty()) {
+            mostrarError("El contacto es obligatorio.");
+            return;
+        }
+        if (zona.isEmpty()) {
+            mostrarError("La zona es obligatoria.");
+            return;
+        }
 
         // Verificar ID duplicado
         for (Advisor a : AppContext.getInstance().getAdvisors()) {
@@ -65,13 +83,13 @@ public class RegistroAsesorController {
 
         Advisor nuevo = new Advisor(
                 id, nombre, contacto, zona,
-                null,                        // scheduledVisits — aún sin definir
-                campoCierres.getValue()
-        );
+                null,
+                campoCierres.getValue());
 
         AppContext.getInstance().getAdvisors().add(nuevo);
 
-        if (onRegistroExitoso != null) onRegistroExitoso.accept(nuevo);
+        if (onRegistroExitoso != null)
+            onRegistroExitoso.accept(nuevo);
         cerrarVentana();
     }
 
@@ -89,7 +107,7 @@ public class RegistroAsesorController {
     }
 
     private void mostrarError(String msg) {
-        labelError.setText("⚠  " + msg);
+        labelError.setText("AVERTENCIA  " + msg);
         labelError.setVisible(true);
         labelError.setManaged(true);
     }

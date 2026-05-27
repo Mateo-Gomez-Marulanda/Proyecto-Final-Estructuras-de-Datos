@@ -10,22 +10,29 @@ import proyectofinal.Main;
 
 public class RegisterController {
 
-    @FXML private TextField campoNombre;
-    @FXML private TextField campoId;
-    @FXML private TextField campoCorreo;
-    @FXML private TextField campoTelefono;
-    @FXML private PasswordField campoContrasena;
-    @FXML private PasswordField campoConfirmarContrasena;
-    @FXML private Label mensajeFeedback;
+    @FXML
+    private TextField campoNombre;
+    @FXML
+    private TextField campoId;
+    @FXML
+    private TextField campoCorreo;
+    @FXML
+    private TextField campoTelefono;
+    @FXML
+    private PasswordField campoContrasena;
+    @FXML
+    private PasswordField campoConfirmarContrasena;
+    @FXML
+    private Label mensajeFeedback;
 
     @FXML
     public void manejarRegistro() {
-        String nombre   = campoNombre.getText().trim();
-        String id       = campoId.getText().trim();
-        String correo   = campoCorreo.getText().trim();
+        String nombre = campoNombre.getText().trim();
+        String id = campoId.getText().trim();
+        String correo = campoCorreo.getText().trim();
         String telefono = campoTelefono.getText().trim();
         String password = campoContrasena.getText();
-        String confirm  = campoConfirmarContrasena.getText();
+        String confirm = campoConfirmarContrasena.getText();
 
         if (estaVacio(nombre, id, correo, password, telefono)) {
             mostrarError("Por favor completa todos los campos.");
@@ -41,16 +48,17 @@ public class RegisterController {
         try {
             AppContext context = AppContext.getInstance();
 
-            // 1. Registramos el cliente en la memoria (Operación O(1) rápida en Estructura de Datos)
+            // 1. Registramos el cliente en la memoria (Operación O(1) rápida en Estructura
+            // de Datos)
             context.getClientManager().registerBasic(
-                id, nombre, correo, password, telefono
-            );
+                    id, nombre, correo, password, telefono);
 
             // 2. Modificaciones visuales rápidas en el hilo de la UI
             mostrarExito("¡Cuenta creada exitosamente! Redirigiendo...");
             bloquearFormulario(true);
-            
-            // 3. Pasamos el contexto al hilo secundario para guardar datos de forma asíncrona
+
+            // 3. Pasamos el contexto al hilo secundario para guardar datos de forma
+            // asíncrona
             guardarYRedirigirAsincrono(context);
 
         } catch (RuntimeException e) {
@@ -60,7 +68,8 @@ public class RegisterController {
 
     private boolean estaVacio(String... campos) {
         for (String campo : campos) {
-            if (campo == null || campo.isEmpty()) return true;
+            if (campo == null || campo.isEmpty())
+                return true;
         }
         return false;
     }
@@ -69,21 +78,25 @@ public class RegisterController {
      * Corre en un hilo separado para evitar que la escritura de archivos planos
      * congele la interfaz gráfica de usuario.
      */
-   private void guardarYRedirigirAsincrono(AppContext context) {
-    new Thread(() -> {
-        try {
-            // Ahora AppContext se encarga internamente de la traducción de estructuras
-            context.saveAll(); 
+    private void guardarYRedirigirAsincrono(AppContext context) {
+        new Thread(() -> {
+            try {
+                // Ahora AppContext se encarga internamente de la traducción de estructuras
+                context.saveAll();
 
-            Thread.sleep(1500); 
-            Platform.runLater(() -> {
-                try { Main.cargarLogin(); } catch (Exception ignored) {}
-            });
-        } catch (InterruptedException ignored) {
-            Thread.currentThread().interrupt();
-        }
-    }).start();
-}
+                Thread.sleep(1500);
+                Platform.runLater(() -> {
+                    try {
+                        Main.cargarLogin();
+                    } catch (Exception ignored) {
+                    }
+                });
+            } catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
+            }
+        }).start();
+    }
+
     private void bloquearFormulario(boolean bloquear) {
         campoNombre.setDisable(bloquear);
         campoId.setDisable(bloquear);

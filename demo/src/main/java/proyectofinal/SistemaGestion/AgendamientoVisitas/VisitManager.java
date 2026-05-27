@@ -20,20 +20,17 @@ public class VisitManager {
         this.visitHistory = new SimpleLinkedList<>();
     }
 
-    // 1. Adaptado para usar LocalDate y LocalTime, y crear un objeto Visit
     public void scheduleVisit(Client client, Property property, LocalDate date, LocalTime time) {
         // Generamos un código único básico para la visita
-       
-        
-        Visit newVisit = new Visit(
-                client, 
-                property, 
-                date, 
-                time, 
-                property.getResponsibleAdvisor()
-        );
 
-       if (client.getClientType() != null && client.getClientType().equalsIgnoreCase("Premium")) {
+        Visit newVisit = new Visit(
+                client,
+                property,
+                date,
+                time,
+                property.getResponsibleAdvisor());
+
+        if (client.getClientType() != null && client.getClientType().equalsIgnoreCase("Premium")) {
             priorityVisits.enqueue(newVisit, 1);
         } else if (client.getClientType() != null && client.getClientType().equalsIgnoreCase("Frecuente")) {
             priorityVisits.enqueue(newVisit, 2);
@@ -46,7 +43,8 @@ public class VisitManager {
 
     // 2. Adaptado para usar VisitStatus.CONFIRMADA
     public void confirmVisit(Visit visit) {
-        if (visit == null) return;
+        if (visit == null)
+            return;
         visit.setVisitStatus(VisitStatus.CONFIRM);
         removeVisitFromQueues(visit);
         visit.getClient().removeVisita(visit);
@@ -56,18 +54,20 @@ public class VisitManager {
 
     // 3. Adaptado para usar LocalDate/LocalTime y VisitStatus.REPROGRAMADA
     public void rescheduleVisit(Visit visit, LocalDate newDate, LocalTime newTime) {
-        if (visit == null) return;
+        if (visit == null)
+            return;
         removeVisitFromQueues(visit);
-        visit.setDate(newDate); 
+        visit.setDate(newDate);
         visit.setTime(newTime);
         visit.setVisitStatus(VisitStatus.PENDING);
-        
-       enqueue(visit);
+
+        enqueue(visit);
     }
 
     // 4. Adaptado para usar VisitStatus.CANCELADA y setPostObservations
     public void cancelVisit(Visit visit, String reason) {
-        if (visit == null) return;
+        if (visit == null)
+            return;
         visit.setVisitStatus(VisitStatus.CANCELLED);
         visit.setPostObservations("Motivo cancelación: " + reason);
         removeVisitFromQueues(visit);
@@ -87,13 +87,16 @@ public class VisitManager {
     }
 
     public Visit getNextVisitToAttend() {
-        if (!priorityVisits.isEmpty()) return priorityVisits.dequeue();
-        if (!pendingVisits.isEmpty()) return pendingVisits.dequeue();
+        if (!priorityVisits.isEmpty())
+            return priorityVisits.dequeue();
+        if (!pendingVisits.isEmpty())
+            return pendingVisits.dequeue();
         return null;
     }
 
     public void removeVisitFromQueues(Visit target) {
-        if (target == null) return;
+        if (target == null)
+            return;
 
         // Limpieza segura en Cola de Prioridad
         PriorityQueue<Visit> tempPriority = new PriorityQueue<>();
@@ -119,24 +122,25 @@ public class VisitManager {
 
     // 5. Adaptado para usar VisitStatus.REALIZADA
     public void processVisitCompletion(Visit visit, String resultNotes, boolean interested) {
-        if (visit == null) throw new IllegalArgumentException("La visita no puede ser nula.");
+        if (visit == null)
+            throw new IllegalArgumentException("La visita no puede ser nula.");
 
         visit.setVisitStatus(VisitStatus.COMPLETED);
         visit.setPostObservations(resultNotes);
 
         Client client = visit.getClient();
         Property property = visit.getProperty();
-        
+
         // Asumiendo que tu clase Client tiene este método
-        if(client.getVisitedPropertiesHistory() != null){
-             client.getVisitedPropertiesHistory().add(property);
+        if (client.getVisitedPropertiesHistory() != null) {
+            client.getVisitedPropertiesHistory().add(property);
         }
 
         if (interested) {
             property.setPropertyStatus("EN NEGOCIACIÓN");
-            property.setAvailable(false); 
+            property.setAvailable(false);
             // Asumiendo que Client tiene este método
-            client.setSearchStatus("Interesado en " + property.getCode()); 
+            client.setSearchStatus("Interesado en " + property.getCode());
         } else {
             property.setPropertyStatus("DISPONIBLE");
             property.setAvailable(true);
@@ -147,7 +151,7 @@ public class VisitManager {
 
     public SimpleLinkedList<Visit> getAllPendingAndActiveVisits() {
         SimpleLinkedList<Visit> list = new SimpleLinkedList<>();
-        
+
         PriorityQueue<Visit> tempPriority = new PriorityQueue<>();
         Queue<Visit> tempPending = new Queue<>();
 

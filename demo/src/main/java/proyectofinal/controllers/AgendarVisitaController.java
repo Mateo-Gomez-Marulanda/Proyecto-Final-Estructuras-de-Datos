@@ -66,7 +66,7 @@ public class AgendarVisitaController {
             }
         });
         for (Client c : AppContext.getInstance().getClientManager().getAllClients()) {
-            // Exclude ADMIN accounts
+            // si la cuenta es de administrador la excluye
             if (!"ADMIN".equalsIgnoreCase(c.getClientType())) {
                 campoCliente.getItems().add(c);
             }

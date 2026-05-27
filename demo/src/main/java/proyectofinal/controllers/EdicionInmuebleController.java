@@ -7,27 +7,40 @@ import javafx.util.StringConverter;
 
 import proyectofinal.Inmueble.Property;
 import proyectofinal.Inmueble.TypeProperty;
-import proyectofinal.Inmueble.ZoneProperty; // <-- NUEVO: Importación del Enum de Zona
+import proyectofinal.Inmueble.ZoneProperty;
 import proyectofinal.Personal.Advisor;
 import proyectofinal.SistemaGestion.GestionInmuebles.PropertyManager;
 
 public class EdicionInmuebleController {
 
-    // ── Mismos fx:id que registro-inmueble.fxml ───────────────
-    @FXML private TextField                campoCodigo;
-    @FXML private ComboBox<TypeProperty>   campoTipo;
-    @FXML private TextField                campoDireccion;
-    @FXML private TextField                campoCiudad;
-    @FXML private ComboBox<ZoneProperty>   campoZona;     // <-- CORREGIDO: Ahora es ComboBox
-    @FXML private TextField                campoArea;
-    @FXML private TextField                campoPrecio;
-    @FXML private Spinner<Integer>         campoHabitaciones;
-    @FXML private Spinner<Integer>         campoBanos;
-    @FXML private ComboBox<String>         campoFinalidad;
-    @FXML private ComboBox<String>         campoEstado;
-    @FXML private CheckBox                 campoDisponible;
-    @FXML private ComboBox<Advisor>        campoAsesor;
-    @FXML private Label                    labelError;
+    @FXML
+    private TextField campoCodigo;
+    @FXML
+    private ComboBox<TypeProperty> campoTipo;
+    @FXML
+    private TextField campoDireccion;
+    @FXML
+    private TextField campoCiudad;
+    @FXML
+    private ComboBox<ZoneProperty> campoZona;
+    @FXML
+    private TextField campoArea;
+    @FXML
+    private TextField campoPrecio;
+    @FXML
+    private Spinner<Integer> campoHabitaciones;
+    @FXML
+    private Spinner<Integer> campoBanos;
+    @FXML
+    private ComboBox<String> campoFinalidad;
+    @FXML
+    private ComboBox<String> campoEstado;
+    @FXML
+    private CheckBox campoDisponible;
+    @FXML
+    private ComboBox<Advisor> campoAsesor;
+    @FXML
+    private Label labelError;
 
     private Property propertyToEdit;
     private Runnable onEdicionExitosa;
@@ -50,10 +63,15 @@ public class EdicionInmuebleController {
 
     private void configurarComboAsesor() {
         campoAsesor.setConverter(new StringConverter<>() {
-            @Override public String toString(Advisor a) {
+            @Override
+            public String toString(Advisor a) {
                 return a == null ? "Sin asignar" : a.getName();
             }
-            @Override public Advisor fromString(String s) { return null; }
+
+            @Override
+            public Advisor fromString(String s) {
+                return null;
+            }
         });
         campoAsesor.getItems().add(null);
         for (Advisor a : AppContext.getInstance().getAdvisors()) {
@@ -83,11 +101,10 @@ public class EdicionInmuebleController {
 
     private void preCargarCampos() {
         campoCodigo.setText(propertyToEdit.getCode());
-        campoCodigo.setDisable(true);          // código inmutable
-
+        campoCodigo.setDisable(true);
         campoDireccion.setText(propertyToEdit.getAddress());
         campoCiudad.setText(propertyToEdit.getCity());
-        campoZona.setValue(propertyToEdit.getZone()); // <-- CORREGIDO: Usamos setValue para inyectar el Enum actual
+        campoZona.setValue(propertyToEdit.getZone());
         campoTipo.setValue(propertyToEdit.getType());
         campoFinalidad.setValue(propertyToEdit.getPurpose());
         campoEstado.setValue(propertyToEdit.getPropertyStatus());
@@ -107,37 +124,59 @@ public class EdicionInmuebleController {
     public void guardarCambios() {
         ocultarError();
 
-        String       direccion = campoDireccion.getText().trim();
-        String       ciudad    = campoCiudad.getText().trim();
-        ZoneProperty zona      = campoZona.getValue(); // <-- CORREGIDO: Leemos el Enum seleccionado
-        TypeProperty tipo      = campoTipo.getValue();
-        String       finalidad = campoFinalidad.getValue();
-        String       estado    = campoEstado.getValue();
+        String direccion = campoDireccion.getText().trim();
+        String ciudad = campoCiudad.getText().trim();
+        ZoneProperty zona = campoZona.getValue();
+        TypeProperty tipo = campoTipo.getValue();
+        String finalidad = campoFinalidad.getValue();
+        String estado = campoEstado.getValue();
 
-        if (direccion.isEmpty()) { mostrarError("La dirección es obligatoria.");        return; }
-        if (ciudad.isEmpty())    { mostrarError("La ciudad es obligatoria.");           return; }
-        if (zona == null)        { mostrarError("Seleccione la zona del inmueble.");    return; } // <-- CORREGIDO
-        if (tipo == null)        { mostrarError("Seleccione el tipo de inmueble.");     return; }
-        if (finalidad == null)   { mostrarError("Seleccione la finalidad.");            return; }
-        if (estado == null)      { mostrarError("Seleccione el estado del inmueble.");  return; }
+        if (direccion.isEmpty()) {
+            mostrarError("La dirección es obligatoria.");
+            return;
+        }
+        if (ciudad.isEmpty()) {
+            mostrarError("La ciudad es obligatoria.");
+            return;
+        }
+        if (zona == null) {
+            mostrarError("Seleccione la zona del inmueble.");
+            return;
+        }
+        if (tipo == null) {
+            mostrarError("Seleccione el tipo de inmueble.");
+            return;
+        }
+        if (finalidad == null) {
+            mostrarError("Seleccione la finalidad.");
+            return;
+        }
+        if (estado == null) {
+            mostrarError("Seleccione el estado del inmueble.");
+            return;
+        }
 
         double precio, area;
         try {
             precio = Double.parseDouble(campoPrecio.getText().trim());
-            if (precio <= 0) throw new NumberFormatException();
+            if (precio <= 0)
+                throw new NumberFormatException();
         } catch (NumberFormatException e) {
-            mostrarError("El precio debe ser un número positivo."); return;
+            mostrarError("El precio debe ser un número positivo.");
+            return;
         }
         try {
             area = Double.parseDouble(campoArea.getText().trim());
-            if (area <= 0) throw new NumberFormatException();
+            if (area <= 0)
+                throw new NumberFormatException();
         } catch (NumberFormatException e) {
-            mostrarError("El área debe ser un número positivo."); return;
+            mostrarError("El área debe ser un número positivo.");
+            return;
         }
 
-        PropertyManager pm          = AppContext.getInstance().getPropertyManager();
-        String          cod         = propertyToEdit.getCode();
-        String          responsable = "Admin";
+        PropertyManager pm = AppContext.getInstance().getPropertyManager();
+        String cod = propertyToEdit.getCode();
+        String responsable = "Admin";
 
         if (Double.compare(precio, propertyToEdit.getPrice()) != 0)
             pm.modifyPrice(cod, precio, responsable);
@@ -161,7 +200,7 @@ public class EdicionInmuebleController {
                     + "' → '" + ciudad + "'", responsable);
             propertyToEdit.setCity(ciudad);
         }
-        // <-- CORREGIDO: Lógica de actualización para el Enum de la zona
+        
         if (zona != propertyToEdit.getZone()) {
             pm.registerAdminAction(cod, "Zona: '" + propertyToEdit.getZone().name()
                     + "' → '" + zona.name() + "'", responsable);
@@ -197,14 +236,16 @@ public class EdicionInmuebleController {
                 nuevoAsesor.assignProperty(propertyToEdit);
             }
             String oldNombre = propertyToEdit.getResponsibleAdvisor() != null
-                    ? propertyToEdit.getResponsibleAdvisor().getName() : "Sin asignar";
+                    ? propertyToEdit.getResponsibleAdvisor().getName()
+                    : "Sin asignar";
             String newNombre = nuevoAsesor != null ? nuevoAsesor.getName() : "Sin asignar";
             pm.registerAdminAction(cod, "Asesor: '" + oldNombre
                     + "' → '" + newNombre + "'", responsable);
             propertyToEdit.setResponsibleAdvisor(nuevoAsesor);
         }
 
-        if (onEdicionExitosa != null) onEdicionExitosa.run();
+        if (onEdicionExitosa != null)
+            onEdicionExitosa.run();
         cerrarVentana();
     }
 

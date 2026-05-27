@@ -20,32 +20,51 @@ import proyectofinal.SistemaGestion.GestionInmuebles.PropertyManager;
 public class InmueblesController {
 
     // ─── Table ───────────────────────────────────────────────
-    @FXML private TableView<Property>           tablaInmuebles;
-    @FXML private TableColumn<Property, String> colCodigo;
-    @FXML private TableColumn<Property, String> colDireccion;
-    @FXML private TableColumn<Property, String> colCiudad;
-    @FXML private TableColumn<Property, String> colTipo;
-    @FXML private TableColumn<Property, String> colFinalidad;
-    @FXML private TableColumn<Property, String> colPrecio;
-    @FXML private TableColumn<Property, String> colArea;
-    @FXML private TableColumn<Property, String> colEstado;
-    @FXML private TableColumn<Property, String> colDisponible;
-    @FXML private TableColumn<Property, String> colAsesor;
+    @FXML
+    private TableView<Property> tablaInmuebles;
+    @FXML
+    private TableColumn<Property, String> colCodigo;
+    @FXML
+    private TableColumn<Property, String> colDireccion;
+    @FXML
+    private TableColumn<Property, String> colCiudad;
+    @FXML
+    private TableColumn<Property, String> colTipo;
+    @FXML
+    private TableColumn<Property, String> colFinalidad;
+    @FXML
+    private TableColumn<Property, String> colPrecio;
+    @FXML
+    private TableColumn<Property, String> colArea;
+    @FXML
+    private TableColumn<Property, String> colEstado;
+    @FXML
+    private TableColumn<Property, String> colDisponible;
+    @FXML
+    private TableColumn<Property, String> colAsesor;
 
     // ─── Filters ─────────────────────────────────────────────
-    @FXML private TextField  campoBusqueda;
-    @FXML private ComboBox<TypeProperty> filtroTipo;
-    @FXML private ComboBox<String>       filtroFinalidad;
-    @FXML private ComboBox<String>       filtroDisponibilidad;
+    @FXML
+    private TextField campoBusqueda;
+    @FXML
+    private ComboBox<TypeProperty> filtroTipo;
+    @FXML
+    private ComboBox<String> filtroFinalidad;
+    @FXML
+    private ComboBox<String> filtroDisponibilidad;
 
     // ─── Action buttons ──────────────────────────────────────
-    @FXML private Button btnEditar;
-    @FXML private Button btnEliminar;
-    @FXML private Button btnDeshacerCambio;
-    @FXML private Button btnRevertirEstado;
+    @FXML
+    private Button btnEditar;
+    @FXML
+    private Button btnEliminar;
+    @FXML
+    private Button btnDeshacerCambio;
+    @FXML
+    private Button btnRevertirEstado;
 
     private ObservableList<Property> masterList;
-    private FilteredList<Property>   filteredList;
+    private FilteredList<Property> filteredList;
 
     @FXML
     public void initialize() {
@@ -60,21 +79,22 @@ public class InmueblesController {
     // ─────────────────────────────────────────────────────────
 
     private void configurarColumnas() {
-        colCodigo.setCellValueFactory(d ->    new SimpleStringProperty(d.getValue().getCode()));
+        colCodigo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCode()));
         colDireccion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getAddress()));
-        colCiudad.setCellValueFactory(d ->    new SimpleStringProperty(d.getValue().getCity()));
-        colTipo.setCellValueFactory(d ->      new SimpleStringProperty(d.getValue().getType().toString()));
+        colCiudad.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCity()));
+        colTipo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getType().toString()));
         colFinalidad.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getPurpose()));
-        colPrecio.setCellValueFactory(d ->    new SimpleStringProperty(
+        colPrecio.setCellValueFactory(d -> new SimpleStringProperty(
                 String.format("$%,.0f", d.getValue().getPrice())));
-        colArea.setCellValueFactory(d ->      new SimpleStringProperty(
+        colArea.setCellValueFactory(d -> new SimpleStringProperty(
                 d.getValue().getArea() + " m²"));
-        colEstado.setCellValueFactory(d ->    new SimpleStringProperty(d.getValue().getPropertyStatus()));
-        colDisponible.setCellValueFactory(d ->new SimpleStringProperty(
-                d.getValue().isAvailable() ? "✅ Sí" : "❌ No"));
-        colAsesor.setCellValueFactory(d ->    new SimpleStringProperty(
+        colEstado.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getPropertyStatus()));
+        colDisponible.setCellValueFactory(d -> new SimpleStringProperty(
+                d.getValue().isAvailable() ? "Sí" : "No"));
+        colAsesor.setCellValueFactory(d -> new SimpleStringProperty(
                 d.getValue().getResponsibleAdvisor() != null
-                        ? d.getValue().getResponsibleAdvisor().getName() : "—"));
+                        ? d.getValue().getResponsibleAdvisor().getName()
+                        : "—"));
     }
 
     private void configurarFiltros() {
@@ -84,7 +104,7 @@ public class InmueblesController {
     }
 
     private void cargarDatos() {
-        masterList   = FXCollections.observableArrayList();
+        masterList = FXCollections.observableArrayList();
         filteredList = new FilteredList<>(masterList, p -> true);
 
         for (Property p : AppContext.getInstance().getPropertyManager().getProperties()) {
@@ -108,9 +128,9 @@ public class InmueblesController {
 
     @FXML
     public void filtrarTabla() {
-        String texto         = campoBusqueda.getText().toLowerCase();
-        TypeProperty tipo    = filtroTipo.getValue();
-        String finalidad     = filtroFinalidad.getValue();
+        String texto = campoBusqueda.getText().toLowerCase();
+        TypeProperty tipo = filtroTipo.getValue();
+        String finalidad = filtroFinalidad.getValue();
         String disponibilidad = filtroDisponibilidad.getValue();
 
         filteredList.setPredicate(p -> {
@@ -149,7 +169,7 @@ public class InmueblesController {
     public void abrirFormularioRegistro() {
         try {
             FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/proyectofinal/views/registro-inmueble.fxml"));
+                    getClass().getResource("/proyectofinal/views/registro-inmueble.fxml"));
             Parent root = loader.load();
 
             RegistroInmuebleController ctrl = loader.getController();
@@ -188,30 +208,31 @@ public class InmueblesController {
     @FXML
     public void editarInmuebleSeleccionado() {
         Property selected = tablaInmuebles.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/proyectofinal/views/editar-inmueble.fxml"));
             Parent root = loader.load();
- 
+
             EdicionInmuebleController ctrl = loader.getController();
             ctrl.setPropertyToEdit(selected);
             // Callback: refresca la tabla para mostrar los valores actualizados
             ctrl.setOnEdicionExitosa(this::refrescarTabla);
- 
+
             Stage dialog = new Stage();
             dialog.setTitle("Editar inmueble — " + selected.getCode());
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.initOwner(tablaInmuebles.getScene().getWindow());
             dialog.setResizable(false);
- 
+
             Scene scene = new Scene(root);
             if (!tablaInmuebles.getScene().getStylesheets().isEmpty()) {
                 scene.getStylesheets().addAll(tablaInmuebles.getScene().getStylesheets());
             }
             dialog.setScene(scene);
             dialog.showAndWait();
- 
+
         } catch (IOException e) {
             mostrarError("No se pudo abrir el formulario de edición:\n" + e.getMessage());
         }
@@ -220,7 +241,8 @@ public class InmueblesController {
     @FXML
     public void eliminarInmuebleSeleccionado() {
         Property selected = tablaInmuebles.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
                 "¿Eliminar el inmueble " + selected.getCode() + "?",
@@ -268,19 +290,19 @@ public class InmueblesController {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/proyectofinal/views/historial-inmuebles.fxml"));
             Parent root = loader.load();
- 
+
             Stage dialog = new Stage();
             dialog.setTitle("Historial de cambios — Inmuebles");
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.initOwner(tablaInmuebles.getScene().getWindow());
- 
+
             Scene scene = new Scene(root);
             if (!tablaInmuebles.getScene().getStylesheets().isEmpty()) {
                 scene.getStylesheets().addAll(tablaInmuebles.getScene().getStylesheets());
             }
             dialog.setScene(scene);
-            dialog.show();   // no bloqueante: se puede consultar mientras se usa la app
- 
+            dialog.show();
+
         } catch (IOException e) {
             mostrarError("No se pudo abrir el historial:\n" + e.getMessage());
         }

@@ -19,30 +19,47 @@ import proyectofinal.Personal.Client;
 public class ClientesController {
 
     // ─── Table ───────────────────────────────────────────────
-    @FXML private TableView<Client>             tablaClientes;
-    @FXML private TableColumn<Client, String>   colIdentificacion;
-    @FXML private TableColumn<Client, String>   colNombre;
-    @FXML private TableColumn<Client, String>   colCorreo;
-    @FXML private TableColumn<Client, String>   colTelefono;
-    @FXML private TableColumn<Client, String>   colTipoCliente;
-    @FXML private TableColumn<Client, String>   colPresupuesto;
-    @FXML private TableColumn<Client, String>   colInmuebleDeseado;
-    @FXML private TableColumn<Client, String>   colEstadoBusqueda;
+    @FXML
+    private TableView<Client> tablaClientes;
+    @FXML
+    private TableColumn<Client, String> colIdentificacion;
+    @FXML
+    private TableColumn<Client, String> colNombre;
+    @FXML
+    private TableColumn<Client, String> colCorreo;
+    @FXML
+    private TableColumn<Client, String> colTelefono;
+    @FXML
+    private TableColumn<Client, String> colTipoCliente;
+    @FXML
+    private TableColumn<Client, String> colPresupuesto;
+    @FXML
+    private TableColumn<Client, String> colInmuebleDeseado;
+    @FXML
+    private TableColumn<Client, String> colEstadoBusqueda;
 
     // ─── Filters ─────────────────────────────────────────────
-    @FXML private TextField              campoBusqueda;
-    @FXML private ComboBox<String>       filtroTipoCliente;
-    @FXML private ComboBox<TypeProperty> filtroInmuebleDeseado;
-    @FXML private ComboBox<String>       filtroEstadoBusqueda;
+    @FXML
+    private TextField campoBusqueda;
+    @FXML
+    private ComboBox<String> filtroTipoCliente;
+    @FXML
+    private ComboBox<TypeProperty> filtroInmuebleDeseado;
+    @FXML
+    private ComboBox<String> filtroEstadoBusqueda;
 
     // ─── Buttons ─────────────────────────────────────────────
-    @FXML private Button btnEditar;
-    @FXML private Button btnEliminar;
-    @FXML private Button btnVerHistorial;
-    @FXML private Button btnVerFavoritos;
+    @FXML
+    private Button btnEditar;
+    @FXML
+    private Button btnEliminar;
+    @FXML
+    private Button btnVerHistorial;
+    @FXML
+    private Button btnVerFavoritos;
 
     private ObservableList<Client> masterList;
-    private FilteredList<Client>   filteredList;
+    private FilteredList<Client> filteredList;
 
     @FXML
     public void initialize() {
@@ -57,17 +74,18 @@ public class ClientesController {
     // ─────────────────────────────────────────────────────────
 
     private void configurarColumnas() {
-        colIdentificacion.setCellValueFactory(d ->  new SimpleStringProperty(d.getValue().getId()));
-        colNombre.setCellValueFactory(d ->           new SimpleStringProperty(d.getValue().getName()));
-        colCorreo.setCellValueFactory(d ->           new SimpleStringProperty(d.getValue().getEmail()));
-        colTelefono.setCellValueFactory(d ->         new SimpleStringProperty(d.getValue().getPhoneNumber()));
-        colTipoCliente.setCellValueFactory(d ->      new SimpleStringProperty(d.getValue().getClientType()));
-        colPresupuesto.setCellValueFactory(d ->      new SimpleStringProperty(
+        colIdentificacion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getId()));
+        colNombre.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getName()));
+        colCorreo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getEmail()));
+        colTelefono.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getPhoneNumber()));
+        colTipoCliente.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getClientType()));
+        colPresupuesto.setCellValueFactory(d -> new SimpleStringProperty(
                 String.format("$%,.0f", d.getValue().getBudget())));
         colInmuebleDeseado.setCellValueFactory(d -> new SimpleStringProperty(
                 d.getValue().getDesiredPropertyType() != null
-                        ? d.getValue().getDesiredPropertyType().toString() : "—"));
-        colEstadoBusqueda.setCellValueFactory(d ->  new SimpleStringProperty(d.getValue().getSearchStatus()));
+                        ? d.getValue().getDesiredPropertyType().toString()
+                        : "—"));
+        colEstadoBusqueda.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getSearchStatus()));
     }
 
     private void configurarFiltros() {
@@ -77,7 +95,7 @@ public class ClientesController {
     }
 
     private void cargarDatos() {
-        masterList   = FXCollections.observableArrayList();
+        masterList = FXCollections.observableArrayList();
         filteredList = new FilteredList<>(masterList, c -> true);
 
         for (Client c : AppContext.getInstance().getClientManager().getAllClients()) {
@@ -103,19 +121,19 @@ public class ClientesController {
 
     @FXML
     public void filtrarTabla() {
-        String texto      = campoBusqueda.getText().toLowerCase();
-        String tipo       = filtroTipoCliente.getValue();
-        TypeProperty tp   = filtroInmuebleDeseado.getValue();
-        String estado     = filtroEstadoBusqueda.getValue();
+        String texto = campoBusqueda.getText().toLowerCase();
+        String tipo = filtroTipoCliente.getValue();
+        TypeProperty tp = filtroInmuebleDeseado.getValue();
+        String estado = filtroEstadoBusqueda.getValue();
 
         filteredList.setPredicate(c -> {
             boolean matchTexto = texto.isEmpty()
                     || c.getId().toLowerCase().contains(texto)
                     || c.getName().toLowerCase().contains(texto)
                     || c.getEmail().toLowerCase().contains(texto);
-            boolean matchTipo  = tipo == null  || c.getClientType().equalsIgnoreCase(tipo);
-            boolean matchTp    = tp == null    || c.getDesiredPropertyType() == tp;
-            boolean matchEstado= estado == null || c.getSearchStatus().equalsIgnoreCase(estado);
+            boolean matchTipo = tipo == null || c.getClientType().equalsIgnoreCase(tipo);
+            boolean matchTp = tp == null || c.getDesiredPropertyType() == tp;
+            boolean matchEstado = estado == null || c.getSearchStatus().equalsIgnoreCase(estado);
             return matchTexto && matchTipo && matchTp && matchEstado;
         });
     }
@@ -137,7 +155,7 @@ public class ClientesController {
     public void abrirFormularioRegistro() {
         try {
             FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/proyectofinal/views/registro-cliente.fxml"));
+                    getClass().getResource("/proyectofinal/views/registro-cliente.fxml"));
             Parent root = loader.load();
 
             RegistroClienteController ctrl = loader.getController();
@@ -166,7 +184,8 @@ public class ClientesController {
     @FXML
     public void editarClienteSeleccionado() {
         Client selected = tablaClientes.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/proyectofinal/views/editar-cliente.fxml"));
@@ -197,7 +216,8 @@ public class ClientesController {
     @FXML
     public void eliminarClienteSeleccionado() {
         Client selected = tablaClientes.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
                 "¿Eliminar al cliente " + selected.getName() + "?",
@@ -213,10 +233,11 @@ public class ClientesController {
     @FXML
     public void verHistorialCliente() {
         Client selected = tablaClientes.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
 
-        int visitadas  = selected.getVisitedPropertiesHistory().size();
-        int favoritos  = selected.getFavoriteProperties().size();
+        int visitadas = selected.getVisitedPropertiesHistory().size();
+        int favoritos = selected.getFavoriteProperties().size();
 
         mostrarInfo("Cliente: " + selected.getName()
                 + "\nPropiedades visitadas: " + visitadas
@@ -226,7 +247,8 @@ public class ClientesController {
     @FXML
     public void verFavoritosCliente() {
         Client selected = tablaClientes.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
 
         StringBuilder sb = new StringBuilder("Favoritos de " + selected.getName() + ":\n");
         if (selected.getFavoriteProperties().size() == 0) {
@@ -240,6 +262,11 @@ public class ClientesController {
     }
 
     // ─────────────────────────────────────────────────────────
-    private void mostrarInfo(String msg)  { new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).showAndWait(); }
-    private void mostrarError(String msg) { new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK).showAndWait(); }
+    private void mostrarInfo(String msg) {
+        new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).showAndWait();
+    }
+
+    private void mostrarError(String msg) {
+        new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK).showAndWait();
+    }
 }

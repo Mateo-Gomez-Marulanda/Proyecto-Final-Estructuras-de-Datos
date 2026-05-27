@@ -11,28 +11,37 @@ import proyectofinal.Main;
 
 public class ShellController {
 
-    @FXML private StackPane contenidoCentral;
-    @FXML private Label     labelUsuarioActivo;
+    @FXML
+    private StackPane contenidoCentral;
+    @FXML
+    private Label labelUsuarioActivo;
 
-    @FXML private Button btnDashboard;
-    @FXML private Button btnInmuebles;
-    @FXML private Button btnClientes;
-    @FXML private Button btnAsesores;
-    @FXML private Button btnVisitas;
-    @FXML private Button btnOperaciones;
-    @FXML private Button btnAlertas;
+    @FXML
+    private Button btnDashboard;
+    @FXML
+    private Button btnInmuebles;
+    @FXML
+    private Button btnClientes;
+    @FXML
+    private Button btnAsesores;
+    @FXML
+    private Button btnVisitas;
+    @FXML
+    private Button btnOperaciones;
+    @FXML
+    private Button btnAlertas;
 
     private Button activeButton;
 
     @FXML
     public void initialize() {
-        // Show current user name in sidebar footer
+        // Mostrar el nombre de usuario actual en el pie de página de la barra lateral
         var client = AppContext.getInstance().getClientManager().getCurrent();
         if (client != null) {
             labelUsuarioActivo.setText(client.getName());
         }
 
-        // Load dashboard by default
+        // Cargar el dashboard por defecto
         navegarDashboard();
     }
 
@@ -40,13 +49,40 @@ public class ShellController {
     // Navigation
     // ─────────────────────────────────────────────
 
-    @FXML public void navegarDashboard()    { cargarVista("/proyectofinal/views/dashboard-content.fxml",   btnDashboard); }
-    @FXML public void navegarInmuebles()    { cargarVista("/proyectofinal/views/inmuebles-content.fxml",   btnInmuebles); }
-    @FXML public void navegarClientes()     { cargarVista("/proyectofinal/views/clientes-content.fxml",    btnClientes); }
-    @FXML public void navegarAsesores()     { cargarVista("/proyectofinal/views/asesores-content.fxml",    btnAsesores); }
-    @FXML public void navegarVisitas()      { cargarVista("/proyectofinal/views/visitas-content.fxml",     btnVisitas); }
-    @FXML public void navegarOperaciones()  { cargarVista("/proyectofinal/views/operaciones-content.fxml", btnOperaciones); }
-    @FXML public void navegarAlertas()      { cargarVista("/proyectofinal/views/alertas-content.fxml",     btnAlertas); }
+    @FXML
+    public void navegarDashboard() {
+        cargarVista("/proyectofinal/views/dashboard-content.fxml", btnDashboard);
+    }
+
+    @FXML
+    public void navegarInmuebles() {
+        cargarVista("/proyectofinal/views/inmuebles-content.fxml", btnInmuebles);
+    }
+
+    @FXML
+    public void navegarClientes() {
+        cargarVista("/proyectofinal/views/clientes-content.fxml", btnClientes);
+    }
+
+    @FXML
+    public void navegarAsesores() {
+        cargarVista("/proyectofinal/views/asesores-content.fxml", btnAsesores);
+    }
+
+    @FXML
+    public void navegarVisitas() {
+        cargarVista("/proyectofinal/views/visitas-content.fxml", btnVisitas);
+    }
+
+    @FXML
+    public void navegarOperaciones() {
+        cargarVista("/proyectofinal/views/operaciones-content.fxml", btnOperaciones);
+    }
+
+    @FXML
+    public void navegarAlertas() {
+        cargarVista("/proyectofinal/views/alertas-content.fxml", btnAlertas);
+    }
 
     @FXML
     public void cerrarSesion() {

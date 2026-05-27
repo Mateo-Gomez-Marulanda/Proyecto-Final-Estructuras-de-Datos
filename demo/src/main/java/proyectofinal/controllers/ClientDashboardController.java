@@ -17,29 +17,44 @@ import proyectofinal.Personal.Client;
 
 public class ClientDashboardController {
 
-    @FXML private Label lblBienvenida;
-    @FXML private Label numFavoritos;
-    @FXML private Label numVisitas;
-    @FXML private Label numVisitadas;
+    @FXML
+    private Label lblBienvenida;
+    @FXML
+    private Label numFavoritos;
+    @FXML
+    private Label numVisitas;
+    @FXML
+    private Label numVisitadas;
 
-    @FXML private TableView<Property>             tablaRecomendaciones;
-    @FXML private TableColumn<Property, String>   colRecCodigo;
-    @FXML private TableColumn<Property, String>   colRecDireccion;
-    @FXML private TableColumn<Property, String>   colRecCiudad;
-    @FXML private TableColumn<Property, String>   colRecTipo;
-    @FXML private TableColumn<Property, String>   colRecPrecio;
-    @FXML private TableColumn<Property, String>   colRecHab;
-    @FXML private TableColumn<Property, String>   colRecArea;
+    @FXML
+    private TableView<Property> tablaRecomendaciones;
+    @FXML
+    private TableColumn<Property, String> colRecCodigo;
+    @FXML
+    private TableColumn<Property, String> colRecDireccion;
+    @FXML
+    private TableColumn<Property, String> colRecCiudad;
+    @FXML
+    private TableColumn<Property, String> colRecTipo;
+    @FXML
+    private TableColumn<Property, String> colRecPrecio;
+    @FXML
+    private TableColumn<Property, String> colRecHab;
+    @FXML
+    private TableColumn<Property, String> colRecArea;
 
-    @FXML private Button btnGuardarFavorito;
-    @FXML private Button btnAgendarVisita;
+    @FXML
+    private Button btnGuardarFavorito;
+    @FXML
+    private Button btnAgendarVisita;
 
     private ObservableList<Property> recomendaciones;
 
     @FXML
     public void initialize() {
         Client client = AppContext.getInstance().getClientManager().getCurrent();
-        if (client != null) lblBienvenida.setText("¡Bienvenido, " + client.getName() + "!");
+        if (client != null)
+            lblBienvenida.setText("¡Bienvenido, " + client.getName() + "!");
 
         configurarColumnas();
         cargarDatos();
@@ -47,34 +62,36 @@ public class ClientDashboardController {
     }
 
     private void configurarColumnas() {
-        colRecCodigo.setCellValueFactory(d ->    new SimpleStringProperty(d.getValue().getCode()));
+        colRecCodigo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCode()));
         colRecDireccion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getAddress()));
-        colRecCiudad.setCellValueFactory(d ->    new SimpleStringProperty(d.getValue().getCity()));
-        colRecTipo.setCellValueFactory(d ->      new SimpleStringProperty(d.getValue().getType().toString()));
-        colRecPrecio.setCellValueFactory(d ->    new SimpleStringProperty(
+        colRecCiudad.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCity()));
+        colRecTipo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getType().toString()));
+        colRecPrecio.setCellValueFactory(d -> new SimpleStringProperty(
                 String.format("$%,.0f", d.getValue().getPrice())));
-        colRecHab.setCellValueFactory(d ->       new SimpleStringProperty(
+        colRecHab.setCellValueFactory(d -> new SimpleStringProperty(
                 String.valueOf(d.getValue().getRooms())));
-        colRecArea.setCellValueFactory(d ->      new SimpleStringProperty(
+        colRecArea.setCellValueFactory(d -> new SimpleStringProperty(
                 d.getValue().getArea() + " m²"));
     }
 
     private void cargarDatos() {
         Client client = AppContext.getInstance().getClientManager().getCurrent();
-        if (client == null) return;
+        if (client == null)
+            return;
 
         numFavoritos.setText(String.valueOf(client.getFavoriteProperties().size()));
         numVisitadas.setText(String.valueOf(client.getVisitedPropertiesHistory().size()));
 
         int visitas = 0;
         var visitasActivasYPendientes = AppContext.getInstance().getVisitManager().getAllPendingAndActiveVisits();
-        
+
         for (int i = 0; i < visitasActivasYPendientes.size(); i++) {
             var v = visitasActivasYPendientes.get(i);
-            
+
             // Validamos que pertenezca al cliente logueado
             if (v.getClient().getId().equals(client.getId())) {
-                // Comparamos usando el Enum directamente, o convirtiéndolo a String de forma segura
+                // Comparamos usando el Enum directamente, o convirtiéndolo a String de forma
+                // segura
                 String estado = String.valueOf(v.getVisitStatus());
                 if (estado.equalsIgnoreCase("PENDING") || estado.equalsIgnoreCase("CONFIRM")) {
                     visitas++;
@@ -87,7 +104,8 @@ public class ClientDashboardController {
         recomendaciones = FXCollections.observableArrayList();
         var recs = AppContext.getInstance().getClientManager()
                 .getRecommendations(AppContext.getInstance().getPropertyManager().getProperties());
-        for (Property p : recs) recomendaciones.add(p);
+        for (Property p : recs)
+            recomendaciones.add(p);
         tablaRecomendaciones.setItems(recomendaciones);
     }
 
@@ -103,9 +121,10 @@ public class ClientDashboardController {
     @FXML
     public void guardarFavorito() {
         Property selected = tablaRecomendaciones.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selected == null)
+            return;
         AppContext.getInstance().getClientManager().markAsFavorite(selected);
-        mostrarInfo("✅ Guardado en favoritos: " + selected.getCode());
+        mostrarInfo("Guardado en favoritos: " + selected.getCode());
     }
 
     @FXML

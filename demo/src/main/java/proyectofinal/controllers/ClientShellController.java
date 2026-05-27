@@ -11,16 +11,25 @@ import proyectofinal.Personal.Client;
 
 public class ClientShellController {
 
-    @FXML private StackPane contenidoCentral;
-    @FXML private Label     labelNombreCliente;
-    @FXML private Label     labelBienvenida;
-    @FXML private Label     labelTipoCliente;
+    @FXML
+    private StackPane contenidoCentral;
+    @FXML
+    private Label labelNombreCliente;
+    @FXML
+    private Label labelBienvenida;
+    @FXML
+    private Label labelTipoCliente;
 
-    @FXML private Button btnDashboard;
-    @FXML private Button btnCatalogo;
-    @FXML private Button btnFavoritos;
-    @FXML private Button btnVisitas;
-    @FXML private Button btnPerfil;
+    @FXML
+    private Button btnDashboard;
+    @FXML
+    private Button btnCatalogo;
+    @FXML
+    private Button btnFavoritos;
+    @FXML
+    private Button btnVisitas;
+    @FXML
+    private Button btnPerfil;
 
     private Button activeButton;
 
@@ -35,11 +44,30 @@ public class ClientShellController {
         navegarDashboard();
     }
 
-    @FXML public void navegarDashboard()  { cargarVista("/proyectofinal/views/client-dashboard.fxml",  btnDashboard); }
-    @FXML public void navegarCatalogo()   { cargarVista("/proyectofinal/views/client-catalog.fxml",    btnCatalogo); }
-    @FXML public void navegarFavoritos()  { cargarVista("/proyectofinal/views/client-favorites.fxml",  btnFavoritos); }
-    @FXML public void navegarVisitas()    { cargarVista("/proyectofinal/views/client-visits.fxml",     btnVisitas); }
-    @FXML public void navegarPerfil()     { cargarVista("/proyectofinal/views/client-profile.fxml",    btnPerfil); }
+    @FXML
+    public void navegarDashboard() {
+        cargarVista("/proyectofinal/views/client-dashboard.fxml", btnDashboard);
+    }
+
+    @FXML
+    public void navegarCatalogo() {
+        cargarVista("/proyectofinal/views/client-catalog.fxml", btnCatalogo);
+    }
+
+    @FXML
+    public void navegarFavoritos() {
+        cargarVista("/proyectofinal/views/client-favorites.fxml", btnFavoritos);
+    }
+
+    @FXML
+    public void navegarVisitas() {
+        cargarVista("/proyectofinal/views/client-visits.fxml", btnVisitas);
+    }
+
+    @FXML
+    public void navegarPerfil() {
+        cargarVista("/proyectofinal/views/client-profile.fxml", btnPerfil);
+    }
 
     @FXML
     public void cerrarSesion() {
@@ -64,7 +92,8 @@ public class ClientShellController {
     }
 
     private void actualizarBotonActivo(Button selected) {
-        if (activeButton != null) activeButton.getStyleClass().remove("nav-button-activo");
+        if (activeButton != null)
+            activeButton.getStyleClass().remove("nav-button-activo");
         if (selected != null && !selected.getStyleClass().contains("nav-button-activo")) {
             selected.getStyleClass().add("nav-button-activo");
         }

@@ -13,13 +13,13 @@ public class AgendarVisitaCLIController {
     @FXML
     private TextField txtInmueble;
     @FXML
-    private DatePicker campoFecha; // Coincide con fx:id="campoFecha" del nuevo FXML
+    private DatePicker campoFecha;
     @FXML
-    private ComboBox<LocalTime> cmbHora; // ¡CAMBIADO de Spinner a ComboBox!
+    private ComboBox<LocalTime> cmbHora;
     @FXML
-    private TextArea txtObservaciones; // Coincide con fx:id="txtObservaciones"
+    private TextArea txtObservaciones;
     @FXML
-    private Label labelError; // Coincide con fx:id="labelError"
+    private Label labelError;
 
     private Property inmuebleSeleccionado;
     private Client clienteActual;
@@ -51,40 +51,40 @@ public class AgendarVisitaCLIController {
     }
 
     @FXML
-public void agendarVisita() {
-    ocultarError();
+    public void agendarVisita() {
+        ocultarError();
 
-    if (clienteActual == null || inmuebleSeleccionado == null) {
-        mostrarError("Error: Datos de cliente o inmueble no cargados.");
-        return;
+        if (clienteActual == null || inmuebleSeleccionado == null) {
+            mostrarError("Error: Datos de cliente o inmueble no cargados.");
+            return;
+        }
+
+        LocalDate fecha = campoFecha.getValue();
+        LocalTime hora = cmbHora.getValue(); // Extrae directamente el LocalTime seleccionado
+
+        if (fecha == null) {
+            mostrarError("Selecciona una fecha válida.");
+            return;
+        }
+        if (hora == null) {
+            mostrarError("Por favor, selecciona una hora para la visita.");
+            return;
+        }
+        if (java.time.LocalDateTime.of(fecha, hora).isBefore(java.time.LocalDateTime.now())) {
+            mostrarError("La fecha y hora no pueden ser pasadas.");
+            return;
+        }
+
+        // Registrar visita usando el manager
+        AppContext.getInstance().getVisitManager().scheduleVisit(
+                this.clienteActual,
+                this.inmuebleSeleccionado,
+                fecha,
+                hora);
+
+        cerrarVentana();
     }
 
-    LocalDate fecha = campoFecha.getValue();
-    LocalTime hora = cmbHora.getValue(); // Extrae directamente el LocalTime seleccionado
-
-    if (fecha == null) {
-        mostrarError("Selecciona una fecha válida.");
-        return;
-    }
-    if (hora == null) {
-        mostrarError("Por favor, selecciona una hora para la visita.");
-        return;
-    }
-    if (java.time.LocalDateTime.of(fecha, hora).isBefore(java.time.LocalDateTime.now())) {
-        mostrarError("La fecha y hora no pueden ser pasadas.");
-        return;
-    }
-
-    // Registrar visita usando el manager
-    AppContext.getInstance().getVisitManager().scheduleVisit(
-        this.clienteActual, 
-        this.inmuebleSeleccionado, 
-        fecha, 
-        hora
-    );
-
-    cerrarVentana();
-}
     @FXML
     public void cancelar() {
         cerrarVentana();

@@ -21,53 +21,76 @@ import proyectofinal.SistemaGestion.AgendamientoVisitas.Visit;
 public class VisitasController {
 
     // ─── Summary labels ──────────────────────────────────────
-    @FXML private Label lblTotalCola;
-    @FXML private Label lblProximaVisita;
+    @FXML
+    private Label lblTotalCola;
+    @FXML
+    private Label lblProximaVisita;
 
     // ─── Queue tab ───────────────────────────────────────────
-    @FXML private TableView<Visit>             tablaCola;
-    @FXML private TableColumn<Visit, String>   colColaPosicion;
-    @FXML private TableColumn<Visit, String>   colColaCodigo;
-    @FXML private TableColumn<Visit, String>   colColaCliente;
-    @FXML private TableColumn<Visit, String>   colColaInmueble;
-    @FXML private TableColumn<Visit, String>   colColaFecha;
-    @FXML private TableColumn<Visit, String>   colColaHora;
-    @FXML private TableColumn<Visit, String>   colColaAsesor;
+    @FXML
+    private TableView<Visit> tablaCola;
+    @FXML
+    private TableColumn<Visit, String> colColaPosicion;
+    @FXML
+    private TableColumn<Visit, String> colColaCodigo;
+    @FXML
+    private TableColumn<Visit, String> colColaCliente;
+    @FXML
+    private TableColumn<Visit, String> colColaInmueble;
+    @FXML
+    private TableColumn<Visit, String> colColaFecha;
+    @FXML
+    private TableColumn<Visit, String> colColaHora;
+    @FXML
+    private TableColumn<Visit, String> colColaAsesor;
 
-    @FXML private Button btnConfirmar;
-    @FXML private Button btnCancelar;
-    @FXML private Button btnReprogramar;
+    @FXML
+    private Button btnConfirmar;
+    @FXML
+    private Button btnCancelar;
+    @FXML
+    private Button btnReprogramar;
 
     // ─── All visits tab ──────────────────────────────────────
-    @FXML private TableView<Visit>             tablaTodasVisitas;
-    @FXML private TableColumn<Visit, String>   colTCodigo;
-    @FXML private TableColumn<Visit, String>   colTCliente;
-    @FXML private TableColumn<Visit, String>   colTInmueble;
-    @FXML private TableColumn<Visit, String>   colTFecha;
-    @FXML private TableColumn<Visit, String>   colTHora;
-    @FXML private TableColumn<Visit, String>   colTAsesor;
-    @FXML private TableColumn<Visit, String>   colTEstado;
+    @FXML
+    private TableView<Visit> tablaTodasVisitas;
+    @FXML
+    private TableColumn<Visit, String> colTCodigo;
+    @FXML
+    private TableColumn<Visit, String> colTCliente;
+    @FXML
+    private TableColumn<Visit, String> colTInmueble;
+    @FXML
+    private TableColumn<Visit, String> colTFecha;
+    @FXML
+    private TableColumn<Visit, String> colTHora;
+    @FXML
+    private TableColumn<Visit, String> colTAsesor;
+    @FXML
+    private TableColumn<Visit, String> colTEstado;
 
-    @FXML private TextField      campoBusquedaTodas;
-    @FXML private ComboBox<String> filtroEstadoVisita;
+    @FXML
+    private TextField campoBusquedaTodas;
+    @FXML
+    private ComboBox<String> filtroEstadoVisita;
 
     private ObservableList<Visit> historyList = FXCollections.observableArrayList();
-    private FilteredList<Visit>   filteredHistory;
+    private FilteredList<Visit> filteredHistory;
     private ObservableList<Visit> colaSnapshot = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
         // Inicializar listas primero para evitar fallos de puntero nulo en celfactory
         filteredHistory = new FilteredList<>(historyList, v -> true);
-        
+
         configurarColumnasCola();
         configurarColumnasTodas();
         configurarFiltros();
-        
+
         // Enlazar de forma definitiva los elementos a las tablas
         tablaCola.setItems(colaSnapshot);
         tablaTodasVisitas.setItems(filteredHistory);
-        
+
         refrescarTodo();
     }
 
@@ -88,25 +111,30 @@ public class VisitasController {
                 }
             }
         });
-        
-        colColaCodigo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCode())); 
-        colColaCliente.setCellValueFactory(d ->  new SimpleStringProperty(d.getValue().getClient().getName()));
+
+        colColaCodigo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCode()));
+        colColaCliente.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getClient().getName()));
         colColaInmueble.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getProperty().getCode()));
-        colColaFecha.setCellValueFactory(d ->    new SimpleStringProperty(d.getValue().getDate().toString()));
-        colColaHora.setCellValueFactory(d ->     new SimpleStringProperty(d.getValue().getTime().toString().substring(0, 5)));
+        colColaFecha.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getDate().toString()));
+        colColaHora
+                .setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTime().toString().substring(0, 5)));
         colColaAsesor.setCellValueFactory(d -> new SimpleStringProperty(
-                d.getValue().getProperty().getResponsibleAdvisor() != null ? d.getValue().getProperty().getResponsibleAdvisor().getName() : "Sin asignar"));
+                d.getValue().getProperty().getResponsibleAdvisor() != null
+                        ? d.getValue().getProperty().getResponsibleAdvisor().getName()
+                        : "Sin asignar"));
     }
 
     private void configurarColumnasTodas() {
         colTCodigo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCode()));
-        colTCliente.setCellValueFactory(d ->  new SimpleStringProperty(d.getValue().getClient().getName()));
+        colTCliente.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getClient().getName()));
         colTInmueble.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getProperty().getCode()));
-        colTFecha.setCellValueFactory(d ->    new SimpleStringProperty(d.getValue().getDate().toString()));
-        colTHora.setCellValueFactory(d ->     new SimpleStringProperty(d.getValue().getTime().toString().substring(0, 5)));
+        colTFecha.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getDate().toString()));
+        colTHora.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTime().toString().substring(0, 5)));
         colTAsesor.setCellValueFactory(d -> new SimpleStringProperty(
-                d.getValue().getProperty().getResponsibleAdvisor() != null ? d.getValue().getProperty().getResponsibleAdvisor().getName() : "Sin asignar"));
-        colTEstado.setCellValueFactory(d ->   new SimpleStringProperty(d.getValue().getVisitStatus().name()));
+                d.getValue().getProperty().getResponsibleAdvisor() != null
+                        ? d.getValue().getProperty().getResponsibleAdvisor().getName()
+                        : "Sin asignar"));
+        colTEstado.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getVisitStatus().name()));
     }
 
     private void configurarFiltros() {
@@ -136,7 +164,8 @@ public class VisitasController {
         historyList.clear(); // Limpiar la lista existente para mantener el binding del filtro
         VisitManager vm = AppContext.getInstance().getVisitManager();
 
-        // 1. Mostrar las procesadas (Confirmadas, Canceladas, Reprogramadas, Realizadas)
+        // 1. Mostrar las procesadas (Confirmadas, Canceladas, Reprogramadas,
+        // Realizadas)
         for (Visit v : vm.getVisitHistory()) {
             historyList.add(v);
         }
@@ -144,7 +173,7 @@ public class VisitasController {
         for (Visit v : vm.getAllPendingAndActiveVisits()) {
             historyList.add(v);
         }
-        
+
         // Volver a aplicar el predicado de filtrado actual
         filtrarTodasVisitas();
     }
@@ -172,7 +201,10 @@ public class VisitasController {
             seleccionada = colaSnapshot.get(0);
         }
 
-        if (seleccionada == null) { mostrarInfo("No hay visitas para confirmar."); return; }
+        if (seleccionada == null) {
+            mostrarInfo("No hay visitas para confirmar.");
+            return;
+        }
 
         AppContext.getInstance().getVisitManager().confirmVisit(seleccionada);
         mostrarInfo("¡Visita confirmada exitosamente! Se ha trasladado al historial.");
@@ -186,12 +218,15 @@ public class VisitasController {
             seleccionada = colaSnapshot.get(0);
         }
 
-        if (seleccionada == null) { mostrarInfo("No hay visitas para cancelar."); return; }
+        if (seleccionada == null) {
+            mostrarInfo("No hay visitas para cancelar.");
+            return;
+        }
 
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Cancelar visita");
         dialog.setHeaderText("Motivo de cancelación (Observaciones):");
-    
+
         final Visit finalSelected = seleccionada;
         dialog.showAndWait().ifPresent(reason -> {
             AppContext.getInstance().getVisitManager().cancelVisit(finalSelected, reason);
@@ -200,55 +235,58 @@ public class VisitasController {
         });
     }
 
-   @FXML
-public void reprogramarSiguienteVisita() {
-    Visit seleccionada = tablaCola.getSelectionModel().getSelectedItem();
-    if (seleccionada == null && !colaSnapshot.isEmpty()) {
-        seleccionada = colaSnapshot.get(0);
-    }
+    @FXML
+    public void reprogramarSiguienteVisita() {
+        Visit seleccionada = tablaCola.getSelectionModel().getSelectedItem();
+        if (seleccionada == null && !colaSnapshot.isEmpty()) {
+            seleccionada = colaSnapshot.get(0);
+        }
 
-    if (seleccionada == null) { mostrarInfo("No hay visitas en cola para reprogramar."); return; }
-
-    Dialog<LocalDate> dialog = new Dialog<>(); // Cambiamos el tipo de retorno del Dialog
-    dialog.setTitle("Reprogramar visita");
-    dialog.setHeaderText("Nueva fecha para: " + seleccionada.getClient().getName()
-            + " — " + seleccionada.getProperty().getCode());
-
-    ButtonType confirmarBtn = new ButtonType("Reprogramar", ButtonBar.ButtonData.OK_DONE);
-    dialog.getDialogPane().getButtonTypes().addAll(confirmarBtn, ButtonType.CANCEL);
-
-    DatePicker picker = new DatePicker(LocalDate.now().plusDays(1));
-    Spinner<Integer> hora = new Spinner<>(0, 23, seleccionada.getTime().getHour());
-    Spinner<Integer> min = new Spinner<>(0, 59, seleccionada.getTime().getMinute());
-
-    javafx.scene.layout.HBox content = new javafx.scene.layout.HBox(12,
-            new Label("Fecha:"), picker,
-            new Label("Hora:"), hora,
-            new Label("Min:"), min);
-    content.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-    content.setPadding(new javafx.geometry.Insets(16));
-    dialog.getDialogPane().setContent(content);
-
-    // En lugar de devolver un objeto complejo, validaremos al pulsar el botón
-    dialog.setResultConverter(bt -> (bt == confirmarBtn) ? picker.getValue() : null);
-
-    final Visit finalSelected = seleccionada;
-    dialog.showAndWait().ifPresent(nuevaFecha -> {
-        java.time.LocalTime nuevaHora = java.time.LocalTime.of(hora.getValue(), min.getValue());
-        
-        // Validación: Fecha y hora en el pasado
-        if (java.time.LocalDateTime.of(nuevaFecha, nuevaHora).isBefore(java.time.LocalDateTime.now())) {
-            mostrarError("La nueva fecha no puede ser en el pasado.");
+        if (seleccionada == null) {
+            mostrarInfo("No hay visitas en cola para reprogramar.");
             return;
         }
 
-        // Llamada al VisitManager usando los parámetros separados
-        AppContext.getInstance().getVisitManager().rescheduleVisit(finalSelected, nuevaFecha, nuevaHora);
-        
-        mostrarInfo("Visita reprogramada correctamente.");
-        refrescarTodo();
-    });
-}
+        Dialog<LocalDate> dialog = new Dialog<>(); // Cambiamos el tipo de retorno del Dialog
+        dialog.setTitle("Reprogramar visita");
+        dialog.setHeaderText("Nueva fecha para: " + seleccionada.getClient().getName()
+                + " — " + seleccionada.getProperty().getCode());
+
+        ButtonType confirmarBtn = new ButtonType("Reprogramar", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(confirmarBtn, ButtonType.CANCEL);
+
+        DatePicker picker = new DatePicker(LocalDate.now().plusDays(1));
+        Spinner<Integer> hora = new Spinner<>(0, 23, seleccionada.getTime().getHour());
+        Spinner<Integer> min = new Spinner<>(0, 59, seleccionada.getTime().getMinute());
+
+        javafx.scene.layout.HBox content = new javafx.scene.layout.HBox(12,
+                new Label("Fecha:"), picker,
+                new Label("Hora:"), hora,
+                new Label("Min:"), min);
+        content.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        content.setPadding(new javafx.geometry.Insets(16));
+        dialog.getDialogPane().setContent(content);
+
+        // En lugar de devolver un objeto complejo, validaremos al pulsar el botón
+        dialog.setResultConverter(bt -> (bt == confirmarBtn) ? picker.getValue() : null);
+
+        final Visit finalSelected = seleccionada;
+        dialog.showAndWait().ifPresent(nuevaFecha -> {
+            java.time.LocalTime nuevaHora = java.time.LocalTime.of(hora.getValue(), min.getValue());
+
+            // Validación: Fecha y hora en el pasado
+            if (java.time.LocalDateTime.of(nuevaFecha, nuevaHora).isBefore(java.time.LocalDateTime.now())) {
+                mostrarError("La nueva fecha no puede ser en el pasado.");
+                return;
+            }
+
+            // Llamada al VisitManager usando los parámetros separados
+            AppContext.getInstance().getVisitManager().rescheduleVisit(finalSelected, nuevaFecha, nuevaHora);
+
+            mostrarInfo("Visita reprogramada correctamente.");
+            refrescarTodo();
+        });
+    }
 
     @FXML
     public void abrirFormularioAgendar() {
@@ -256,16 +294,16 @@ public void reprogramarSiguienteVisita() {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/proyectofinal/views/agendar-visita.fxml"));
             Parent root = loader.load();
- 
+
             AgendarVisitaController ctrl = loader.getController();
             ctrl.setOnAgendadoExitoso(v -> refrescarTodo());
- 
+
             Stage dialog = new Stage();
             dialog.setTitle("Agendar visita");
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.initOwner(tablaCola.getScene().getWindow());
             dialog.setResizable(false);
- 
+
             Scene scene = new Scene(root);
             if (!tablaCola.getScene().getStylesheets().isEmpty()) {
                 scene.getStylesheets().addAll(tablaCola.getScene().getStylesheets());
@@ -273,7 +311,7 @@ public void reprogramarSiguienteVisita() {
             dialog.setScene(scene);
             dialog.showAndWait();
             refrescarTodo(); // Forzar refresco al cerrar modal por si acaso
- 
+
         } catch (IOException e) {
             mostrarError("No se pudo abrir el formulario:\n" + e.getMessage());
         }
@@ -281,9 +319,10 @@ public void reprogramarSiguienteVisita() {
 
     @FXML
     public void filtrarTodasVisitas() {
-        if (filteredHistory == null) return;
-        
-        String texto  = campoBusquedaTodas.getText() != null ? campoBusquedaTodas.getText().toLowerCase() : "";
+        if (filteredHistory == null)
+            return;
+
+        String texto = campoBusquedaTodas.getText() != null ? campoBusquedaTodas.getText().toLowerCase() : "";
         String estado = filtroEstadoVisita.getValue();
 
         filteredHistory.setPredicate(v -> {
@@ -304,6 +343,11 @@ public void reprogramarSiguienteVisita() {
         }
     }
 
-    private void mostrarInfo(String msg) { new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).showAndWait(); }
-    private void mostrarError(String msg) { new Alert(Alert.AlertType.ERROR,       msg, ButtonType.OK).showAndWait(); }
+    private void mostrarInfo(String msg) {
+        new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).showAndWait();
+    }
+
+    private void mostrarError(String msg) {
+        new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK).showAndWait();
+    }
 }

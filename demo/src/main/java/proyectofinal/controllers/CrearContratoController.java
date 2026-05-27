@@ -74,8 +74,7 @@ public class CrearContratoController {
             operacionBase.setProcessStatus(ProcessStatus.COMPLETED);
 
             // ======================================================================
-            // 🔥 CORRECCIÓN DEL DISPARADOR DE EVENTOS (OBSERVER):
-            // Llamamos a tu método real 'publish' pasando la operación y el evento
+            // se llama al método 'publish' enviando la operación y el evento
             // ======================================================================
             OperationPublisher.getInstance().publish(operacionBase, OperationEvent.EventType.OPERATION_UPDATED);
 
